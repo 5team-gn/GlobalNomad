@@ -1,0 +1,121 @@
+@import 'tailwindcss';
+
+@theme {
+  /* White & Black */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Gray Scale */
+  --color-gray-25: #f8f8f8;
+  --color-gray-50: #edeef2;
+  --color-gray-100: #e0e0e5;
+  --color-gray-200: #c6c8cf;
+  --color-gray-300: #b3b4bc;
+  --color-gray-400: #9fa0a7;
+  --color-gray-500: #84858c;
+  --color-gray-600: #707177;
+  --color-gray-700: #5d5d61;
+  --color-gray-800: #49494c;
+  --color-gray-900: #323236;
+  --color-gray-950: #1f1f22;
+
+  /* Brand Colors (Primary) */
+  --color-primary-100: #e5f3ff;
+  --color-primary-500: #3d9ef2;
+
+  /* Semantic Colors (Red) */
+  --color-red-500: #ff2727;
+
+  /* 폰트 고정 */
+  --font-pretendard: 'Pretendard', 'sans-serif';
+
+  /* 기본 폰트 스타일 토큰화 (Size_Weight) */
+  --text-11-m: 10px;
+  --text-11-m--font-weight: 500;
+  --text-11-m--line-height: 1;
+
+  --text-11-b: 10px;
+  --text-11-b--font-weight: 700;
+  --text-11-b--line-height: 1;
+
+  --text-12-m: 12px;
+  --text-12-m--font-weight: 500;
+  --text-12-m--line-height: 1;
+
+  --text-12-b: 12px;
+  --text-12-b--font-weight: 700;
+  --text-12-b--line-height: 1;
+
+  --text-13-m: 13px;
+  --text-13-m--font-weight: 500;
+  --text-13-m--line-height: 1;
+
+  --text-13-b: 13px;
+  --text-13-b--font-weight: 700;
+  --text-13-b--line-height: 1;
+
+  --text-14-m: 14px;
+  --text-14-m--font-weight: 500;
+  --text-14-m--line-height: 1;
+
+  --text-14-b: 14px;
+  --text-14-b--font-weight: 700;
+  --text-14-b--line-height: 1;
+
+  --text-16-m: 16px;
+  --text-16-m--font-weight: 500;
+  --text-16-m--line-height: 1;
+
+  --text-16-b: 16px;
+  --text-16-b--font-weight: 700;
+  --text-16-b--line-height: 1;
+
+  --text-18-m: 18px;
+  --text-18-m--font-weight: 500;
+  --text-18-m--line-height: 1;
+
+  --text-18-b: 18px;
+  --text-18-b--font-weight: 700;
+  --text-18-b--line-height: 1;
+
+  --text-20-m: 20px;
+  --text-20-m--font-weight: 500;
+  --text-20-m--line-height: 1;
+
+  --text-20-b: 20px;
+  --text-20-b--font-weight: 700;
+  --text-20-b--line-height: 1;
+
+  --text-24-m: 24px;
+  --text-24-m--font-weight: 500;
+  --text-24-m--line-height: 1;
+
+  --text-24-b: 24px;
+  --text-24-b--font-weight: 700;
+  --text-24-b--line-height: 1;
+
+  --text-32-m: 32px;
+  --text-32-m--font-weight: 500;
+  --text-32-m--line-height: 1;
+
+  --text-32-b: 32px;
+  --text-32-b--font-weight: 700;
+  --text-32-b--line-height: 1;
+
+  /* Body 폰트 스타일 (180% 행간) */
+  --text-14-body-m: 14px;
+  --text-14-body-m--font-weight: 500;
+  --text-14-body-m--line-height: 1.8;
+
+  --text-16-body-m: 16px;
+  --text-16-body-m--font-weight: 500;
+  --text-16-body-m--line-height: 1.8;
+
+  --text-18-body-b: 18px;
+  --text-18-body-b--font-weight: 700;
+  --text-18-body-b--line-height: 1.8;
+
+  --text-20-body-b: 20px;
+  --text-20-body-b--font-weight: 700;
+  --text-20-body-b--line-height: 1.8;
+}
