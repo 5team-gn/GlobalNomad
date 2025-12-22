@@ -1,7 +1,6 @@
-// src/components/common/CardLayout.tsx
 import type { HTMLAttributes, PropsWithChildren } from "react";
 
-type Variant = "grid" | "list";
+type Variant = "grid" | "list"; //그리드 타입 | 1열 리스트 타입
 
 type Props = PropsWithChildren<
   HTMLAttributes<HTMLDivElement> & {
