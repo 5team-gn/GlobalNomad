@@ -15,7 +15,7 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
           <div className="w-full h-full rounded-full bg-primary-100 overflow-hidden border border-gray-100">
             {user?.profileImageUrl ? (
               <Image
-                src={user.profileImageUrl}
+                src={user.profileImageUrl ?? BasicImage}
                 alt={`${user?.nickname ?? "user"} profile`}
                 className="w-full h-full object-cover"
               />
