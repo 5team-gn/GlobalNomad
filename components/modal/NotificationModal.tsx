@@ -1,33 +1,14 @@
 'use client';
 
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { NotificationModalProps } from '@/lib/utils/Modal.types';
 
 /**
  * NotificationModal 컴포넌트
  * 
  * 알림 목록을 표시하는 모달
- * @size 231px × 326px
- * 
- * @note API 연동 방법:
- * 1. 알림 데이터를 API에서 가져오기
- * 2. notifications prop에 데이터 전달
- * 3. onNotificationClick에서 읽음 처리 등 추가 로직 구현
- * 
- * @example
- * ```tsx
- * const { data: notifications } = useQuery({
- *   queryKey: ['notifications'],
- *   queryFn: fetchNotifications,
- * });
- * 
- * <NotificationModal
- *   isOpen={isOpen}
- *   onClose={onClose}
- *   notifications={notifications || []}
- *   onNotificationClick={handleNotificationClick}
- * />
- * ```
+ * @size 368px × 480px
  */
 export default function NotificationModal({
   isOpen,
@@ -58,63 +39,145 @@ export default function NotificationModal({
 
   if (!isOpen) return null;
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
-    >
+  const modalContent = (
+    <>
       <div
-        className="w-[231px] h-[326px] bg-white rounded-xl overflow-hidden flex flex-col"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9999,
+        }}
+        onClick={onClose}
+      />
+      
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '368px',
+          height: '480px',
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          zIndex: 10000,
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <span className="text-16-b text-gray-900">알림</span>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+            borderBottom: '1px solid #edeef2',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="text-16-b" style={{ color: '#323236' }}>알림</span>
             {notifications.length > 0 && (
-              <span className="text-12-r text-gray-500">{notifications.length}개</span>
+              <span className="text-12-m" style={{ color: '#84858c' }}>
+                {notifications.length}개
+              </span>
             )}
           </div>
           <button
             onClick={onClose}
-            className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 text-20-r"
+            style={{
+              width: '24px',
+              height: '24px',
+              border: 'none',
+              background: 'none',
+              fontSize: '24px',
+              color: '#707177',
+              cursor: 'pointer',
+              padding: 0,
+              lineHeight: 1,
+            }}
           >
             ×
           </button>
         </div>
 
         {/* 알림 목록 */}
-        <div className="flex-1 overflow-y-auto">
+        <div style={{ flex: 1, overflowY: 'auto' }}>
           {notifications.length === 0 ? (
-            <div className="h-full flex items-center justify-center">
-              <p className="text-14-r text-gray-500">알림이 없습니다</p>
+            <div
+              style={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <p className="text-14-m" style={{ color: '#84858c' }}>알림이 없습니다</p>
             </div>
           ) : (
             notifications.map((notification) => (
               <button
                 key={notification.id}
                 onClick={() => onNotificationClick?.(notification.id)}
-                className={`w-full p-4 text-left border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                  !notification.isRead ? 'bg-blue-50' : ''
-                }`}
+                style={{
+                  width: '100%',
+                  padding: '20px 24px',
+                  textAlign: 'left',
+                  borderBottom: '1px solid #f8f8f8',
+                  backgroundColor: !notification.isRead ? '#e5f3ff' : 'white',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (notification.isRead) {
+                    e.currentTarget.style.backgroundColor = '#f8f8f8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = !notification.isRead
+                    ? '#e5f3ff'
+                    : 'white';
+                }}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <h4 className="text-14-b text-gray-900">{notification.title}</h4>
-                  <span className="text-10-r text-gray-500">
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '4px',
+                  }}
+                >
+                  <h4 className="text-14-b" style={{ color: '#323236' }}>
+                    {notification.title}
+                  </h4>
+                  <span className="text-11-m" style={{ color: '#84858c' }}>
                     {notification.date.split('-')[1]}월 {notification.date.split('-')[2]}일
                   </span>
                 </div>
 
-                <p className="text-12-r text-gray-700 mb-1">{notification.activityTitle}</p>
+                <p className="text-12-m" style={{ color: '#49494c', marginBottom: '4px' }}>
+                  {notification.activityTitle}
+                </p>
 
-                <p className="text-10-r text-gray-500 mb-1">
+                <p className="text-11-m" style={{ color: '#84858c', marginBottom: '4px' }}>
                   ({notification.date} {notification.time})
                 </p>
 
-                <p className="text-10-r">
+                <p className="text-11-m" style={{ color: '#49494c' }}>
                   예약이{' '}
                   <span
-                    className={notification.status === '승인' ? 'text-primary-500' : 'text-red-500'}
+                    style={{
+                      color: notification.status === '승인' ? '#3d9ef2' : '#ff2727',
+                      fontWeight: '700',
+                    }}
                   >
                     {notification.status}
                   </span>
@@ -125,6 +188,8 @@ export default function NotificationModal({
           )}
         </div>
       </div>
-    </div>
+    </>
   );
+
+  return createPortal(modalContent, document.body);
 }

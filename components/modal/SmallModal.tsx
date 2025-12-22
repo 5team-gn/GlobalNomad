@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { SmallModalProps } from '@/lib/utils/Modal.types';
 
 /**
@@ -44,26 +45,69 @@ export default function SmallModal({
     onClose();
   };
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
-    >
+  const modalContent = (
+    <>
       <div
-        className="w-[320px] h-[140px] bg-white rounded-xl p-5 flex flex-col justify-between"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9999,
+        }}
+        onClick={onClose}
+      />
+      
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '320px',
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '28px 20px 20px 20px',
+          zIndex: 10000,
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-14-m text-gray-900 text-center">{text}</p>
+        <div style={{ marginBottom: '28px', textAlign: 'center' }}>
+          <p className="text-14-m" style={{ color: '#323236' }}>{text}</p>
         </div>
 
-        <button
-          onClick={handleConfirm}
-          className="w-full h-11 bg-primary-500 text-white text-14-m rounded-lg hover:bg-primary-600 transition-colors"
-        >
-          {buttonText}
-        </button>
+        {/* 중앙 버튼 */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <button
+            onClick={handleConfirm}
+            style={{
+              width: '180px',
+              height: '41px',
+              backgroundColor: '#3d9ef2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#2b8ed9';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#3d9ef2';
+            }}
+          >
+            {buttonText}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
+
+  return createPortal(modalContent, document.body);
 }

@@ -40,7 +40,7 @@ export interface AlertModalProps extends BaseModalProps {
 /**
  * 작은 경고 모달 Props (320×185)
  */
-export interface SmallWarningModalProps extends BaseModalProps {
+export interface SmallAlertModalProps extends BaseModalProps {
   text: string;
   cancelText?: string;
   confirmText?: string;

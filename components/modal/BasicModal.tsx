@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { BasicModalProps } from '@/lib/utils/Modal.types';
 
 /**
@@ -44,26 +45,72 @@ export default function BasicModal({
     onClose();
   };
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
-    >
+  const modalContent = (
+    <>
+      {/* 오버레이 */}
       <div
-        className="w-[400px] h-[170px] bg-white rounded-xl p-6 flex flex-col justify-between"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9999,
+        }}
+        onClick={onClose}
+      />
+      
+      {/* 모달쪽 */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '400px',
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '32px 24px 24px 24px',
+          zIndex: 10000,
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-16-m text-gray-900 text-center">{text}</p>
+        {/* 텍스트 */}
+        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+          <p className="text-16-m" style={{ color: '#323236' }}>{text}</p>
         </div>
 
-        <button
-          onClick={handleConfirm}
-          className="w-full h-12 bg-primary-500 text-white text-16-m rounded-lg hover:bg-primary-600 transition-colors"
-        >
-          {buttonText}
-        </button>
+        {/* 파란색 확인 버튼 */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <button
+            onClick={handleConfirm}
+            style={{
+              width: '200px',
+              height: '47px',
+              backgroundColor: '#3d9ef2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#2b8ed9';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#3d9ef2';
+            }}
+          >
+            {buttonText}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
+
+  return createPortal(modalContent, document.body);
 }

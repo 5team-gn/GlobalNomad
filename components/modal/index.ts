@@ -7,7 +7,7 @@
 export { default as BasicModal } from './BasicModal';
 export { default as SmallModal } from './SmallModal';
 export { default as AlertModal } from './AlertModal';
-export { default as SmallWarningModal } from './SmallWarningModal';
+export { default as SmallAlertModal } from './SmallAlertModal';
 export { default as ReviewModal } from './ReviewModal';
 export { default as NotificationModal } from './NotificationModal';
 

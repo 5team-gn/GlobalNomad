@@ -3,15 +3,15 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import type { AlertModalProps } from '@/lib/utils/Modal.types';
+import type { SmallAlertModalProps } from '@/lib/utils/Modal.types';
 
 /**
- * AlertModal 컴포넌트
+ * SmallAlertModal 컴포넌트
  * 
- * 경고 아이콘과 예/아니오 버튼이 있는 모달
- * @size 400px × 242px
+ * 경고 모달의 작은 버전
+ * @size 320px × 185px
  */
-export default function AlertModal({
+export default function SmallAlertModal({
   isOpen,
   onClose,
   text,
@@ -19,7 +19,7 @@ export default function AlertModal({
   confirmText = '취소하기',
   onCancel,
   onConfirm,
-}: AlertModalProps) {
+}: SmallAlertModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -74,35 +74,33 @@ export default function AlertModal({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '540px',
+          width: '320px',
           backgroundColor: 'white',
           borderRadius: '16px',
-          padding: '32px 24px 24px 24px',
+          padding: '28px 20px 20px 20px',
           zIndex: 10000,
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 경고 아이콘 + 텍스트 */}
-        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-            <Image src="/modalimage.png" alt="경고" width={48} height={48} />
+        <div style={{ marginBottom: '28px', textAlign: 'center' }}>
+          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+            <Image src="/modalimage.png" alt="경고" width={40} height={40} />
           </div>
-          <p className="text-16-m" style={{ color: '#323236' }}>{text}</p>
+          <p className="text-14-m" style={{ color: '#323236' }}>{text}</p>
         </div>
 
-        {/* 버튼 2개 */}
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
           <button
             onClick={handleCancel}
             style={{
-              width: '141px',
-              height: '47px',
+              width: '113px',
+              height: '41px',
               backgroundColor: 'white',
               color: '#707177',
               border: '1px solid #c6c8cf',
               borderRadius: '8px',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '500',
               cursor: 'pointer',
               transition: 'all 0.2s',
@@ -119,13 +117,13 @@ export default function AlertModal({
           <button
             onClick={handleConfirm}
             style={{
-              width: '141px',
-              height: '47px',
+              width: '113px',
+              height: '41px',
               backgroundColor: '#3d9ef2',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: '500',
               cursor: 'pointer',
               transition: 'background-color 0.2s',

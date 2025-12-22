@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { ReviewModalProps } from '@/lib/utils/Modal.types';
 
 /**
@@ -62,70 +63,163 @@ export default function ReviewModal({
     onSubmit?.(rating, content);
   };
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
-    >
+  const modalContent = (
+    <>
       <div
-        className="w-[321px] h-[493px] bg-white rounded-xl p-6 flex flex-col"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 9999,
+        }}
+        onClick={onClose}
+      />
+      
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '510px',
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '28px 24px 24px 24px',
+          zIndex: 10000,
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* X 버튼 */}
         <button
           onClick={onClose}
-          className="self-end w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 text-24-r"
+          style={{
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            width: '24px',
+            height: '24px',
+            border: 'none',
+            background: 'none',
+            fontSize: '24px',
+            color: '#707177',
+            cursor: 'pointer',
+            padding: 0,
+            lineHeight: 1,
+          }}
         >
           ×
         </button>
 
-        <h3 className="text-18-b text-gray-900 mb-2">{title}</h3>
-        {subtitle && <p className="text-14-r text-gray-500 mb-4">{subtitle}</p>}
+        {/* 제목 */}
+        <h3 className="text-18-b" style={{ color: '#323236', marginBottom: '8px' }}>{title}</h3>
+        {subtitle && (
+          <p className="text-14-m" style={{ color: '#84858c', marginBottom: '20px' }}>
+            {subtitle}
+          </p>
+        )}
 
-        <div className="flex gap-2 mb-6">
+        {/* 별점 */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', justifyContent: 'center' }}>
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               onClick={() => setRating(star)}
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
-              className="w-10 h-10 flex items-center justify-center"
+              style={{
+                width: '48px',
+                height: '48px',
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                fontSize: '40px',
+                lineHeight: 1,
+                color: star <= (hoverRating || rating) ? '#FFC700' : '#e0e0e5',
+                transition: 'color 0.2s',
+              }}
             >
-              <span
-                className={`text-32-r ${
-                  star <= (hoverRating || rating) ? 'text-yellow-400' : 'text-gray-300'
-                }`}
-              >
-                ★
-              </span>
+              ★
             </button>
           ))}
         </div>
 
-        <div className="flex-1 mb-4">
-          <p className="text-16-m text-gray-900 mb-2">소중한 경험을 들려주세요</p>
-          <textarea
-            value={content}
-            onChange={(e) => {
-              if (e.target.value.length <= maxLength) {
-                setContent(e.target.value);
-              }
-            }}
-            placeholder={placeholder}
-            className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none text-14-r focus:outline-none focus:border-primary-500"
-          />
-          <div className="text-12-r text-gray-500 text-right mt-1">
-            {content.length}/{maxLength}
-          </div>
+        {/* 텍스트 라벨 */}
+        <p className="text-16-m" style={{ color: '#323236', marginBottom: '12px' }}>
+          소중한 경험을 들려주세요
+        </p>
+
+        {/* Textarea */}
+        <textarea
+          value={content}
+          onChange={(e) => {
+            if (e.target.value.length <= maxLength) {
+              setContent(e.target.value);
+            }
+          }}
+          placeholder={placeholder}
+          style={{
+            width: '100%',
+            height: '160px',
+            padding: '16px',
+            border: '1px solid #c6c8cf',
+            borderRadius: '8px',
+            resize: 'none',
+            fontSize: '14px',
+            fontWeight: '500',
+            color: '#323236',
+            marginBottom: '8px',
+            outline: 'none',
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = '#3d9ef2';
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = '#c6c8cf';
+          }}
+        />
+        
+        {/* 글자 수 */}
+        <div className="text-12-m" style={{ color: '#84858c', textAlign: 'right', marginBottom: '20px' }}>
+          {content.length}/{maxLength}
         </div>
 
+        {/* 작성하기 버튼 */}
         <button
           onClick={handleSubmit}
-          className="w-full h-12 bg-primary-500 text-white text-16-m rounded-lg hover:bg-primary-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
           disabled={rating === 0}
+          style={{
+            width: '100%',
+            height: '48px',
+            backgroundColor: rating === 0 ? '#e0e0e5' : '#3d9ef2',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '500',
+            cursor: rating === 0 ? 'not-allowed' : 'pointer',
+            transition: 'background-color 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            if (rating !== 0) {
+              e.currentTarget.style.backgroundColor = '#2b8ed9';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (rating !== 0) {
+              e.currentTarget.style.backgroundColor = '#3d9ef2';
+            }
+          }}
         >
           {buttonText}
         </button>
       </div>
-    </div>
+    </>
   );
+
+  return createPortal(modalContent, document.body);
 }
