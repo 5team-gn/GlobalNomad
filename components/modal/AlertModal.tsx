@@ -9,7 +9,6 @@ import type { AlertModalProps } from '@/lib/utils/Modal.types';
  * AlertModal 컴포넌트
  * 
  * 경고 아이콘과 예/아니오 버튼이 있는 모달
- * @size 400px × 242px
  */
 export default function AlertModal({
   isOpen,

@@ -8,7 +8,6 @@ import type { ReviewModalProps } from '@/lib/utils/Modal.types';
  * ReviewModal 컴포넌트
  * 
  * 별점과 리뷰 내용을 입력할 수 있는 모달
- * @size 321px × 493px
  */
 export default function ReviewModal({
   isOpen,
@@ -148,7 +147,7 @@ export default function ReviewModal({
           ))}
         </div>
 
-        {/* 텍스트 라벨 */}
+        {/* 텍스트 */}
         <p className="text-16-m" style={{ color: '#323236', marginBottom: '12px' }}>
           소중한 경험을 들려주세요
         </p>
@@ -174,6 +173,7 @@ export default function ReviewModal({
             color: '#323236',
             marginBottom: '8px',
             outline: 'none',
+            boxSizing: 'border-box',
           }}
           onFocus={(e) => {
             e.target.style.borderColor = '#3d9ef2';

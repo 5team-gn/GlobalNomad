@@ -8,7 +8,6 @@ import type { NotificationModalProps } from '@/lib/utils/Modal.types';
  * NotificationModal 컴포넌트
  * 
  * 알림 목록을 표시하는 모달
- * @size 368px × 480px
  */
 export default function NotificationModal({
   isOpen,
@@ -108,7 +107,7 @@ export default function NotificationModal({
           </button>
         </div>
 
-        {/* 알림 목록 */}
+        {/* 목록 */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {notifications.length === 0 ? (
             <div

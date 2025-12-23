@@ -8,7 +8,6 @@ import type { BasicModalProps } from '@/lib/utils/Modal.types';
  * BasicModal 컴포넌트
  * 
  * 기본 텍스트와 확인 버튼이 있는 간단한 모달
- * @size 400px × 170px
  */
 export default function BasicModal({
   isOpen,
