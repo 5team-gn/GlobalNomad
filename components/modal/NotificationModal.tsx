@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+
 import type { NotificationModalProps } from '@/lib/utils/Modal.types';
 
 /**
  * NotificationModal 컴포넌트
  * 
  * 알림 목록을 표시하는 모달
+
  */
 export default function NotificationModal({
   isOpen,
@@ -87,6 +89,7 @@ export default function NotificationModal({
               <span className="text-12-m" style={{ color: '#84858c' }}>
                 {notifications.length}개
               </span>
+
             )}
           </div>
           <button
@@ -102,6 +105,7 @@ export default function NotificationModal({
               padding: 0,
               lineHeight: 1,
             }}
+
           >
             ×
           </button>
@@ -119,6 +123,7 @@ export default function NotificationModal({
               }}
             >
               <p className="text-14-m" style={{ color: '#84858c' }}>알림이 없습니다</p>
+
             </div>
           ) : (
             notifications.map((notification) => (
@@ -158,6 +163,7 @@ export default function NotificationModal({
                     {notification.title}
                   </h4>
                   <span className="text-11-m" style={{ color: '#84858c' }}>
+
                     {notification.date.split('-')[1]}월 {notification.date.split('-')[2]}일
                   </span>
                 </div>
@@ -177,6 +183,7 @@ export default function NotificationModal({
                       color: notification.status === '승인' ? '#3d9ef2' : '#ff2727',
                       fontWeight: '700',
                     }}
+
                   >
                     {notification.status}
                   </span>
@@ -191,4 +198,5 @@ export default function NotificationModal({
   );
 
   return createPortal(modalContent, document.body);
+
 }

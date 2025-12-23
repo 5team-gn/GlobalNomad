@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+
 import type { BasicModalProps } from '@/lib/utils/Modal.types';
 
 /**
  * BasicModal 컴포넌트
  * 
  * 기본 텍스트와 확인 버튼이 있는 간단한 모달
+
  */
 export default function BasicModal({
   isOpen,
@@ -112,4 +114,5 @@ export default function BasicModal({
   );
 
   return createPortal(modalContent, document.body);
+
 }

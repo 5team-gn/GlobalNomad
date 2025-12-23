@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
 import type { AlertModalProps } from '@/lib/utils/Modal.types';
 
@@ -9,6 +10,7 @@ import type { AlertModalProps } from '@/lib/utils/Modal.types';
  * AlertModal 컴포넌트
  * 
  * 경고 아이콘과 예/아니오 버튼이 있는 모달
+
  */
 export default function AlertModal({
   isOpen,
@@ -16,6 +18,7 @@ export default function AlertModal({
   text,
   cancelText = '아니오',
   confirmText = '취소하기',
+
   onCancel,
   onConfirm,
 }: AlertModalProps) {
@@ -112,6 +115,7 @@ export default function AlertModal({
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'white';
             }}
+
           >
             {cancelText}
           </button>
@@ -135,6 +139,7 @@ export default function AlertModal({
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '#3d9ef2';
             }}
+
           >
             {confirmText}
           </button>
@@ -144,4 +149,5 @@ export default function AlertModal({
   );
 
   return createPortal(modalContent, document.body);
+
 }

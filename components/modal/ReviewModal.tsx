@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+
 import type { ReviewModalProps } from '@/lib/utils/Modal.types';
 
 /**
  * ReviewModal 컴포넌트
  * 
  * 별점과 리뷰 내용을 입력할 수 있는 모달
+
  */
 export default function ReviewModal({
   isOpen,
@@ -109,6 +111,7 @@ export default function ReviewModal({
             padding: 0,
             lineHeight: 1,
           }}
+
         >
           ×
         </button>
@@ -123,6 +126,7 @@ export default function ReviewModal({
 
         {/* 별점 */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', justifyContent: 'center' }}>
+
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
@@ -143,6 +147,7 @@ export default function ReviewModal({
               }}
             >
               ★
+
             </button>
           ))}
         </div>
@@ -214,6 +219,7 @@ export default function ReviewModal({
               e.currentTarget.style.backgroundColor = '#3d9ef2';
             }
           }}
+
         >
           {buttonText}
         </button>
@@ -222,4 +228,5 @@ export default function ReviewModal({
   );
 
   return createPortal(modalContent, document.body);
+
 }

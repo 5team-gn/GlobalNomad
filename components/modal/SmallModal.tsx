@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+
 import type { SmallModalProps } from '@/lib/utils/Modal.types';
 
 /**
@@ -110,4 +111,5 @@ export default function SmallModal({
   );
 
   return createPortal(modalContent, document.body);
+
 }
