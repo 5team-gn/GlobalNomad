@@ -3,7 +3,7 @@
 import { SIDEBAR_MENUS } from "@/feature/MyInfo/Utils/SidebarMenuConfig";
 import { SidebarProps } from "@/types/SidebarTypes";
 import ImageEditButton from "./ImageEditButton";
-import BasicImage from "@/public/Image/cloude.svg"
+import BasicImage from "@/public/Image/cloude.svg";
 import Image from "next/image";
 
 export default function Sidebar({ active, onChange, user }: SidebarProps) {
@@ -11,7 +11,6 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
     <aside className="w-64 max-h-112.5 border border-gray-50 rounded-xl px-6 py-3.5 shadow">
       <div className="flex items-center my-6 justify-center">
         <div className="relative w-30 h-30">
-          
           <div className="w-full h-full rounded-full bg-primary-100 overflow-hidden border border-gray-100">
             {user?.profileImageUrl ? (
               <Image
@@ -21,7 +20,7 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                <BasicImage/>
+                <BasicImage />
               </div>
             )}
           </div>

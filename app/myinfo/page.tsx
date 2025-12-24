@@ -1,8 +1,7 @@
-// app/myinfo/page.tsx (또는 dashboard/page.tsx)
 "use client";
 
 import { useState } from "react";
-import Sidebar from "@/feature/MyInfo/components/Sidebar";
+import Sidebar from "@/feature/MyInfo/Sidebar";
 import MyInfoView from "@/feature/MyInfo/MyInfoView";
 import ReservationView from "@/feature/MyInfo/ReservationView";
 import MyExperinenceView from "@/feature/MyInfo/MyExperinenceView";
