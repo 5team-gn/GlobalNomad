@@ -1,9 +1,9 @@
 "use client";
 
-import ReservationCalendar from "@/app/feature/activities-detail/ReservationCalendar";
 import { useReservationFlow } from "./reservation/useReservationFlow";
 import ReservationBarMobile from "./reservation/ReservationBarMobile";
 import ReservationSheet from "./reservation/ReservationSheet";
+import ReservationPanelDesktop from "./reservation/ReservationPanelDesktop";
 
 export default function ActivityCalendarClient() {
   const flow = useReservationFlow();
@@ -26,15 +26,27 @@ export default function ActivityCalendarClient() {
 
   const onTabletConfirm = () => {
     if (tabletConfirmDisabled) return;
-    // ✅ 완료 처리 (useReservationFlow에 finish() 만들어 쓰는 게 정석)
-    flow.finish?.(); // finish를 추가해두면 이걸로
+    flow.finish?.();
   };
 
   return (
     <>
-      {/* PC */}
+      {/* ✅ PC도 flow 기반 (기능 동일) */}
       <div className="hidden lg:block">
-        <ReservationCalendar />
+        <ReservationPanelDesktop
+          priceLabel={priceLabel}
+          maxPeople={maxPeople}
+          selectedDate={flow.selection.date}
+          onSelectDate={flow.setDate}
+          slots={flow.availableSlots}
+          selectedSlot={flow.selection.timeSlot}
+          onSelectSlot={flow.setTimeSlot}
+          people={flow.selection.people}
+          onInc={() => flow.incPeople(maxPeople)}
+          onDec={flow.decPeople}
+          canReserve={flow.canReserve}
+          onReserve={reserve}
+        />
       </div>
 
       {/* TB/MB */}
