@@ -1,6 +1,6 @@
 import { Review } from "@/types/reviews/review.types";
 import { StarRating } from "./StarRating";
-import { formatKoreanDate } from "@/lib/utils";
+import { formatKoreanDate } from "@/utils/detail-utils";
 
 type ReviewItemProps = {
   review: Review;
@@ -8,10 +8,10 @@ type ReviewItemProps = {
 
 export function ReviewItem({ review }: ReviewItemProps) {
   return (
-    <li className="bg-white rounded-2xl shadow-sm px-6 py-5">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-14-b text-gray-950">{review.user.nickname}</p>
-        <p className="text-12-m text-gray-400">
+    <li className="bg-white rounded-2xl p-5 shadow-[0_4px_24px_0_rgba(156,180,202,0.2)]">
+      <div className="flex items-center mb-2">
+        <p className="text-16-b text-gray-950 mr-2">{review.user.nickname}</p>
+        <p className="text-14-m text-gray-a4a1aa">
           {formatKoreanDate(review.createdAt)}
         </p>
       </div>
@@ -20,9 +20,11 @@ export function ReviewItem({ review }: ReviewItemProps) {
         <StarRating rating={review.rating} />
       </div>
 
-      <p className="text-14-m text-gray-700 leading-relaxed whitespace-pre-line">
-        {review.content}
-      </p>
+      <div className="max-h-[6.5em] overflow-y-auto pr-1">
+        <p className="text-16-body-m text-gray-950 leading-relaxed whitespace-pre-line">
+          {review.content}
+        </p>
+      </div>
     </li>
   );
 }

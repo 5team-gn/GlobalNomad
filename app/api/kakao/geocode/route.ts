@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const address = searchParams.get("address");
-
   if (!address) {
     return NextResponse.json({ error: "address is required" }, { status: 400 });
   }
@@ -25,26 +24,17 @@ export async function GET(req: Request) {
     cache: "no-store",
   });
 
-  const text = await res.text(); //성공이든 실패든 텍스트 받기
-
   if (!res.ok) {
-    console.error("[Kakao Geocode Error]", res.status, text);
+    // body가 길 수 있으니 일부만
+    const detail = await res.text().catch(() => "");
+    console.error("[Kakao Geocode Error]", res.status, detail.slice(0, 500));
     return NextResponse.json(
-      { error: "kakao api failed", status: res.status, detail: text },
+      { error: "kakao api failed", status: res.status },
       { status: 502 }
     );
   }
 
-  let data: any;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    return NextResponse.json(
-      { error: "invalid kakao response", detail: text },
-      { status: 502 }
-    );
-  }
-
+  const data = await res.json();
   const doc = data?.documents?.[0];
   if (!doc) {
     return NextResponse.json({ error: "address not found" }, { status: 404 });

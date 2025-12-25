@@ -15,7 +15,7 @@ export function ReviewList({ reviews }: ReviewListProps) {
   }
 
   return (
-    <ul className="space-y-6 mt-6">
+    <ul className="space-y-10 lg:space-y-5 mt-6">
       {reviews.map((review) => (
         <ReviewItem key={review.id} review={review} />
       ))}
