@@ -1,3 +1,8 @@
-export { default as Button } from "./Button";
-export { default as ButtonIcon } from "./Button.Icon";
-export { default as ButtonLabel } from "./Button.Label";
+import ButtonRoot from "./Button";
+import ButtonIcon from "./Button.Icon";
+import ButtonLabel from "./Button.Label";
+
+export const Button = Object.assign(ButtonRoot, {
+  Icon: ButtonIcon,
+  Label: ButtonLabel,
+});
