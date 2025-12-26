@@ -1,39 +1,54 @@
 "use client";
 
 import { ReactNode } from "react";
-import ButtonContext from "./Button.context";
-import { ButtonVariants } from "./ButtonVariants";
+import { ButtonVariants, buttonIconVariants, buttonLabelVariants } from "./ButtonVariants";
 import { cn } from "@/lib/utils/twmerge";
 
 interface ButtonProps {
   variant?: "primary" | "secondary" | "text" | "ghost";
   size?: "lg" | "md" | "sm";
   disabled?: boolean;
-  children: ReactNode;
   className?: string;
+  children: ReactNode;
 }
 
-export default function Button({
+interface ButtonSubProps {
+  variant?: "primary" | "secondary" | "text" | "ghost";
+  size?: "lg" | "md" | "sm";
+  className?: string;
+  children: ReactNode;
+}
+
+// Button Icon
+export const ButtonIcon = ({ variant = "primary", className, children }: ButtonSubProps) => (
+  <span className={cn(buttonIconVariants({ variant }), className)}>
+    {children}
+  </span>
+);
+
+// Button Label
+export const ButtonLabel = ({ variant = "primary", size = "md", className, children }: ButtonSubProps) => (
+  <span className={cn(buttonLabelVariants({ variant, size }), className)}>
+    {children}
+  </span>
+);
+
+export  function Button({
   variant = "primary",
   size = "md",
   disabled = false,
-  children,
   className,
+  children,
   ...props
 }: ButtonProps) {
   return (
-    <ButtonContext.Provider value={{ variant, size, disabled }}>
-      <button
-        type="button"
-        disabled={disabled}
-        className={cn(
-          ButtonVariants({ variant, size }),
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </button>
-    </ButtonContext.Provider>
+    <button
+      type="button"
+      disabled={disabled}
+      className={cn(ButtonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
