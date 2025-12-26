@@ -40,7 +40,7 @@ const ActivityHeader = () => {
   return (
     <>
       {/* 헤더 이미지 */}
-      <div className="order-1 lg:col-start-1 lg:row-start-1 lg:row-span-2">
+      <div className="order-1 lg:col-start-1 lg:row-start-1">
         <div className="flex gap-[8] overflow-hidden rounded-[30] min-w-0">
           <div className="relative flex-1 min-w-0 h-[400]">
             <Image

@@ -1,7 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import SimpleCalendar from "./SimpleCalendar";
 import type { ReservationStep, TimeSlot } from "@/types/reservation/types";
+import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
 
 type Props = {
   open: boolean;
@@ -51,6 +53,11 @@ export default function ReservationSheet({
 }: Props) {
   if (!open) return null;
 
+  const enabledDateSet = useMemo(
+    () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
+    []
+  );
+
   const mobileTitle =
     step === "date" ? "날짜" : step === "time" ? "예약 가능한 시간" : "인원";
 
@@ -94,7 +101,11 @@ export default function ReservationSheet({
           <div className="hidden md:block mt-4">
             <div className="grid gap-6 md:grid-cols-[1fr_320px]">
               <section>
-                <SimpleCalendar value={selectedDate} onChange={onSelectDate} />
+                <SimpleCalendar
+                  value={selectedDate}
+                  onChange={onSelectDate}
+                  enabledDateSet={enabledDateSet}
+                />
               </section>
 
               <aside className="rounded-2xl bg-gray-25 p-4">
@@ -178,6 +189,7 @@ export default function ReservationSheet({
                   <SimpleCalendar
                     value={selectedDate}
                     onChange={onSelectDate}
+                    enabledDateSet={enabledDateSet}
                   />
                   <div className="mt-6">
                     <p className="text-14-b text-gray-950">예약 가능한 시간</p>

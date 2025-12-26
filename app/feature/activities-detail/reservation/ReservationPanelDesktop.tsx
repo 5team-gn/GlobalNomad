@@ -1,7 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import SimpleCalendar from "./SimpleCalendar";
 import type { TimeSlot } from "@/types/reservation/types";
+import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
 
 type Props = {
   priceLabel: string;
@@ -35,6 +37,10 @@ export default function ReservationPanelDesktop({
   canReserve,
   onReserve,
 }: Props) {
+  const enabledDateSet = useMemo(
+    () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
+    []
+  );
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-6">
       <div className="mb-4">
@@ -42,7 +48,11 @@ export default function ReservationPanelDesktop({
         <p className="text-14-m text-gray-500">/ 1인</p>
       </div>
 
-      <SimpleCalendar value={selectedDate} onChange={onSelectDate} />
+      <SimpleCalendar
+        value={selectedDate}
+        onChange={onSelectDate}
+        enabledDateSet={enabledDateSet}
+      />
 
       <div className="mt-6 space-y-6">
         <div>

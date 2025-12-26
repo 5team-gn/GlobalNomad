@@ -59,7 +59,7 @@ export default function ActivityCalendarClient() {
           onReserve={reserve}
         />
 
-        <div className="h-[104px]" />
+        {/* <div className="h-[104px]" /> */}
 
         <ReservationSheet
           open={flow.open}

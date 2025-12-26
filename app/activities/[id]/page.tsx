@@ -11,7 +11,13 @@ const Activities = () => {
   return (
     <main className="max-w-[1200] mx-auto font-pretendard mt-22 mb-45 text-gray-950">
       <div className="detail_wrap px-[3.3333vw]">
-        <div className="grid lg:grid-cols-[1fr_410px] lg:grid-rows-[auto_auto_auto_auto] lg:gap-x-10 lg:items-start">
+        <div
+          className="grid
+  lg:grid-cols-[1fr_410px]
+  lg:grid-rows-[auto_1fr]
+  lg:gap-x-10
+  lg:items-start"
+        >
           {/* 상세헤더 (row1) */}
           <ActivityHeader />
 
