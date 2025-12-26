@@ -4,11 +4,14 @@ import { useReservationFlow } from "./reservation/useReservationFlow";
 import ReservationBarMobile from "./reservation/ReservationBarMobile";
 import ReservationSheet from "./reservation/ReservationSheet";
 import ReservationPanelDesktop from "./reservation/ReservationPanelDesktop";
+import { mockActivityDetail } from "@/app/mocks/activityDetail.mock";
 
 export default function ActivityCalendarClient() {
+  const mock = mockActivityDetail;
+
   const flow = useReservationFlow();
 
-  const priceLabel = "₩ 1,000";
+  const priceLabel = "1000";
   const maxPeople = 10;
 
   const openPicker = () => flow.openFor("date");
@@ -30,11 +33,11 @@ export default function ActivityCalendarClient() {
   };
 
   return (
-    <>
+    <div className="shadow-[0_4px_24px_0_rgba(156,180,202,0.2)]">
       {/* ✅ PC도 flow 기반 (기능 동일) */}
       <div className="hidden lg:block">
         <ReservationPanelDesktop
-          priceLabel={priceLabel}
+          price={mock.price}
           maxPeople={maxPeople}
           selectedDate={flow.selection.date}
           onSelectDate={flow.setDate}
@@ -82,6 +85,6 @@ export default function ActivityCalendarClient() {
           mobileConfirmDisabled={mobileConfirmDisabled}
         />
       </div>
-    </>
+    </div>
   );
 }

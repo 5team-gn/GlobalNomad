@@ -9,10 +9,9 @@ type Props = {
   open: boolean;
   onClose: () => void;
 
-  // 공통 상태
-  step: ReservationStep; // 모바일 단계형에 사용
-  onBack: () => void; // 모바일 뒤로가기
-  onNext: () => void; // 모바일 확인(다음 단계)
+  step: ReservationStep;
+  onBack: () => void;
+  onNext: () => void;
 
   selectedDate: Date | null;
   onSelectDate: (d: Date) => void;
@@ -25,11 +24,9 @@ type Props = {
   onInc: () => void;
   onDec: () => void;
 
-  // TB는 한 번에 완료 처리용
   tabletConfirmDisabled: boolean;
   onTabletConfirm: () => void;
 
-  // MB 단계형 확인 버튼 disable
   mobileConfirmDisabled: boolean;
 };
 
@@ -51,8 +48,6 @@ export default function ReservationSheet({
   onTabletConfirm,
   mobileConfirmDisabled,
 }: Props) {
-  if (!open) return null;
-
   const enabledDateSet = useMemo(
     () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
     []
@@ -62,15 +57,34 @@ export default function ReservationSheet({
     step === "date" ? "날짜" : step === "time" ? "예약 가능한 시간" : "인원";
 
   return (
-    <div className="fixed inset-0 z-[60] lg:hidden">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <div
+      className={[
+        "fixed inset-0 z-[60] lg:hidden",
+        open ? "pointer-events-auto" : "pointer-events-none",
+      ].join(" ")}
+      aria-hidden={!open}
+    >
+      {/* 오버레이 */}
+      <div
+        className={[
+          "absolute inset-0 bg-black/40 transition-opacity duration-300",
+          open ? "opacity-100" : "opacity-0",
+        ].join(" ")}
+        onClick={onClose}
+      />
 
-      <div className="absolute left-0 right-0 bottom-0 rounded-t-2xl bg-white shadow-lg">
+      {/* 시트 */}
+      <div
+        className={[
+          "absolute left-0 right-0 bottom-0 rounded-t-2xl bg-white shadow-lg",
+          "transform transition-transform duration-300 ease-out will-change-transform",
+          open ? "translate-y-0" : "translate-y-full",
+        ].join(" ")}
+      >
         <div className="mx-auto w-full max-w-[920px] px-4 md:px-6 pt-4">
-          {/* 헤더 */}
+          {/* ====== 이하 내용은 사용자님 기존 그대로 ====== */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {/* ✅ 모바일에서만 뒤로가기(요구사항: people->time) */}
               <button
                 onClick={onBack}
                 className="md:hidden rounded-md px-2 py-1 text-16-body-b text-gray-950"
@@ -80,7 +94,6 @@ export default function ReservationSheet({
                 ←
               </button>
 
-              {/* 제목: TB는 고정, MB는 단계별 */}
               <p className="text-16-body-b text-gray-950">
                 <span className="hidden md:inline">날짜 선택</span>
                 <span className="md:hidden">{mobileTitle}</span>

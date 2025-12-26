@@ -4,9 +4,11 @@ import { useMemo } from "react";
 import SimpleCalendar from "./SimpleCalendar";
 import type { TimeSlot } from "@/types/reservation/types";
 import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
+import Image from "next/image";
+import clsx from "clsx";
 
 type Props = {
-  priceLabel: string;
+  price: number;
   maxPeople: number;
 
   selectedDate: Date | null;
@@ -25,7 +27,7 @@ type Props = {
 };
 
 export default function ReservationPanelDesktop({
-  priceLabel,
+  price,
   selectedDate,
   onSelectDate,
   slots,
@@ -41,26 +43,56 @@ export default function ReservationPanelDesktop({
     () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
     []
   );
+  const totalPrice = price * people;
+  const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6">
-      <div className="mb-4">
-        <p className="text-20-b text-gray-950">{priceLabel}</p>
-        <p className="text-14-m text-gray-500">/ 1인</p>
+    <div className="rounded-2xl border border-gray-100 bg-white p-[30px]">
+      <div className="mb-4 flex items-center">
+        <p className="text-24-b text-gray-950 mr-[5px]">{formatKRW(price)}</p>
+        <p className="text-20-m text-gray-79747E tracking-[1px]">/인</p>
       </div>
-
+      <p className="text-16-b">날짜</p>
       <SimpleCalendar
         value={selectedDate}
         onChange={onSelectDate}
         enabledDateSet={enabledDateSet}
       />
 
-      <div className="mt-6 space-y-6">
+      <div
+        className={clsx(
+          "flex justify-between items-center my-6",
+          !selectedSlot && "opacity-40 pointer-events-none"
+        )}
+      >
+        <p className="text-14-b text-gray-950">참여 인원 수</p>
+        <div className="mt-3 flex items-center justify-between w-35 h-10 rounded-3xl bg-white px-4 py-3 border border-gray-200">
+          <button
+            type="button"
+            onClick={onDec}
+            className="h-10 w-10 rounded-lg flex items-center justify-center"
+            aria-label="인원 감소"
+          >
+            <Image src="/icons/icon_minus.svg" alt="" width={20} height={20} />
+          </button>
+          <div className="text-14-b text-gray-950">{people}</div>
+          <button
+            type="button"
+            onClick={onInc}
+            className="h-10 w-10 rounded-lg flex items-center justify-center"
+            aria-label="인원 증가"
+          >
+            <Image src="/icons/icon_plus.svg" alt="" width={20} height={20} />
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-6 space-y-8">
         <div>
           <p className="text-14-b text-gray-950">예약 가능한 시간</p>
           {!selectedDate ? (
             <p className="mt-2 text-14-m text-gray-500">날짜를 선택해주세요.</p>
           ) : (
-            <div className="mt-3 space-y-2">
+            <div className="mt-[14px] space-y-4">
               {slots.map((s) => {
                 const active = selectedSlot?.id === s.id;
                 return (
@@ -82,37 +114,25 @@ export default function ReservationPanelDesktop({
           )}
         </div>
 
-        <div className={!selectedSlot ? "opacity-40 pointer-events-none" : ""}>
-          <p className="text-14-b text-gray-950">참여 인원 수</p>
-          <div className="mt-3 flex items-center justify-between rounded-xl bg-white px-4 py-3 border border-gray-200">
-            <button
-              onClick={onDec}
-              className="h-9 w-9 rounded-lg border border-gray-200 text-16-body-b"
-            >
-              –
-            </button>
-            <div className="text-14-b text-gray-950">{people}</div>
-            <button
-              onClick={onInc}
-              className="h-9 w-9 rounded-lg border border-gray-200 text-16-body-b"
-            >
-              +
-            </button>
+        <div className="pt-6 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-16-b text-gray-950">총 합계</p>
+            <p className="text-20-b text-gray-950">{formatKRW(totalPrice)}</p>
           </div>
-        </div>
 
-        <button
-          onClick={onReserve}
-          disabled={!canReserve}
-          className={[
-            "w-full rounded-xl py-4 text-16-body-b",
-            canReserve
-              ? "bg-primary-500 text-white"
-              : "bg-gray-100 text-gray-400",
-          ].join(" ")}
-        >
-          예약하기
-        </button>
+          <button
+            onClick={onReserve}
+            disabled={!canReserve}
+            className={[
+              "w-full rounded-xl py-4 text-16-body-b",
+              canReserve
+                ? "bg-primary-500 text-white"
+                : "bg-gray-100 text-gray-400",
+            ].join(" ")}
+          >
+            예약하기
+          </button>
+        </div>
       </div>
     </div>
   );

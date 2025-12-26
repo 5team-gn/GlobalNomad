@@ -16,10 +16,10 @@ export default function Page() {
            ====================== */}
         <div className="lg:hidden">
           <ActivityHeaderGallery mock={mock} />
-          <div className="mt-6">
+          <div className="mt-6 ">
             <ActivityHeaderInfo mock={mock} />
           </div>
-          <div className="mt-6">
+          <div className="mt-6 ">
             <ActivityCalendarClient />
           </div>
 
