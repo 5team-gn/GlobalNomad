@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 
 import Sidebar from "@/feature/MyInfo/Sidebar";
 import MyInfoView from "@/feature/MyInfo/MyInfoView";
@@ -11,18 +10,10 @@ import ReservaionStatusView from "@/feature/MyInfo/ReservaionStatusView";
 import type { SidebarMenu } from "@/types/SidebarTypes";
 
 export default function MyInfoPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const queryMenu = searchParams.get("menu") as SidebarMenu | null;
-
-  const [activeMenu, setActiveMenu] = useState<SidebarMenu>(
-    queryMenu || "MY_INFO"
-  );
+  const [activeMenu, setActiveMenu] = useState<SidebarMenu>("MY_INFO");
 
   const handleMenuChange = (menu: SidebarMenu) => {
     setActiveMenu(menu);
-    router.push(`/myinfo?menu=${menu}`);
   };
 
   return (
