@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react"; // 1. useRef 추가
 import ArrowDown from "@/public/icon_arrow_down.svg";
 import TimeDropdown from "./TimeDropdown";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -13,9 +13,12 @@ interface Props {
 
 export default function TimeSelect({ value, onChange, disabled }: Props) {
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null); 
+
+  useClickOutside(ref, () => setOpen(false));
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <button
         type="button"
         disabled={disabled}
