@@ -1,15 +1,16 @@
 "use client";
 
-import { ReactNode } from "react";
-import { ButtonVariants, buttonIconVariants, buttonLabelVariants } from "./ButtonVariants";
+import { ButtonHTMLAttributes, ReactNode } from "react";
+import {
+  ButtonVariants,
+  buttonIconVariants,
+  buttonLabelVariants,
+} from "./ButtonVariants";
 import { cn } from "@/lib/utils/twmerge";
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "text" | "ghost";
   size?: "lg" | "md" | "sm";
-  disabled?: boolean;
-  className?: string;
-  children: ReactNode;
 }
 
 interface ButtonSubProps {
@@ -19,21 +20,28 @@ interface ButtonSubProps {
   children: ReactNode;
 }
 
-// Button Icon
-export const ButtonIcon = ({ variant = "primary", className, children }: ButtonSubProps) => (
+export const ButtonIcon = ({
+  variant = "primary",
+  className,
+  children,
+}: ButtonSubProps) => (
   <span className={cn(buttonIconVariants({ variant }), className)}>
     {children}
   </span>
 );
 
-// Button Label
-export const ButtonLabel = ({ variant = "primary", size = "md", className, children }: ButtonSubProps) => (
+export const ButtonLabel = ({
+  variant = "primary",
+  size = "md",
+  className,
+  children,
+}: ButtonSubProps) => (
   <span className={cn(buttonLabelVariants({ variant, size }), className)}>
     {children}
   </span>
 );
 
-export  function Button({
+export function Button({
   variant = "primary",
   size = "md",
   disabled = false,
