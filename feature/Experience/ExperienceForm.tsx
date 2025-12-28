@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button } from "@/components/button/Button";
-import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
 import { Input } from "@/components/common/input";
-import ProductImageInput from "./ProductImageInput";
-import Delete from "@/public/delete_button.svg";
-import Image from "next/image";
-import ScheduleRow from "./schedule/ScheduleRow";
+import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
+
+import { useExperienceForm } from "@/hooks/useExperienceForm";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
+import { useImageManager } from "@/hooks/useImageManager";
+
+import { ImageSection } from "./ImageSection"; 
+import { ScheduleSection } from "./ScheduleSection"; 
 
 interface Props {
   initialValues?: Partial<ExperienceFormValues>;
@@ -16,49 +17,31 @@ interface Props {
   submitLabel?: string;
 }
 
-interface ImageItem {
-  file: File;
-  preview: string;
-}
+export default function ExperienceForm({
+  initialValues,
+  onSubmit,
+  submitLabel = "등록하기",
+}: Props) {
+  /** 기본 폼 상태 */
+  const { values, handleChange } = useExperienceForm(initialValues);
 
-export default function ExperienceForm({ initialValues, onSubmit }: Props) {
-  const [values, setValues] = useState<ExperienceFormValues>({
-    title: initialValues?.title ?? "",
-    description: initialValues?.description ?? "",
-    category: initialValues?.category ?? "",
-    price: initialValues?.price ?? 0,
-    address: initialValues?.address ?? "",
-    bannerImageUrl: initialValues?.bannerImageUrl ?? "",
-    schedules: initialValues?.schedules ?? [],
-    subImageUrls: initialValues?.subImageUrls ?? [],
-  });
+  /** 스케줄 관리 */
+  const scheduleManager = useScheduleManager(
+    initialValues?.schedules ?? []
+  );
 
-  const [bannerImages, setBannerImages] = useState<ImageItem[]>([]);
-  const [detailImages, setDetailImages] = useState<ImageItem[]>([]);
-
-  const {date,startTime,endTime,schedules,setDate,setStartTime,setEndTime,isAddDisabled,addSchedule,removeSchedule,
-  } = useScheduleManager(initialValues?.schedules ?? []);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setValues((prev) => ({
-      ...prev,
-      [name]: name === "price" ? Number(value) : value,
-    }));
-  };
+  /** 이미지 관리 */
+  const bannerImages = useImageManager();
+  const detailImages = useImageManager();
 
   const handleSubmit = () => {
     onSubmit({
       ...values,
-      schedules,
-      bannerImageUrl: bannerImages[0]?.preview ?? "",
-      subImageUrls: detailImages.map((img) => img.preview),
+      schedules: scheduleManager.schedules,
+      bannerImageUrl: bannerImages.images[0]?.preview ?? "",
+      subImageUrls: detailImages.images.map((img) => img.preview),
     });
   };
-
-  
 
   return (
     <form
@@ -70,6 +53,7 @@ export default function ExperienceForm({ initialValues, onSubmit }: Props) {
     >
       <h1 className="text-18-b">내 체험 등록</h1>
 
+      {/* 제목 */}
       <label>제목</label>
       <Input
         name="title"
@@ -78,159 +62,74 @@ export default function ExperienceForm({ initialValues, onSubmit }: Props) {
         placeholder="제목을 입력해 주세요"
       />
 
+      {/* 카테고리 */}
       <label>카테고리</label>
-      <input
+      <Input
         name="category"
-        placeholder="카테고리를 선택해 주세요"
         value={values.category}
         onChange={handleChange}
-        className="border p-3 rounded-xl"
+        placeholder="카테고리를 선택해 주세요"
       />
 
+      {/* 설명 */}
       <label>설명</label>
       <textarea
         name="description"
-        placeholder="체험에 대한 설명을 입력해 주세요"
         value={values.description}
         onChange={handleChange}
+        placeholder="체험에 대한 설명을 입력해 주세요"
         className="border p-3 rounded-xl"
       />
 
+      {/* 가격 */}
       <label>가격</label>
-      <input
+      <Input
         name="price"
         type="number"
-        placeholder="체험 금액을 입력해주세요"
         value={values.price}
         onChange={handleChange}
-        className="border p-3 rounded-xl"
+        placeholder="체험 금액을 입력해주세요"
       />
 
+      {/* 주소 */}
       <label>주소</label>
-      <input
+      <Input
         name="address"
-        placeholder="주소를 입력해 주세요"
         value={values.address}
         onChange={handleChange}
-        className="border p-3 rounded-xl"
+        placeholder="주소를 입력해 주세요"
       />
 
-      {/* 예약 가능 시간대 */}
-      <h2 className="text-16-b">예약 가능한 시간대</h2>
-      <ScheduleRow
-        date={date}
-        startTime={startTime}
-        endTime={endTime}
-        actionType="add"
-        disabled={false}
-        addDisabled={isAddDisabled}
-        onAction={addSchedule}
-        onDateChange={setDate}
-        onStartTimeChange={setStartTime}
-        onEndTimeChange={setEndTime}
-      />
-        <div className="h-px w-full bg-gray-100"></div>
-
-      <div className="flex flex-col gap-3 mt-4">
-        {schedules.map((item, index) => (
-          <ScheduleRow
-          key={index}
-          date={item.date}
-          startTime={item.startTime}
-          endTime={item.endTime}
-          actionType="remove"
-          onAction={() => removeSchedule(index)}
-          />
-        ))}
-      </div>
+      {/* 예약 가능한 시간대 */}
+      <ScheduleSection manager={scheduleManager} />
 
       {/* 배너 이미지 */}
-      <h2 className="text-16-b">배너 이미지 등록</h2>
+      <ImageSection
+        title="배너 이미지 등록"
+        images={bannerImages.images}
+        maxCount={4}
+        onUpload={bannerImages.addImages}
+        onRemove={bannerImages.removeImage}
+      />
 
-      <div className="flex gap-7">
-        <ProductImageInput
-          currentCount={bannerImages.length}
-          maxCount={4}
-          onImageUpload={(files) =>
-            setBannerImages((prev) => [
-              ...prev,
-              ...files.map((file) => ({
-                file,
-                preview: URL.createObjectURL(file),
-              })),
-            ])
-          }
-        />
+      {/* 소개 이미지 */}
+      <ImageSection
+        title="소개 이미지 등록"
+        images={detailImages.images}
+        maxCount={4}
+        onUpload={detailImages.addImages}
+        onRemove={detailImages.removeImage}
+      />
 
-        <div className="flex gap-4 flex-wrap">
-          {bannerImages.map((image, index) => (
-            <div key={index} className="relative w-42 h-42">
-              <Image
-                src={image.preview}
-                alt="배너 이미지"
-                fill
-                className="object-cover rounded"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  URL.revokeObjectURL(image.preview);
-                  setBannerImages((prev) => prev.filter((_, i) => i !== index));
-                }}
-                className="absolute -top-2 -right-2 flex w-6.5 h-6.5 items-center justify-center rounded-full bg-gray-950 text-white"
-              >
-                <Delete />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 서브 이미지 */}
-      <h2 className="text-16-b">소개 이미지 등록</h2>
-
-      <div className="flex gap-7">
-        <ProductImageInput
-          currentCount={detailImages.length}
-          maxCount={4}
-          onImageUpload={(files) =>
-            setDetailImages((prev) => [
-              ...prev,
-              ...files.map((file) => ({
-                file,
-                preview: URL.createObjectURL(file),
-              })),
-            ])
-          }
-        />
-
-        <div className="flex gap-4 flex-wrap">
-          {detailImages.map((image, index) => (
-            <div key={index} className="relative w-42 h-42">
-              <Image
-                src={image.preview}
-                alt="소개 이미지"
-                fill
-                className="object-cover rounded"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  URL.revokeObjectURL(image.preview);
-                  setDetailImages((prev) => prev.filter((_, i) => i !== index));
-                }}
-                className="absolute -top-2 -right-2 flex w-6.5 h-6.5 items-center justify-center rounded-full bg-gray-950 text-white hover:cursor-pointer"
-              >
-                <Delete />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      {/* 제출 버튼 */}
       <div className="flex w-full justify-center">
-        <Button variant="primary" size="sm" className="px-10 py-3 rounded-2xl">
-          등록하기
+        <Button
+          type="submit"
+          variant="primary"
+          size="sm"
+          className="px-10 py-3 rounded-2xl"
+        >
+          {submitLabel}
         </Button>
       </div>
     </form>
