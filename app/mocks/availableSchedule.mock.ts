@@ -1,11 +1,4 @@
-export type AvailableScheduleItem = {
-  date: string; // "YYYY-MM-DD"
-  times: {
-    id: number;
-    startTime: string; // "HH:mm"
-    endTime: string; // "HH:mm"
-  }[];
-};
+import { AvailableScheduleItem } from "@/types/reservation/types";
 
 export const MOCK_AVAILABLE_SCHEDULE: AvailableScheduleItem[] = [
   {

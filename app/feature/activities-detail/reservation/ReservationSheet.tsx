@@ -82,7 +82,6 @@ export default function ReservationSheet({
         ].join(" ")}
       >
         <div className="mx-auto w-full max-w-[920px] px-4 md:px-6 pt-4">
-          {/* ====== 이하 내용은 사용자님 기존 그대로 ====== */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <button

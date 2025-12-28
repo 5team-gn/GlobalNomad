@@ -18,3 +18,12 @@ export function formatDateKR(d: Date): string {
   const dd = String(d.getDate()).padStart(2, "0");
   return `${yy}/${mm}/${dd}`;
 }
+
+export type AvailableScheduleItem = {
+  date: string; // "YYYY-MM-DD"
+  times: {
+    id: number;
+    startTime: string; // "HH:mm"
+    endTime: string; // "HH:mm"
+  }[];
+};

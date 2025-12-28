@@ -4,18 +4,19 @@ import { formatDateKR } from "@/types/reservation/types";
 import type { ReservationSelection } from "@/types/reservation/types";
 
 type Props = {
-  priceLabel: string; // "₩1,000"
+  price: number;
   selection: ReservationSelection;
   canReserve: boolean;
-
+  people: number;
   onOpen: () => void; // 날짜 선택하기
   onReserve: () => void; // 예약하기
 };
 
 export default function ReservationBarMobile({
-  priceLabel,
+  price,
   selection,
   canReserve,
+  people,
   onOpen,
   onReserve,
 }: Props) {
@@ -24,13 +25,16 @@ export default function ReservationBarMobile({
       ? `${formatDateKR(selection.date)} ${selection.timeSlot.label}`
       : "날짜 선택하기";
 
+  const totalPrice = price * people;
+  const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
+
   return (
     <div className="fixed left-0 right-0 bottom-0 z-50 border-t border-gray-100 bg-white">
       <div className="mx-auto max-w-[1200px] px-4 py-3">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-16-body-b text-gray-950">
-              {priceLabel}{" "}
+              {formatKRW(totalPrice)}{" "}
               <span className="text-14-m text-gray-500">/ 1명</span>
             </p>
           </div>

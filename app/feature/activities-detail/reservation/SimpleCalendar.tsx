@@ -79,26 +79,23 @@ export default function SimpleCalendar({
 
           let cls = base;
 
-          // 기본: 예약 불가
-          if (!enabled) {
-            cls += " text-gray-300";
-          } else {
-            cls += " text-gray-900 cursor-pointer hover:bg-gray-50";
-          }
-
-          // 오늘 표시(테두리)
-          if (isTodayFlag) {
-            cls += " ring-1 ring-primary-200";
-          }
-
-          // 예약 가능 표시(옅은 배경)
-          if (enabled) {
-            cls += " bg-primary-50";
-          }
-
-          // 선택 최우선
+          // 1) 선택 최우선
           if (selected) {
             cls = base + " bg-primary-500 text-white cursor-pointer";
+          }
+          // 2) 예약 가능일 (더 진한 하늘색 + 흰색)
+          else if (enabled) {
+            cls =
+              base +
+              " bg-primary-500 text-white cursor-pointer hover:bg-primary-600";
+          }
+          // 3) 오늘(당일) - 예약 불가일 때만: 연한 하늘색 + 진한 하늘색 숫자
+          else if (isTodayFlag) {
+            cls = base + " bg-primary-100 text-primary-500";
+          }
+          // 4) 예약 불가 기본
+          else {
+            cls = base + " text-gray-300";
           }
 
           return (
@@ -111,9 +108,9 @@ export default function SimpleCalendar({
               {date.getDate()}
 
               {/* 예약 가능 dot (선택되면 숨김) */}
-              {enabled && !selected && (
+              {/* {enabled && !selected && (
                 <span className="absolute bottom-1 h-1 w-1 rounded-full bg-primary-500" />
-              )}
+              )} */}
             </button>
           );
         })}

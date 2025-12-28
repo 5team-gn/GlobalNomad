@@ -29,7 +29,7 @@ export default function ActivityCalendarClient() {
 
   const onTabletConfirm = () => {
     if (tabletConfirmDisabled) return;
-    flow.finish?.();
+    flow.close?.();
   };
 
   return (
@@ -55,14 +55,13 @@ export default function ActivityCalendarClient() {
       {/* TB/MB */}
       <div className="lg:hidden">
         <ReservationBarMobile
-          priceLabel={priceLabel}
+          price={mock.price}
+          people={flow.selection.people}
           selection={flow.selection}
           canReserve={flow.canReserve}
           onOpen={openPicker}
           onReserve={reserve}
         />
-
-        {/* <div className="h-[104px]" /> */}
 
         <ReservationSheet
           open={flow.open}
