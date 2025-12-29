@@ -9,8 +9,8 @@ export default function Page() {
   const mock = mockActivityDetail;
 
   return (
-    <main className="max-w-[1200px] mx-auto font-pretendard mt-22 mb-45 text-gray-950">
-      <div className="detail_wrap px-[3.3333vw]">
+    <main className="max-w-[1200px] mx-auto font-pretendard mt-[34px] lg:mt-22 mb-45 text-gray-950">
+      <div className="detail_wrap px-6 md:px-[30px] lg:px-[3.3333vw]">
         {/* ======================
            TB/MB (< lg): 세로 스택
            ====================== */}

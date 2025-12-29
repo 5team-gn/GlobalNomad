@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import SimpleCalendar from "./SimpleCalendar";
 import type { ReservationStep, TimeSlot } from "@/types/reservation/types";
 import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
+import Image from "next/image";
 
 type Props = {
   open: boolean;
@@ -28,6 +29,8 @@ type Props = {
   onTabletConfirm: () => void;
 
   mobileConfirmDisabled: boolean;
+  onGoPeople: () => void;
+  onGoBackMobile: () => void; // ✅ 모바일 people에서 date로
 };
 
 export default function ReservationSheet({
@@ -47,6 +50,8 @@ export default function ReservationSheet({
   tabletConfirmDisabled,
   onTabletConfirm,
   mobileConfirmDisabled,
+  onGoPeople,
+  onGoBackMobile,
 }: Props) {
   const enabledDateSet = useMemo(
     () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
@@ -81,55 +86,57 @@ export default function ReservationSheet({
           open ? "translate-y-0" : "translate-y-full",
         ].join(" ")}
       >
-        <div className="mx-auto w-full max-w-[920px] px-4 md:px-6 pt-4">
+        <div className="mx-auto w-full max-w-[920px] px-4 pt-6 md:px-6 md:pt-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={onBack}
-                className="md:hidden rounded-md px-2 py-1 text-16-body-b text-gray-950"
-                aria-label="뒤로가기"
-                style={{ visibility: step === "people" ? "visible" : "hidden" }}
-              >
-                ←
-              </button>
+            <div className="flex items-center">
+              {/* ✅ 모바일 people 단계에서만 뒤로 버튼 */}
+              {step === "people" && (
+                <button
+                  onClick={onGoBackMobile}
+                  className="md:hidden rounded-md text-16-body-b text-gray-950"
+                  aria-label="뒤로가기"
+                >
+                  <Image
+                    src="/icons/icon_back.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </button>
+              )}
 
-              <p className="text-16-body-b text-gray-950">
-                <span className="hidden md:inline">날짜 선택</span>
-                <span className="md:hidden">{mobileTitle}</span>
+              <p className="text-18-b md:text-20-b text-gray-950">
+                <span className="hidden md:inline">날짜</span>
+                <span className="md:hidden text-18-b ml-1">{mobileTitle}</span>
               </p>
             </div>
-
-            <button
-              onClick={onClose}
-              className="px-2 py-1 text-14-m text-gray-700"
-            >
-              닫기
-            </button>
           </div>
 
           {/* ===================== */}
-          {/* ✅ TB Content (md~lg-1): 2컬럼 */}
+          {/* ✅ TB Content (md~lg-1) */}
           {/* ===================== */}
-          <div className="hidden md:block mt-4">
+          <div className="hidden md:block mt-6">
             <div className="grid gap-6 md:grid-cols-[1fr_320px]">
               <section>
                 <SimpleCalendar
                   value={selectedDate}
-                  onChange={onSelectDate}
+                  onChange={(d) => {
+                    onSelectDate(d);
+                  }}
                   enabledDateSet={enabledDateSet}
                 />
               </section>
 
-              <aside className="rounded-2xl bg-gray-25 p-4">
-                <div className="space-y-6">
+              <aside className="rounded-2xl bg-white p-6 pt-[30px] shadow-[0_4px_24px_0_rgba(156,180,202,0.2)]">
+                <div className="space-y-9">
                   <div>
-                    <p className="text-14-b text-gray-950">예약 가능한 시간</p>
+                    <p className="text-16-b text-gray-950">예약 가능한 시간</p>
                     {!selectedDate ? (
-                      <p className="mt-2 text-14-m text-gray-500">
+                      <p className="mt-[14px] text-16-m text-gray-4b4b4b text-center">
                         날짜를 선택해주세요.
                       </p>
                     ) : (
-                      <div className="mt-3 space-y-2">
+                      <div className="mt-[14px] space-y-3">
                         {slots.map((s) => {
                           const active = selectedSlot?.id === s.id;
                           return (
@@ -137,10 +144,10 @@ export default function ReservationSheet({
                               key={s.id}
                               onClick={() => onSelectSlot(s)}
                               className={[
-                                "w-full rounded-xl border px-4 py-3 text-14-m",
+                                "w-full rounded-xl px-4 py-[16px] text-16-m",
                                 active
-                                  ? "border-primary-500 bg-primary-50 text-primary-500"
-                                  : "border-gray-200 bg-white text-gray-900",
+                                  ? "ring-2 ring-primary-500 bg-primary-100 text-primary-500 "
+                                  : "ring-1 ring-gray-200 bg-white text-gray-950",
                               ].join(" ")}
                             >
                               {s.label}
@@ -151,28 +158,44 @@ export default function ReservationSheet({
                     )}
                   </div>
 
-                  <div
-                    className={
-                      !selectedSlot ? "opacity-40 pointer-events-none" : ""
-                    }
-                  >
-                    <p className="text-14-b text-gray-950">참여 인원 수</p>
-                    <div className="mt-3 flex items-center justify-between rounded-xl bg-white px-4 py-3 border border-gray-200">
-                      <button
-                        onClick={onDec}
-                        className="h-9 w-9 rounded-lg border border-gray-200 text-16-body-b"
-                      >
-                        –
-                      </button>
-                      <div className="text-14-b text-gray-950">{people}</div>
-                      <button
-                        onClick={onInc}
-                        className="h-9 w-9 rounded-lg border border-gray-200 text-16-body-b"
-                      >
-                        +
-                      </button>
+                  {selectedDate && (
+                    <div
+                      className={
+                        !selectedSlot ? "opacity-40 pointer-events-none" : ""
+                      }
+                    >
+                      <p className="text-14-b text-gray-950">참여 인원 수</p>
+                      <div className="mt-5 flex items-center justify-between w-full rounded-xl bg-white px-4 py-[5px] border border-gray-200">
+                        <button
+                          type="button"
+                          onClick={onDec}
+                          className="h-10 w-10 rounded-lg flex items-center justify-center"
+                          aria-label="인원 감소"
+                        >
+                          <Image
+                            src="/icons/icon_minus.svg"
+                            alt=""
+                            width={20}
+                            height={20}
+                          />
+                        </button>
+                        <div className="text-14-b text-gray-950">{people}</div>
+                        <button
+                          type="button"
+                          onClick={onInc}
+                          className="h-10 w-10 rounded-lg flex items-center justify-center"
+                          aria-label="인원 증가"
+                        >
+                          <Image
+                            src="/icons/icon_plus.svg"
+                            alt=""
+                            width={20}
+                            height={20}
+                          />
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </aside>
             </div>
@@ -183,7 +206,7 @@ export default function ReservationSheet({
               className={[
                 "mt-6 mb-6 w-full rounded-xl py-4 text-16-body-b",
                 tabletConfirmDisabled
-                  ? "bg-gray-100 text-gray-400"
+                  ? "bg-gray-200 text-gray-50"
                   : "bg-primary-500 text-white",
               ].join(" ")}
             >
@@ -192,10 +215,10 @@ export default function ReservationSheet({
           </div>
 
           {/* ===================== */}
-          {/* ✅ MB Content (<md): 단계형 */}
+          {/* ✅ MB Content (<md) */}
           {/* ===================== */}
-          <div className="md:hidden mt-4">
-            <div className="max-h-[70vh] overflow-auto pb-4">
+          <div className="md:hidden mt-2">
+            <div className="max-h-[70vh] overflow-auto pb-[30px]">
               {step === "date" && (
                 <>
                   <SimpleCalendar
@@ -203,69 +226,100 @@ export default function ReservationSheet({
                     onChange={onSelectDate}
                     enabledDateSet={enabledDateSet}
                   />
-                  <div className="mt-6">
+
+                  <div className="mt-8">
                     <p className="text-14-b text-gray-950">예약 가능한 시간</p>
-                    <p className="mt-2 text-14-m text-gray-500">
-                      날짜를 선택해주세요.
-                    </p>
+                    {!selectedDate ? (
+                      <p className="mt-2 text-14-m text-gray-500">
+                        날짜를 선택해주세요.
+                      </p>
+                    ) : (
+                      <div className="mt-3 space-y-4 px-[2px]">
+                        {slots.map((s) => {
+                          const active = selectedSlot?.id === s.id;
+                          return (
+                            <button
+                              key={s.id}
+                              onClick={() => onSelectSlot(s)}
+                              className={[
+                                "w-full rounded-xl px-4 py-[19px] text-14-m",
+                                active
+                                  ? "ring-2 ring-primary-500 bg-primary-100 text-primary-500 "
+                                  : "ring-1 ring-gray-200 bg-white text-gray-950",
+                              ].join(" ")}
+                            >
+                              {s.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </>
               )}
 
-              {step === "time" && (
-                <div>
-                  <p className="text-14-b text-gray-950">예약 가능한 시간</p>
-                  <div className="mt-3 space-y-2">
-                    {slots.map((s) => {
-                      const active = selectedSlot?.id === s.id;
-                      return (
-                        <button
-                          key={s.id}
-                          onClick={() => onSelectSlot(s)}
-                          className={[
-                            "w-full rounded-xl border px-4 py-3 text-14-m",
-                            active
-                              ? "border-primary-500 bg-primary-50 text-primary-500"
-                              : "border-gray-200 bg-white text-gray-900",
-                          ].join(" ")}
-                        >
-                          {s.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
               {step === "people" && (
-                <div>
-                  <p className="text-14-b text-gray-950">참여 인원 수</p>
-                  <div className="mt-3 flex items-center justify-between rounded-xl bg-white px-4 py-3 border border-gray-200">
-                    <button
-                      onClick={onDec}
-                      className="h-10 w-10 rounded-lg border border-gray-200 text-16-body-b"
-                    >
-                      –
-                    </button>
-                    <div className="text-14-b text-gray-950">{people}</div>
-                    <button
-                      onClick={onInc}
-                      className="h-10 w-10 rounded-lg border border-gray-200 text-16-body-b"
-                    >
-                      +
-                    </button>
+                <div className="">
+                  <p>예약할 인원을 선택해주세요.</p>
+                  <div className="flex items-center justify-between mt-5">
+                    <p className="text-16-b text-gray-950">참여 인원 수</p>
+                    <div className="flex items-center justify-between w-38 h-12 rounded-xl bg-white px-4 py-3 border border-gray-200">
+                      <button
+                        type="button"
+                        onClick={onDec}
+                        className="h-10 w-10 rounded-lg flex items-center justify-center"
+                        aria-label="인원 감소"
+                      >
+                        <Image
+                          src="/icons/icon_minus.svg"
+                          alt=""
+                          width={20}
+                          height={20}
+                        />
+                      </button>
+                      <div className="text-14-b text-gray-950">{people}</div>
+                      <button
+                        type="button"
+                        onClick={onInc}
+                        className="h-10 w-10 rounded-lg flex items-center justify-center"
+                        aria-label="인원 증가"
+                      >
+                        <Image
+                          src="/icons/icon_plus.svg"
+                          alt=""
+                          width={20}
+                          height={20}
+                        />
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
 
             <button
-              onClick={onNext}
-              disabled={mobileConfirmDisabled}
+              onClick={() => {
+                if (step === "date") {
+                  onGoPeople();
+                  return;
+                }
+                if (step === "people") {
+                  onNext(); // 최종 확정(done/close)
+                }
+              }}
+              disabled={
+                step === "date"
+                  ? !(selectedDate && selectedSlot)
+                  : mobileConfirmDisabled
+              }
               className={[
-                "mb-4 w-full rounded-xl py-4 text-16-body-b",
-                mobileConfirmDisabled
-                  ? "bg-gray-100 text-gray-400"
+                "mb-[18px] w-full rounded-xl py-4 text-16-b h-[50px]",
+                (
+                  step === "date"
+                    ? !(selectedDate && selectedSlot)
+                    : mobileConfirmDisabled
+                )
+                  ? "bg-gray-200 text-gray-50"
                   : "bg-primary-500 text-white",
               ].join(" ")}
             >

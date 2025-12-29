@@ -46,8 +46,8 @@ export default function ReservationPanelDesktop({
   const totalPrice = price * people;
   const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-[30px]">
-      <div className="mb-4 flex items-center">
+    <div className="rounded-2xl box-border shadow-[inset_0_0_0_1px_theme(colors.gray.100)] bg-white p-[30px]">
+      <div className="mb-8 flex items-center">
         <p className="text-24-b text-gray-950 mr-[5px]">{formatKRW(price)}</p>
         <p className="text-20-m text-gray-79747E tracking-[1px]">/인</p>
       </div>
@@ -86,13 +86,13 @@ export default function ReservationPanelDesktop({
         </div>
       </div>
 
-      <div className="mt-6 space-y-8">
+      <div className="mt-6 space-y-10">
         <div>
           <p className="text-14-b text-gray-950">예약 가능한 시간</p>
           {!selectedDate ? (
             <p className="mt-2 text-14-m text-gray-500">날짜를 선택해주세요.</p>
           ) : (
-            <div className="mt-[14px] space-y-4">
+            <div className="mt-[14px] space-y-3">
               {slots.map((s) => {
                 const active = selectedSlot?.id === s.id;
                 return (
@@ -100,10 +100,10 @@ export default function ReservationPanelDesktop({
                     key={s.id}
                     onClick={() => onSelectSlot(s)}
                     className={[
-                      "w-full rounded-xl border px-4 py-3 text-14-m",
+                      "w-full rounded-xl px-4 py-[16px] text-16-m",
                       active
-                        ? "border-primary-500 bg-primary-50 text-primary-500"
-                        : "border-gray-200 bg-white text-gray-900",
+                        ? "ring-2 ring-primary-500 bg-primary-100 text-primary-500 "
+                        : "ring-1 ring-gray-200 bg-white text-gray-950",
                     ].join(" ")}
                   >
                     {s.label}
@@ -114,17 +114,19 @@ export default function ReservationPanelDesktop({
           )}
         </div>
 
-        <div className="pt-6 border-t border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-16-b text-gray-950">총 합계</p>
-            <p className="text-20-b text-gray-950">{formatKRW(totalPrice)}</p>
+        <div className="flex items-center justify-between pt-5  border-t border-gray-100 ">
+          <div className="flex items-center">
+            <p className="text-20-m text-gray-79747E">총 합계</p>
+            <p className="text-20-b text-gray-950 ml-[6px]">
+              {formatKRW(totalPrice)}
+            </p>
           </div>
 
           <button
             onClick={onReserve}
             disabled={!canReserve}
             className={[
-              "w-full rounded-xl py-4 text-16-body-b",
+              "rounded-xl py-[15px] px-10 text-16-b h-[50px]",
               canReserve
                 ? "bg-primary-500 text-white"
                 : "bg-gray-100 text-gray-400",

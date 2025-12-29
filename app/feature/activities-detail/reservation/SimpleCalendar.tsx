@@ -1,20 +1,23 @@
 "use client";
-
+import "../../../../style/global.css";
 import { useMemo, useState } from "react";
+import {
+  DayPicker,
+  type DayButtonProps,
+  type NavProps,
+  type MonthCaptionProps,
+} from "react-day-picker";
 import { toISODate } from "@/utils/date";
+import Image from "next/image";
 
 type Props = {
   value: Date | null;
   onChange: (d: Date) => void;
-  enabledDateSet: Set<string>; // "YYYY-MM-DD"
+  enabledDateSet: Set<string>;
 };
 
-function isSameDay(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+function cx(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
 }
 
 export default function SimpleCalendar({
@@ -23,98 +26,148 @@ export default function SimpleCalendar({
   enabledDateSet,
 }: Props) {
   const today = useMemo(() => new Date(), []);
-  const [cursor, setCursor] = useState(
+  const [month, setMonth] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1)
   );
 
-  const year = cursor.getFullYear();
-  const month = cursor.getMonth();
+  const isEnabled = (d: Date) => enabledDateSet.has(toISODate(d));
+  const isToday = (d: Date) => toISODate(d) === toISODate(today);
+  const isSelected = (d: Date) =>
+    value ? toISODate(d) === toISODate(value) : false;
 
-  const firstDay = new Date(year, month, 1);
-  const startWeekday = firstDay.getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  const cells = useMemo(() => {
-    const arr: (Date | null)[] = [];
-    for (let i = 0; i < startWeekday; i++) arr.push(null);
-    for (let d = 1; d <= daysInMonth; d++) arr.push(new Date(year, month, d));
-    return arr;
-  }, [year, month, startWeekday, daysInMonth]);
+  const weekday1 = (d: Date) =>
+    ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
 
   return (
     <div className="w-full">
-      {/* 헤더 */}
-      <div className="flex items-center justify-between">
-        <div className="text-16-body-b text-gray-950">
-          {cursor.toLocaleString("en-US", { month: "long" })} {year}
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setCursor(new Date(year, month - 1, 1))}
-            className="h-9 w-9 rounded-lg border border-gray-200"
-          >
-            ‹
-          </button>
-          <button
-            onClick={() => setCursor(new Date(year, month + 1, 1))}
-            className="h-9 w-9 rounded-lg border border-gray-200"
-          >
-            ›
-          </button>
-        </div>
-      </div>
+      <DayPicker
+        mode="single"
+        showOutsideDays
+        month={month}
+        onMonthChange={setMonth}
+        selected={value ?? undefined}
+        onSelect={(d) => {
+          if (!d) return;
+          if (!isEnabled(d)) return;
+          onChange(d);
+        }}
+        formatters={{ formatWeekdayName: weekday1 }}
+        modifiers={{
+          available: (d) => isEnabled(d),
+          todayDisabled: (d) => isToday(d) && !isEnabled(d),
+        }}
+        classNames={{
+          root: "w-full relative",
+          months: "w-full",
+          month: "w-full",
 
-      {/* 날짜 */}
-      <div className="mt-4 grid grid-cols-7 gap-y-2 text-center">
-        {cells.map((date, idx) => {
-          if (!date) return <div key={idx} className="h-10" />;
+          caption: "mt-2",
+          caption_label: "text-16-m text-gray-950",
 
-          const ymd = toISODate(date);
-          const enabled = enabledDateSet.has(ymd);
-          const selected = value ? isSameDay(value, date) : false;
-          const isTodayFlag = isSameDay(today, date);
+          month_grid: "w-full border-separate border-spacing-y-1",
+          row: "w-full",
+          cell: "p-0 text-center align-middle ",
+          head_row: "w-full ",
+          head_cell: " p-0 align-middle text-gray-800 text-14-m font-normal",
 
-          const base =
-            "relative mx-auto flex h-10 w-10 items-center justify-center rounded-full text-14-m";
+          weekday: " md:py-[13px]h-[54px] md:h-[73px] lg:h-[54px]",
+          day: "h-[54px] md:h-[73px] lg:h-[54px] p-0 py-[4px] md:py-[13px] lg:py-[4px] text-center align-middle",
+          outside: "",
+          day_outside: "",
+          disabled: "",
+        }}
+        components={{
+          MonthCaption: (props: MonthCaptionProps) => {
+            const date = (props.calendarMonth as any)?.date as Date;
+            const label = date
+              ? date.toLocaleString("en-US", { month: "long", year: "numeric" })
+              : "";
 
-          let cls = base;
+            return (
+              <div className="relative lg:mt-2 flex items-center h-8 md:mb-1">
+                <p className="text-16-m text-gray-950">{label}</p>
+              </div>
+            );
+          },
 
-          // 1) 선택 최우선
-          if (selected) {
-            cls = base + " bg-primary-500 text-white cursor-pointer";
-          }
-          // 2) 예약 가능일 (더 진한 하늘색 + 흰색)
-          else if (enabled) {
-            cls =
-              base +
-              " bg-primary-500 text-white cursor-pointer hover:bg-primary-600";
-          }
-          // 3) 오늘(당일) - 예약 불가일 때만: 연한 하늘색 + 진한 하늘색 숫자
-          else if (isTodayFlag) {
-            cls = base + " bg-primary-100 text-primary-500";
-          }
-          // 4) 예약 불가 기본
-          else {
-            cls = base + " text-gray-300";
-          }
+          Nav: ({
+            onPreviousClick,
+            onNextClick,
+            previousMonth,
+            nextMonth,
+          }: NavProps) => {
+            return (
+              <div className="flex justify-end absolute right-0 top-1 z-1">
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => onPreviousClick?.(e)}
+                    disabled={!previousMonth}
+                    className="h-6 w-6 rounded-lg flex items-center justify-center disabled:opacity-40  cursor-pointer"
+                    aria-label="Previous month"
+                  >
+                    <Image
+                      src="/icons/icon_arrow_left.svg"
+                      alt=""
+                      width={24}
+                      height={24}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => onNextClick?.(e)}
+                    disabled={!nextMonth}
+                    className="h-6 w-6 rounded-lg flex items-center justify-center disabled:opacity-40  cursor-pointer"
+                    aria-label="Next month"
+                  >
+                    <Image
+                      src="/icons/icon_arrow_right.svg"
+                      alt=""
+                      width={24}
+                      height={24}
+                    />
+                  </button>
+                </div>
+              </div>
+            );
+          },
 
-          return (
-            <button
-              key={idx}
-              disabled={!enabled}
-              onClick={() => enabled && onChange(date)}
-              className={cls}
-            >
-              {date.getDate()}
+          DayButton: (props: DayButtonProps) => {
+            const d = props.day.date;
 
-              {/* 예약 가능 dot (선택되면 숨김) */}
-              {/* {enabled && !selected && (
-                <span className="absolute bottom-1 h-1 w-1 rounded-full bg-primary-500" />
-              )} */}
-            </button>
-          );
-        })}
-      </div>
+            const outside = !!props.modifiers?.outside;
+            const enabled = isEnabled(d);
+            const selected = isSelected(d);
+            const todayDisabled = isToday(d) && !enabled;
+
+            const baseText = outside ? "text-gray-300" : "text-gray-800";
+
+            const stateCls = selected
+              ? "bg-primary-500 text-white"
+              : enabled
+              ? "bg-primary-500 text-white hover:bg-primary-600"
+              : todayDisabled
+              ? "bg-primary-100 text-primary-500"
+              : "";
+
+            return (
+              <button
+                {...props}
+                disabled={!enabled}
+                className={[
+                  // ✅ block 제거, inline-flex로
+                  "mx-auto inline-flex items-center justify-center",
+                  "h-[100%] w-[46px]",
+                  "rounded-full text-16-m overflow-hidden",
+                  baseText,
+                  stateCls,
+                  enabled ? "cursor-pointer" : "cursor-not-allowed",
+                ].join(" ")}
+              />
+            );
+          },
+        }}
+      />
     </div>
   );
 }

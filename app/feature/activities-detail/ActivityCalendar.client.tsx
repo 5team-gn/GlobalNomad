@@ -11,7 +11,6 @@ export default function ActivityCalendarClient() {
 
   const flow = useReservationFlow();
 
-  const priceLabel = "1000";
   const maxPeople = 10;
 
   const openPicker = () => flow.openFor("date");
@@ -29,12 +28,12 @@ export default function ActivityCalendarClient() {
 
   const onTabletConfirm = () => {
     if (tabletConfirmDisabled) return;
-    flow.close?.();
+    flow.close();
   };
 
   return (
     <div className="shadow-[0_4px_24px_0_rgba(156,180,202,0.2)]">
-      {/* ✅ PC도 flow 기반 (기능 동일) */}
+      {/* PC */}
       <div className="hidden lg:block">
         <ReservationPanelDesktop
           price={mock.price}
@@ -69,7 +68,7 @@ export default function ActivityCalendarClient() {
           step={
             flow.step === "idle" || flow.step === "done" ? "date" : flow.step
           }
-          onBack={flow.goBack}
+          onBack={flow.goBack} // ✅ 추가(필수)
           onNext={flow.goNext}
           selectedDate={flow.selection.date}
           onSelectDate={flow.setDate}
@@ -82,6 +81,8 @@ export default function ActivityCalendarClient() {
           tabletConfirmDisabled={tabletConfirmDisabled}
           onTabletConfirm={onTabletConfirm}
           mobileConfirmDisabled={mobileConfirmDisabled}
+          onGoPeople={flow.goPeople}
+          onGoBackMobile={flow.goBackMobile} // ✅ 추가(필수)
         />
       </div>
     </div>

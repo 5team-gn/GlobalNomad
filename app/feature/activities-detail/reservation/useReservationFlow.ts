@@ -53,7 +53,6 @@ export function useReservationFlow() {
     setSelection((prev) => ({
       ...prev,
       date: d,
-      // 날짜 바꾸면 시간 선택 초기화
       timeSlot: null,
     }));
   };
@@ -74,23 +73,26 @@ export function useReservationFlow() {
   };
 
   const goNext = () => {
-    if (step === "date" && selection.date) setStep("time");
-    else if (step === "time" && selection.timeSlot) setStep("people");
-    else if (step === "people") {
-      // 최종 확정
-      setStep("done");
-      setOpen(false);
-    }
+    setSelection((sel) => {
+      setStep((prevStep) => {
+        if (prevStep === "date") return sel.date ? "time" : prevStep;
+        if (prevStep === "time") return sel.timeSlot ? "people" : prevStep;
+        if (prevStep === "people") {
+          setOpen(false);
+          return "done";
+        }
+        return prevStep;
+      });
+      return sel;
+    });
   };
 
   const goBack = () => {
     if (step === "people") setStep("time");
     else if (step === "time") setStep("date");
-    // date에서는 뒤로갈 곳 없으면 close하거나 idle로 보내고 싶으면 여기서 처리
     else if (step === "date") setOpen(false);
   };
 
-  // 열렸을 때 body scroll lock
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -99,6 +101,28 @@ export function useReservationFlow() {
       document.body.style.overflow = prev;
     };
   }, [open]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const handler = () => {
+      if (mq.matches) {
+        setOpen(false);
+        document.body.style.overflow = "";
+        setStep("idle");
+      }
+    };
+    handler();
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const goPeople = () => {
+    if (selection.date && selection.timeSlot) setStep("people");
+  };
+
+  const goBackMobile = () => {
+    setStep("date");
+  };
 
   return {
     open,
@@ -116,5 +140,7 @@ export function useReservationFlow() {
     decPeople,
     goNext,
     goBack,
+    goPeople,
+    goBackMobile,
   };
 }
