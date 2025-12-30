@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import CalendarIcon from "@/public/icon_calendar.svg";
 import DatePicker from "./Datepicker";
-import { Input } from "@/components/common/input";
+import { Input } from "@/components/input/Input"; 
 import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface Props {
