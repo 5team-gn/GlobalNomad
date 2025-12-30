@@ -1,5 +1,10 @@
-const MyInfo = () => {
-  return <div>MyInfo page</div>;
-};
+import { Suspense } from "react";
+import MyInfoClient from "@/feature/MyInfo/MyInfoClient";
 
-export default MyInfo;
+export default function MyInfoPage() {
+  return (
+    <Suspense fallback={<div>로딩중...</div>}>
+      <MyInfoClient />
+    </Suspense>
+  );
+}
