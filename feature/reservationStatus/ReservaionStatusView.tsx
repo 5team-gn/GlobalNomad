@@ -1,17 +1,62 @@
 "use client";
 
-export default function ReservaionStatusView() {
+import { useState } from "react";
+import { toDateKey } from "@/lib/utils/date";
+import ReservationCalendar from "./Calendar/ReservationCalendar";
+import ReservationSideModal from "./ReservationSidemdal";
+import { Reservation } from "./types/reservation";
+
+export default function ReservationStatusView({
+  reservations,
+}: {
+  reservations: Reservation[];
+}) {
+  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
+  // 클릭한 날짜 요소의 위치 정보를 저장할 상태
+  const [modalPosition, setModalPosition] = useState<{ top: number; left: number } | null>(null);
+
+  const filtered = selectedDateKey
+    ? reservations.filter((r) => {
+        const key = toDateKey(new Date(r.date));
+        return key === selectedDateKey;
+      })
+    : [];
+
+  const handleSelectDate = (
+  key: string,
+  position: { top: number; left: number }
+) => {
+  if (selectedDateKey === key) {
+    setSelectedDateKey(null);
+    setModalPosition(null);
+  } else {
+    setSelectedDateKey(key);
+    setModalPosition(position);
+  }
+};
   return (
-    <main className="flex">
-      <div className="flex-col">
-        <h1 className="text-18-b mb-2.5">예약현황 </h1>
-        <span className="text-14-m text-gray-500">
-          {" "}
-          내 체험에 예약된 내역들을 한 눈에 확인할 수 있습니다.
-        </span>
-        <div className="flex mt-7.5 mb-7.5 ">드롭다운 자리</div>
-        <div className="flex "> 달력 자리 </div>
+    <div className="relative flex gap-6">
+      <div className="flex-1">
+        <ReservationCalendar
+          reservations={reservations}
+          selectedDateKey={selectedDateKey}
+          // Calendar 내부의 날짜 버튼 클릭 시 event를 넘겨주도록 수정 필요
+          onSelectDate={handleSelectDate} 
+        />
       </div>
-    </main>
+
+      {selectedDateKey && modalPosition && (
+        <ReservationSideModal
+          dateKey={selectedDateKey}
+          reservations={filtered}
+          onClose={() => {
+            setSelectedDateKey(null);
+            setModalPosition(null);
+          }}
+          // 위치 좌표 전달
+          position={modalPosition}
+        />
+      )}
+    </div>
   );
 }
