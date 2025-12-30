@@ -9,12 +9,12 @@ interface Props {
 }
 
 const TIME_SLOTS = [
-  "전체", 
+  "전체",
   ...Array.from({ length: 24 }, (_, i) => {
     const start = String(i).padStart(2, "0") + ":00";
     const end = String(i + 1).padStart(2, "0") + ":00";
     return `${start} - ${end}`;
-  })
+  }),
 ];
 
 const TABS: { label: string; status: ReservationStatusCode }[] = [
@@ -23,18 +23,43 @@ const TABS: { label: string; status: ReservationStatusCode }[] = [
   { label: "거절", status: "declined" },
 ];
 
+/**  상태별 스타일 설정 */
+const styleConfig: Record<
+  ReservationStatusCode,
+  { badge: string; card: string }
+> = {
+  pending: {
+    badge: "bg-blue-50 text-blue-600 border-blue-100",
+    card: "bg-white",
+  },
+  confirmed: {
+    badge: "bg-blue-50 text-blue-600 border-blue-100",
+    card: "bg-white",
+  },
+  canceled: {
+    badge: "bg-gray-100 text-gray-500 border-gray-200",
+    card: "bg-gray-50 opacity-80",
+  },
+  declined: {
+    badge: "bg-red-50 text-red-600 border-red-100",
+    card: "bg-red-50/30 opacity-80",
+  },
+  completed: {
+    badge: "bg-blue-50 text-blue-600 border-blue-100",
+    card: "bg-white",
+  },
+};
+
 export default function ReservationDetailContent({
   dateKey,
   reservations,
   onClose,
 }: Props) {
-  const [activeTab, setActiveTab] =
-    useState<ReservationStatusCode>("pending");
+  const [activeTab, setActiveTab] = useState<ReservationStatusCode>("pending");
   const [selectedTime, setSelectedTime] = useState("전체");
 
   const filteredReservations = reservations.filter((r) => {
     if (r.status !== activeTab) return false;
-
     if (selectedTime === "전체") return true;
 
     const hour = new Date(r.date).getHours();
@@ -55,13 +80,13 @@ export default function ReservationDetailContent({
         </button>
       </div>
 
-    
+      {/* 탭 */}
       <nav className="mb-6 flex border-b border-gray-100 text-16-b">
         {TABS.map((tab) => (
           <button
             key={tab.status}
             onClick={() => setActiveTab(tab.status)}
-            className={`relative flex-1 pb-3 font-medium transition-colors  ${
+            className={`relative flex-1 pb-3 font-medium transition-colors ${
               activeTab === tab.status ? "text-blue-500" : "text-gray-400"
             }`}
           >
@@ -73,49 +98,53 @@ export default function ReservationDetailContent({
         ))}
       </nav>
 
+      {/* 시간 선택 */}
       <div className="mb-6">
         <label className="block text-18-b font-bold mb-3">예약 시간</label>
         <div className="relative">
           <select
             value={selectedTime}
             onChange={(e) => setSelectedTime(e.target.value)}
-            className="w-full h-13.5 appearance-none rounded-xl border border-gray-200  px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full h-13.5 appearance-none rounded-xl border border-gray-200 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {TIME_SLOTS.map((slot) => (
-              <option key={slot} value={slot}>{slot}</option>
+              <option key={slot} value={slot}>
+                {slot}
+              </option>
             ))}
           </select>
-          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2  ">▼</div>
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+            ▼
+          </div>
         </div>
       </div>
 
+      {/* 예약 내역 */}
       <div className="space-y-4 mt-7.5">
         <h3 className="text-18-b">예약 내역</h3>
+
         {filteredReservations.length === 0 ? (
           <p className="py-10 text-center text-sm text-gray-400">
-            {selectedTime === "전체" ? "예약 내역이 없습니다." : `${selectedTime}에 해당하는 내역이 없습니다.`}
+            {selectedTime === "전체"
+              ? "예약 내역이 없습니다."
+              : `${selectedTime}에 해당하는 내역이 없습니다.`}
           </p>
         ) : (
           <ul className="space-y-3">
             {filteredReservations.map((r) => {
-              let badgeStyle = "bg-blue-50 text-blue-600 border-blue-100";
-              let cardStyle = "bg-white";
-
-              if (r.status === "canceled") {
-                badgeStyle = "bg-gray-100 text-gray-500 border-gray-200";
-                cardStyle = "bg-gray-50 opacity-80";
-              } else if (r.status === "declined") {
-                badgeStyle = "bg-red-50 text-red-600 border-red-100";
-                cardStyle = "bg-red-50/30 opacity-80";
-              } else if (r.status === "completed") {
-                badgeStyle = "bg-blue-50 text-blue-600 border-blue-100";
-              }
+              const { badge: badgeStyle, card: cardStyle } =
+                styleConfig[r.status] ?? styleConfig.pending;
 
               return (
-                <li key={r.id} className={`rounded-2xl border border-gray-100 shadow-sm ${cardStyle}`}>
+                <li
+                  key={r.id}
+                  className={`rounded-2xl border border-gray-100 shadow-sm ${cardStyle}`}
+                >
                   <div className="flex items-start justify-between px-4 py-3.5">
                     <div className="space-y-2.5">
-                      <span className={`inline-block px-2 py-0.5 text-[10px] font-bold border rounded ${badgeStyle}`}>
+                      <span
+                        className={`inline-block px-2 py-0.5 text-[10px] font-bold border rounded ${badgeStyle}`}
+                      >
                         {r.status === "pending" && "신청"}
                         {r.status === "canceled" && "예약 취소"}
                         {r.status === "declined" && "예약 거절"}
@@ -123,14 +152,24 @@ export default function ReservationDetailContent({
                       </span>
 
                       <div className="flex gap-2">
-                        <span className="text-16-b font-medium text-gray-400">닉네임</span>
-                        <span className="text-16-m font-bold text-gray-800">{r.id}</span>
+                        <span className="text-16-b font-medium text-gray-400">
+                          닉네임
+                        </span>
+                        <span className="text-16-m font-bold text-gray-800">
+                          {r.id}
+                        </span>
                       </div>
+
                       <div className="flex gap-2">
-                        <span className="text-16-b font-medium text-gray-400">인원</span>
-                        <span className="text-16-m font-bold text-gray-800">{r.people}명</span>
+                        <span className="text-16-b font-medium text-gray-400">
+                          인원
+                        </span>
+                        <span className="text-16-m font-bold text-gray-800">
+                          {r.people}명
+                        </span>
                       </div>
                     </div>
+
                     {activeTab === "pending" && (
                       <div className="flex flex-col gap-2">
                         <button className="rounded-lg border border-gray-200 px-4 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-50">

@@ -32,10 +32,10 @@ export default function CalendarCell({
     const containerRect = containerRef.current.getBoundingClientRect();
 
     const dateKey = toDateKey(date.date);
-    const OFFSET_Y = 70;
+    const MODAL_VERTICAL_OFFSET = 70;
 
     onClick(dateKey, {
-      top: rect.top - containerRect.top + rect.height / 2 + OFFSET_Y,
+      top: rect.top - containerRect.top + rect.height / 2 + MODAL_VERTICAL_OFFSET,
       left: rect.left - containerRect.left + rect.width + 12,
       width: rect.width,
       height: rect.height,

@@ -61,8 +61,8 @@ export default function ReservationStatusView({
         <div
           className="absolute z-50 shadow-2xl animate-in fade-in zoom-in duration-200"
           style={{
-            top: `${modalPosition.top}px`,
-            left: `${modalPosition.left}px`,
+            top: modalPosition.top,
+            left: modalPosition.left,
             transform: "translate(-50%, 10px)",
           }}
         >

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Button from "@/components/button/Button";
-import ButtonLabel from "@/components/button/Button.Label";
+//import Button from "@/components/button/Button";
+//import ButtonLabel from "@/components/button/Button.Label";
 
 type ReservationStatus =
   | "pending"
