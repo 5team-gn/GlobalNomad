@@ -17,23 +17,16 @@ type BaseButtonProps = {
 
 type ButtonProps = ComponentProps<"button"> & BaseButtonProps;
 
-type ButtonLabelProps = {
-  label: string;
-  variant?: "primary" | "secondary" | "text" | "ghost";
-  size?: "lg" | "md" | "sm";
-  className?: string;
+type ButtonLabelProps = ComponentProps<typeof Button> & {
+  label?: string;
 };
 
-export const ButtonLabel = ({
-  label,
-  variant = "primary",
-  size = "md",
-  className,
-}: ButtonLabelProps) => {
+export const ButtonLabel = ({ label, children, variant = "primary", size = "md", ...buttonProps }: ButtonLabelProps) => {
   return (
-    <span className={cn(buttonLabelVariants({ variant, size }), className)}>
-      {label}
-    </span>
+    <Button variant={variant} size={size} {...buttonProps}>
+      {label && <span className={cn(buttonLabelVariants({ variant, size }))}>{label}</span>}
+      {children}
+    </Button>
   );
 };
 
