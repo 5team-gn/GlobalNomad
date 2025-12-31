@@ -1,54 +1,52 @@
 "use client";
 
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { ReactNode, ComponentProps } from "react";
+import { cn } from "@/lib/utils/twmerge";
 import {
   ButtonVariants,
   buttonIconVariants,
   buttonLabelVariants,
 } from "./ButtonVariants";
-import { cn } from "@/lib/utils/twmerge";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type BaseButtonProps = {
   variant?: "primary" | "secondary" | "text" | "ghost";
   size?: "lg" | "md" | "sm";
-}
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+};
 
-interface ButtonSubProps {
+type ButtonProps = ComponentProps<"button"> & BaseButtonProps;
+
+type ButtonLabelProps = {
+  label: string;
   variant?: "primary" | "secondary" | "text" | "ghost";
   size?: "lg" | "md" | "sm";
   className?: string;
-  children: ReactNode;
-}
-
-export const ButtonIcon = ({
-  variant = "primary",
-  className,
-  children,
-}: ButtonSubProps) => (
-  <span className={cn(buttonIconVariants({ variant }), className)}>
-    {children}
-  </span>
-);
+};
 
 export const ButtonLabel = ({
+  label,
   variant = "primary",
   size = "md",
   className,
-  children,
-}: ButtonSubProps) => (
-  <span className={cn(buttonLabelVariants({ variant, size }), className)}>
-    {children}
-  </span>
-);
+}: ButtonLabelProps) => {
+  return (
+    <span className={cn(buttonLabelVariants({ variant, size }), className)}>
+      {label}
+    </span>
+  );
+};
 
-export function Button({
+export const Button = ({
   variant = "primary",
   size = "md",
   disabled = false,
   className,
   children,
+  leftIcon,
+  rightIcon,
   ...props
-}: ButtonProps) {
+}: ButtonProps) => {
   return (
     <button
       type="button"
@@ -56,7 +54,15 @@ export function Button({
       className={cn(ButtonVariants({ variant, size }), className)}
       {...props}
     >
+      {leftIcon && (
+        <span className={cn(buttonIconVariants({ variant }))}>{leftIcon}</span>
+      )}
+
       {children}
+
+      {rightIcon && (
+        <span className={cn(buttonIconVariants({ variant }))}>{rightIcon}</span>
+      )}
     </button>
   );
-}
+};
