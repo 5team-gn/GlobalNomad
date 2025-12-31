@@ -1,15 +1,12 @@
 "use client";
 
+import { useRef } from "react";
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/input/Input"; 
-import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
-
-import { useExperienceForm } from "@/hooks/useExperienceForm";
+import { ImageSection } from "./ImageSection";
+import { ScheduleSection } from "./ScheduleSection";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
 import { useImageManager } from "@/hooks/useImageManager";
-
-import { ImageSection } from "./ImageSection"; 
-import { ScheduleSection } from "./ScheduleSection"; 
+import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
 
 interface Props {
   initialValues?: Partial<ExperienceFormValues>;
@@ -22,21 +19,25 @@ export default function ExperienceForm({
   onSubmit,
   submitLabel = "등록하기",
 }: Props) {
-  /** 기본 폼 상태 */
-  const { values, handleChange } = useExperienceForm(initialValues);
 
-  /** 스케줄 관리 */
-  const scheduleManager = useScheduleManager(
-    initialValues?.schedules ?? []
-  );
+  const titleRef = useRef<HTMLInputElement>(null);
+  const categoryRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const priceRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLInputElement>(null);
 
-  /** 이미지 관리 */
+  const scheduleManager = useScheduleManager(initialValues?.schedules ?? []);
+
   const bannerImages = useImageManager();
   const detailImages = useImageManager();
 
   const handleSubmit = () => {
     onSubmit({
-      ...values,
+      title: titleRef.current?.value ?? "",
+      category: categoryRef.current?.value ?? "",
+      description: descriptionRef.current?.value ?? "",
+      price: Number(priceRef.current?.value ?? 0),
+      address: addressRef.current?.value ?? "",
       schedules: scheduleManager.schedules,
       bannerImageUrl: bannerImages.images[0]?.preview ?? "",
       subImageUrls: detailImages.images.map((img) => img.preview),
@@ -55,49 +56,53 @@ export default function ExperienceForm({
 
       {/* 제목 */}
       <label>제목</label>
-      <Input
+      <input
         name="title"
-        value={values.title}
-        onChange={handleChange}
+        defaultValue={initialValues?.title}
         placeholder="제목을 입력해 주세요"
+        ref={titleRef}
+        className="border p-3 rounded-xl"
       />
 
       {/* 카테고리 */}
       <label>카테고리</label>
-      <Input
+      <input
         name="category"
-        value={values.category}
-        onChange={handleChange}
+        defaultValue={initialValues?.category}
         placeholder="카테고리를 선택해 주세요"
+        ref={categoryRef}
+        className="border p-3 rounded-xl"
       />
 
       {/* 설명 */}
       <label>설명</label>
       <textarea
         name="description"
-        value={values.description}
-        onChange={handleChange}
+        defaultValue={initialValues?.description}
         placeholder="체험에 대한 설명을 입력해 주세요"
+        ref={descriptionRef}
         className="border p-3 rounded-xl"
       />
 
       {/* 가격 */}
       <label>가격</label>
-      <Input
+      <input
         name="price"
         type="number"
-        value={values.price}
-        onChange={handleChange}
+        defaultValue={initialValues?.price}
         placeholder="체험 금액을 입력해주세요"
+        ref={priceRef}
+        className="border p-3 rounded-xl"
       />
 
       {/* 주소 */}
       <label>주소</label>
-      <Input
+      <input
         name="address"
-        value={values.address}
-        onChange={handleChange}
+        defaultValue={initialValues?.address}
         placeholder="주소를 입력해 주세요"
+        ref={addressRef}
+        className="border p-3 rounded-xl"
       />
 
       {/* 예약 가능한 시간대 */}
