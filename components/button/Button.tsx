@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, ComponentProps } from "react";
+import { ReactNode, ComponentPropsWithRef } from "react";
 import { cn } from "@/lib/utils/twmerge";
 import {
   ButtonVariants,
@@ -15,19 +15,10 @@ type BaseButtonProps = {
   rightIcon?: ReactNode;
 };
 
-type ButtonProps = ComponentProps<"button"> & BaseButtonProps;
+export type ButtonProps = ComponentPropsWithRef<"button"> & BaseButtonProps;
 
-type ButtonLabelProps = ComponentProps<typeof Button> & {
+export type ButtonLabelProps = ButtonProps & {
   label?: string;
-};
-
-export const ButtonLabel = ({ label, children, variant = "primary", size = "md", ...buttonProps }: ButtonLabelProps) => {
-  return (
-    <Button variant={variant} size={size} {...buttonProps}>
-      {label && <span className={cn(buttonLabelVariants({ variant, size }))}>{label}</span>}
-      {children}
-    </Button>
-  );
 };
 
 export const Button = ({
@@ -38,6 +29,7 @@ export const Button = ({
   children,
   leftIcon,
   rightIcon,
+  ref, 
   ...props
 }: ButtonProps) => {
   return (
@@ -45,6 +37,7 @@ export const Button = ({
       type="button"
       disabled={disabled}
       className={cn(ButtonVariants({ variant, size }), className)}
+      ref={ref}
       {...props}
     >
       {leftIcon && (
@@ -57,5 +50,21 @@ export const Button = ({
         <span className={cn(buttonIconVariants({ variant }))}>{rightIcon}</span>
       )}
     </button>
+  );
+};
+
+export const ButtonLabel = ({
+  label,
+  children,
+  variant = "primary",
+  size = "md",
+  ref, 
+  ...buttonProps
+}: ButtonLabelProps) => {
+  return (
+    <Button variant={variant} size={size} ref={ref} {...buttonProps}>
+      {label && <span className={cn(buttonLabelVariants({ variant, size }))}>{label}</span>}
+      {children}
+    </Button>
   );
 };
