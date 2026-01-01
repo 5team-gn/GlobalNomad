@@ -1,45 +1,62 @@
-import { forwardRef } from "react";
-import ButtonContext from "./Button.context";
-import { ButtonVariants } from "./ButtonVariants";
+"use client";
+
+import { ButtonHTMLAttributes, ReactNode } from "react";
+import {
+  ButtonVariants,
+  buttonIconVariants,
+  buttonLabelVariants,
+} from "./ButtonVariants";
 import { cn } from "@/lib/utils/twmerge";
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "text" | "ghost";
   size?: "lg" | "md" | "sm";
-  full?: boolean;
 }
 
-const ButtonBase = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant = "primary",
-      size = "md",
-      full = false,
-      disabled,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    return (
-      <ButtonContext.Provider value={{ variant, size, disabled }}>
-        <button
-          ref={ref}
-          disabled={disabled}
-          className={cn(
-            ButtonVariants({ variant, size, full }),
-            className,
-          )}
-          {...props}
-        >
-          {children}
-        </button>
-      </ButtonContext.Provider>
-    );
-  },
+interface ButtonSubProps {
+  variant?: "primary" | "secondary" | "text" | "ghost";
+  size?: "lg" | "md" | "sm";
+  className?: string;
+  children: ReactNode;
+}
+
+export const ButtonIcon = ({
+  variant = "primary",
+  className,
+  children,
+}: ButtonSubProps) => (
+  <span className={cn(buttonIconVariants({ variant }), className)}>
+    {children}
+  </span>
 );
 
-ButtonBase.displayName = "Button";
-export default ButtonBase;
+export const ButtonLabel = ({
+  variant = "primary",
+  size = "md",
+  className,
+  children,
+}: ButtonSubProps) => (
+  <span className={cn(buttonLabelVariants({ variant, size }), className)}>
+    {children}
+  </span>
+);
+
+export function Button({
+  variant = "primary",
+  size = "md",
+  disabled = false,
+  className,
+  children,
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      className={cn(ButtonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
