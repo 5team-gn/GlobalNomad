@@ -1,5 +1,6 @@
-import { ReactNode } from "react";
+import { useId, ReactNode } from "react";
 import { Input } from "./Input";
+import clsx from "clsx";
 
 interface InputFieldProps {
   label?: string;
@@ -16,13 +17,29 @@ export function InputField({
   children,
   inputProps,
 }: InputFieldProps) {
+  const id = useId();
+
   return (
     <div className="flex w-full flex-col gap-[10px]">
       {label && (
-        <label className="text-[16px] font-medium text-gray-900">{label}</label>
+        <label htmlFor={id} className="text-[16px] font-medium text-gray-900">
+          {label}
+        </label>
       )}
 
-      {children ?? <Input {...inputProps} />}
+      {children ?? (
+        <Input
+          id={id}
+          {...inputProps}
+          className={clsx(
+            "h-[54px] w-full rounded-[16px] border px-[20px]",
+            error
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-200 focus:ring-primary-500",
+            inputProps?.className
+          )}
+        />
+      )}
 
       {error ? (
         <p className="text-xs text-red-500">{error}</p>
