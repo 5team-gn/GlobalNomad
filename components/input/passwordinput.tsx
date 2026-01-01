@@ -13,7 +13,7 @@ export function PasswordInput(props: ComponentProps<"input">) {
       <Input
         {...props}
         type={visible ? "text" : "password"}
-        className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[20px] pr-12"
+        className="pr-12"
       />
 
       <button
