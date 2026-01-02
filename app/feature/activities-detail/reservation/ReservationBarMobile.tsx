@@ -43,7 +43,7 @@ export default function ReservationBarMobile({
 
           <button
             onClick={onOpen}
-            className="text-16-b text-primary-500 tracking-[-0.5px] decoration-2 underline underline-offset-4  cursor-pointer"
+            className="text-16-b text-primary-500 tracking-[-0.5px] decoration-2 underline underline-offset-4 cursor-pointer"
           >
             {rightText}
           </button>
@@ -54,9 +54,7 @@ export default function ReservationBarMobile({
           disabled={!canReserve}
           className={[
             "mt-[14px] w-full rounded-xl py-4 text-16-b",
-            canReserve
-              ? "bg-primary-500 text-white"
-              : "bg-gray-200 text-gray-50",
+            canReserve ? "bg-primary-500 text-white" : "bg-gray-200 text-gray-50",
           ].join(" ")}
         >
           예약하기

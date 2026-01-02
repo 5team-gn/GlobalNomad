@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import SimpleCalendar from "./SimpleCalendar";
-import type { TimeSlot } from "@/types/reservation/types";
 import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
-import Image from "next/image";
+import type { TimeSlot } from "@/types/reservation/types";
 import clsx from "clsx";
+
+import CalendarSection from "./sections/CalendarSection";
+import TimeSlotsSection from "./sections/TimeSlotsSection";
+import PeopleSection from "./sections/PeopleSection";
 
 type Props = {
   price: number;
@@ -43,76 +45,57 @@ export default function ReservationPanelDesktop({
     () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
     []
   );
+
   const totalPrice = price * people;
   const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
+
   return (
     <div className="rounded-2xl box-border shadow-[inset_0_0_0_1px_theme(colors.gray.100)] bg-white p-[30px]">
       <div className="mb-8 flex items-center">
         <p className="text-24-b text-gray-950 mr-[5px]">{formatKRW(price)}</p>
         <p className="text-20-m text-gray-79747E tracking-[1px]">/인</p>
       </div>
-      <p className="text-16-b">날짜</p>
-      <SimpleCalendar
+
+      {/* ✅ 원본: 날짜 라벨은 항상 보임 */}
+      <CalendarSection
+        label="날짜"
+        labelClassName="text-16-b"
         value={selectedDate}
         onChange={onSelectDate}
         enabledDateSet={enabledDateSet}
       />
 
+      {/* ✅ 원본: 참여 인원 수 블록은 항상 있고, selectedSlot 없으면 dim */}
       <div
         className={clsx(
           "flex justify-between items-center my-6",
           !selectedSlot && "opacity-40 pointer-events-none"
         )}
       >
-        <p className="text-14-b text-gray-950">참여 인원 수</p>
-        <div className="mt-3 flex items-center justify-between w-35 h-10 rounded-3xl bg-white px-4 py-3 border border-gray-200">
-          <button
-            type="button"
-            onClick={onDec}
-            className="h-10 w-10 rounded-lg flex items-center justify-center"
-            aria-label="인원 감소"
-          >
-            <Image src="/icons/icon_minus.svg" alt="" width={20} height={20} />
-          </button>
-          <div className="text-14-b text-gray-950">{people}</div>
-          <button
-            type="button"
-            onClick={onInc}
-            className="h-10 w-10 rounded-lg flex items-center justify-center"
-            aria-label="인원 증가"
-          >
-            <Image src="/icons/icon_plus.svg" alt="" width={20} height={20} />
-          </button>
-        </div>
+        <PeopleSection
+          labelText="참여 인원 수"
+          labelClassName="text-14-b text-gray-950"
+          people={people}
+          onInc={onInc}
+          onDec={onDec}
+          wrapperClassName="mt-3 flex items-center justify-between w-35 h-10 rounded-3xl bg-white px-4 py-3 border border-gray-200"
+        />
       </div>
 
       <div className="mt-6 space-y-10">
-        <div>
-          <p className="text-14-b text-gray-950">예약 가능한 시간</p>
-          {!selectedDate ? (
-            <p className="mt-2 text-14-m text-gray-500">날짜를 선택해주세요.</p>
-          ) : (
-            <div className="mt-[14px] space-y-3">
-              {slots.map((s) => {
-                const active = selectedSlot?.id === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => onSelectSlot(s)}
-                    className={[
-                      "w-full rounded-xl px-4 py-[16px] text-16-m",
-                      active
-                        ? "ring-2 ring-primary-500 bg-primary-100 text-primary-500 "
-                        : "ring-1 ring-gray-200 bg-white text-gray-950",
-                    ].join(" ")}
-                  >
-                    {s.label}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        {/* ✅ 원본: '예약 가능한 시간'은 날짜 선택 전에도 항상 보임 */}
+        <TimeSlotsSection
+          labelText="예약 가능한 시간"
+          labelClassName="text-14-b text-gray-950"
+          selectedDate={selectedDate}
+          emptyText="날짜를 선택해주세요."
+          emptyClassName="mt-2 text-14-m text-gray-500"
+          listClassName="mt-[14px] space-y-3"
+          buttonClassName="px-4 py-[16px] text-16-m cursor-pointer"
+          slots={slots}
+          selectedSlot={selectedSlot}
+          onSelectSlot={onSelectSlot}
+        />
 
         <div className="flex items-center justify-between pt-5  border-t border-gray-100 ">
           <div className="flex items-center">

@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type {
-  ReservationSelection,
-  ReservationStep,
-  TimeSlot,
-} from "@/types/reservation/types";
+import type { ReservationSelection, ReservationStep, TimeSlot } from "@/types/reservation/types";
 
 const MOCK_SLOTS: TimeSlot[] = [
   { id: "t1", label: "14:00~15:00" },

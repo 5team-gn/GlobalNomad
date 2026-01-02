@@ -1,90 +1,46 @@
 "use client";
 
-import { useReservationFlow } from "./reservation/useReservationFlow";
-import ReservationBarMobile from "./reservation/ReservationBarMobile";
-import ReservationSheet from "./reservation/ReservationSheet";
-import ReservationPanelDesktop from "./reservation/ReservationPanelDesktop";
 import { mockActivityDetail } from "@/app/mocks/activityDetail.mock";
+import ReservationUI from "./reservation/ReservationUI";
+import { useReservationFlow } from "./reservation/useReservationFlow";
 
 export default function ActivityCalendarClient() {
   const mock = mockActivityDetail;
-
   const flow = useReservationFlow();
-
   const maxPeople = 10;
-
-  const openPicker = () => flow.openFor("date");
 
   const reserve = () => {
     alert("예약 API 호출 자리");
   };
 
-  const tabletConfirmDisabled =
-    !flow.selection.date ||
-    !flow.selection.timeSlot ||
-    flow.selection.people < 1;
+  const props = {
+    price: mock.price,
+    maxPeople,
 
-  const mobileConfirmDisabled = !flow.canConfirm;
+    open: flow.open,
+    step: flow.step === "idle" || flow.step === "done" ? "date" : flow.step,
 
-  const onTabletConfirm = () => {
-    if (tabletConfirmDisabled) return;
-    flow.close();
-  };
+    selection: flow.selection,
+    slots: flow.availableSlots,
 
-  return (
-    <div className="shadow-[0_4px_24px_0_rgba(156,180,202,0.2)]">
-      {/* PC */}
-      <div className="hidden lg:block">
-        <ReservationPanelDesktop
-          price={mock.price}
-          maxPeople={maxPeople}
-          selectedDate={flow.selection.date}
-          onSelectDate={flow.setDate}
-          slots={flow.availableSlots}
-          selectedSlot={flow.selection.timeSlot}
-          onSelectSlot={flow.setTimeSlot}
-          people={flow.selection.people}
-          onInc={() => flow.incPeople(maxPeople)}
-          onDec={flow.decPeople}
-          canReserve={flow.canReserve}
-          onReserve={reserve}
-        />
-      </div>
+    openPicker: () => flow.openFor("date"),
+    close: flow.close,
 
-      {/* TB/MB */}
-      <div className="lg:hidden">
-        <ReservationBarMobile
-          price={mock.price}
-          people={flow.selection.people}
-          selection={flow.selection}
-          canReserve={flow.canReserve}
-          onOpen={openPicker}
-          onReserve={reserve}
-        />
+    setDate: flow.setDate,
+    setTimeSlot: flow.setTimeSlot,
+    incPeople: () => flow.incPeople(maxPeople),
+    decPeople: flow.decPeople,
 
-        <ReservationSheet
-          open={flow.open}
-          onClose={flow.close}
-          step={
-            flow.step === "idle" || flow.step === "done" ? "date" : flow.step
-          }
-          onBack={flow.goBack} // ✅ 추가(필수)
-          onNext={flow.goNext}
-          selectedDate={flow.selection.date}
-          onSelectDate={flow.setDate}
-          slots={flow.availableSlots}
-          selectedSlot={flow.selection.timeSlot}
-          onSelectSlot={flow.setTimeSlot}
-          people={flow.selection.people}
-          onInc={() => flow.incPeople(maxPeople)}
-          onDec={flow.decPeople}
-          tabletConfirmDisabled={tabletConfirmDisabled}
-          onTabletConfirm={onTabletConfirm}
-          mobileConfirmDisabled={mobileConfirmDisabled}
-          onGoPeople={flow.goPeople}
-          onGoBackMobile={flow.goBackMobile} // ✅ 추가(필수)
-        />
-      </div>
-    </div>
-  );
+    goNext: flow.goNext,
+    goBack: flow.goBack,
+    goPeople: flow.goPeople,
+    goBackMobile: flow.goBackMobile,
+
+    canReserve: flow.canReserve,
+    canConfirm: flow.canConfirm,
+
+    onReserve: reserve,
+  } as const;
+
+  return <ReservationUI {...props} />;
 }

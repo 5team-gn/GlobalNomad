@@ -1,5 +1,4 @@
-import { ReviewSummary } from "./ReviewSummary";
-import { ReviewList } from "./ReviewList";
+import ActivityReviewsClient from "./ActivityReviewsClient";
 import { getActivityReviews } from "@/lib/reviews/reviews.api";
 
 type ActivityReviewsProps = {
@@ -14,19 +13,14 @@ export default async function ActivityReviews({
   const data = await getActivityReviews(activityId);
 
   return (
-    <section className={className ?? ""}>
-      <h2 className="text-16-b text-gray-950 mb-2 lg:text-18-b ">
-        체험 후기{" "}
-        <span className="text-gray-500 text-14-sb lg:text-16-b ">
-          {data.totalCount.toLocaleString()}개
-        </span>
-      </h2>
-
-      <ReviewSummary
-        averageRating={data.averageRating}
-        totalCount={data.totalCount}
-      />
-      <ReviewList reviews={data.reviews} />
-    </section>
+    <ActivityReviewsClient
+      activityId={activityId}
+      className={className}
+      initialData={{
+        ...data,
+        page: 1,
+        pageSize: 5,
+      }}
+    />
   );
 }

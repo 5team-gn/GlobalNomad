@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import SimpleCalendar from "./SimpleCalendar";
 import type { ReservationStep, TimeSlot } from "@/types/reservation/types";
 import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
 import Image from "next/image";
+
+import CalendarSection from "./sections/CalendarSection";
+import TimeSlotsSection from "./sections/TimeSlotsSection";
+import PeopleSection from "./sections/PeopleSection";
 
 type Props = {
   open: boolean;
@@ -30,7 +33,7 @@ type Props = {
 
   mobileConfirmDisabled: boolean;
   onGoPeople: () => void;
-  onGoBackMobile: () => void; // ✅ 모바일 people에서 date로
+  onGoBackMobile: () => void;
 };
 
 export default function ReservationSheet({
@@ -69,7 +72,6 @@ export default function ReservationSheet({
       ].join(" ")}
       aria-hidden={!open}
     >
-      {/* 오버레이 */}
       <div
         className={[
           "absolute inset-0 bg-black/40 transition-opacity duration-300",
@@ -78,7 +80,6 @@ export default function ReservationSheet({
         onClick={onClose}
       />
 
-      {/* 시트 */}
       <div
         className={[
           "absolute left-0 right-0 bottom-0 rounded-t-2xl bg-white shadow-lg",
@@ -89,7 +90,6 @@ export default function ReservationSheet({
         <div className="mx-auto w-full max-w-[920px] px-4 pt-6 md:px-6 md:pt-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              {/* ✅ 모바일 people 단계에서만 뒤로 버튼 */}
               {step === "people" && (
                 <button
                   onClick={onGoBackMobile}
@@ -112,51 +112,31 @@ export default function ReservationSheet({
             </div>
           </div>
 
-          {/* ===================== */}
-          {/* ✅ TB Content (md~lg-1) */}
-          {/* ===================== */}
+          {/* TB (md~lg-1) */}
           <div className="hidden md:block mt-6">
             <div className="grid gap-6 md:grid-cols-[1fr_320px]">
               <section>
-                <SimpleCalendar
+                <CalendarSection
                   value={selectedDate}
-                  onChange={(d) => {
-                    onSelectDate(d);
-                  }}
+                  onChange={onSelectDate}
                   enabledDateSet={enabledDateSet}
                 />
               </section>
 
               <aside className="rounded-2xl bg-white p-6 pt-[30px] shadow-[0_4px_24px_0_rgba(156,180,202,0.2)]">
                 <div className="space-y-9">
-                  <div>
-                    <p className="text-16-b text-gray-950">예약 가능한 시간</p>
-                    {!selectedDate ? (
-                      <p className="mt-[14px] text-16-m text-gray-4b4b4b text-center">
-                        날짜를 선택해주세요.
-                      </p>
-                    ) : (
-                      <div className="mt-[14px] space-y-3">
-                        {slots.map((s) => {
-                          const active = selectedSlot?.id === s.id;
-                          return (
-                            <button
-                              key={s.id}
-                              onClick={() => onSelectSlot(s)}
-                              className={[
-                                "w-full rounded-xl px-4 py-[16px] text-16-m",
-                                active
-                                  ? "ring-2 ring-primary-500 bg-primary-100 text-primary-500 "
-                                  : "ring-1 ring-gray-200 bg-white text-gray-950",
-                              ].join(" ")}
-                            >
-                              {s.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+                  <TimeSlotsSection
+                    selectedDate={selectedDate}
+                    slots={slots}
+                    selectedSlot={selectedSlot}
+                    onSelectSlot={onSelectSlot}
+                    labelText="예약 가능한 시간"
+                    emptyText="날짜를 선택해주세요."
+                    labelClassName="text-16-b text-gray-950"
+                    emptyClassName="mt-[14px] text-16-m text-gray-4b4b4b text-center"
+                    listClassName="mt-[14px] space-y-3"
+                    buttonClassName="px-4 py-[16px] text-16-m cursor-pointer"
+                  />
 
                   {selectedDate && (
                     <div
@@ -164,36 +144,15 @@ export default function ReservationSheet({
                         !selectedSlot ? "opacity-40 pointer-events-none" : ""
                       }
                     >
-                      <p className="text-14-b text-gray-950">참여 인원 수</p>
-                      <div className="mt-5 flex items-center justify-between w-full rounded-xl bg-white px-4 py-[5px] border border-gray-200">
-                        <button
-                          type="button"
-                          onClick={onDec}
-                          className="h-10 w-10 rounded-lg flex items-center justify-center"
-                          aria-label="인원 감소"
-                        >
-                          <Image
-                            src="/icons/icon_minus.svg"
-                            alt=""
-                            width={20}
-                            height={20}
-                          />
-                        </button>
-                        <div className="text-14-b text-gray-950">{people}</div>
-                        <button
-                          type="button"
-                          onClick={onInc}
-                          className="h-10 w-10 rounded-lg flex items-center justify-center"
-                          aria-label="인원 증가"
-                        >
-                          <Image
-                            src="/icons/icon_plus.svg"
-                            alt=""
-                            width={20}
-                            height={20}
-                          />
-                        </button>
-                      </div>
+                      <PeopleSection
+                        people={people}
+                        onInc={onInc}
+                        onDec={onDec}
+                        disabled={!selectedSlot}
+                        labelText="참여 인원 수"
+                        labelClassName="text-14-b text-gray-950"
+                        wrapperClassName="mt-5 flex items-center justify-between w-full rounded-xl bg-white px-4 py-[5px] border border-gray-200"
+                      />
                     </div>
                   )}
                 </div>
@@ -214,46 +173,30 @@ export default function ReservationSheet({
             </button>
           </div>
 
-          {/* ===================== */}
-          {/* ✅ MB Content (<md) */}
-          {/* ===================== */}
+          {/* MB (<md) */}
           <div className="md:hidden mt-2">
             <div className="max-h-[70vh] overflow-auto pb-[30px]">
               {step === "date" && (
                 <>
-                  <SimpleCalendar
+                  <CalendarSection
                     value={selectedDate}
                     onChange={onSelectDate}
                     enabledDateSet={enabledDateSet}
                   />
 
                   <div className="mt-8">
-                    <p className="text-14-b text-gray-950">예약 가능한 시간</p>
-                    {!selectedDate ? (
-                      <p className="mt-2 text-14-m text-gray-500">
-                        날짜를 선택해주세요.
-                      </p>
-                    ) : (
-                      <div className="mt-3 space-y-4 px-[2px]">
-                        {slots.map((s) => {
-                          const active = selectedSlot?.id === s.id;
-                          return (
-                            <button
-                              key={s.id}
-                              onClick={() => onSelectSlot(s)}
-                              className={[
-                                "w-full rounded-xl px-4 py-[19px] text-14-m",
-                                active
-                                  ? "ring-2 ring-primary-500 bg-primary-100 text-primary-500 "
-                                  : "ring-1 ring-gray-200 bg-white text-gray-950",
-                              ].join(" ")}
-                            >
-                              {s.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
+                    <TimeSlotsSection
+                      selectedDate={selectedDate}
+                      slots={slots}
+                      selectedSlot={selectedSlot}
+                      onSelectSlot={onSelectSlot}
+                      labelText="예약 가능한 시간"
+                      emptyText="날짜를 선택해주세요."
+                      labelClassName="text-14-b text-gray-950"
+                      emptyClassName="mt-2 text-14-m text-gray-500"
+                      listClassName="px-[1px] mt-[14px] space-y-3"
+                      buttonClassName="px-14 py-[19px] text-14-m c"
+                    />
                   </div>
                 </>
               )}
@@ -263,35 +206,12 @@ export default function ReservationSheet({
                   <p>예약할 인원을 선택해주세요.</p>
                   <div className="flex items-center justify-between mt-5">
                     <p className="text-16-b text-gray-950">참여 인원 수</p>
-                    <div className="flex items-center justify-between w-38 h-12 rounded-xl bg-white px-4 py-3 border border-gray-200">
-                      <button
-                        type="button"
-                        onClick={onDec}
-                        className="h-10 w-10 rounded-lg flex items-center justify-center"
-                        aria-label="인원 감소"
-                      >
-                        <Image
-                          src="/icons/icon_minus.svg"
-                          alt=""
-                          width={20}
-                          height={20}
-                        />
-                      </button>
-                      <div className="text-14-b text-gray-950">{people}</div>
-                      <button
-                        type="button"
-                        onClick={onInc}
-                        className="h-10 w-10 rounded-lg flex items-center justify-center"
-                        aria-label="인원 증가"
-                      >
-                        <Image
-                          src="/icons/icon_plus.svg"
-                          alt=""
-                          width={20}
-                          height={20}
-                        />
-                      </button>
-                    </div>
+                    <PeopleSection
+                      people={people}
+                      onInc={onInc}
+                      onDec={onDec}
+                      wrapperClassName="flex items-center justify-between w-38 h-12 rounded-xl bg-white px-4 py-3 border border-gray-200"
+                    />
                   </div>
                 </div>
               )}
@@ -303,9 +223,7 @@ export default function ReservationSheet({
                   onGoPeople();
                   return;
                 }
-                if (step === "people") {
-                  onNext(); // 최종 확정(done/close)
-                }
+                if (step === "people") onNext();
               }}
               disabled={
                 step === "date"

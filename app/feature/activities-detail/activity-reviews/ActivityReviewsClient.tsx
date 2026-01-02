@@ -1,0 +1,72 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { ReviewSummary } from "./ReviewSummary";
+import { ReviewList } from "./ReviewList";
+import ReviewsPagination from "./ReviewsPagination"; // 경로 맞게
+
+// import type { Review } from "@/types/reviews/types"; // 프로젝트에 맞게 수정
+import { Review } from "@/types/reviews/review.types";
+
+type InitialData = {
+  averageRating: number;
+  totalCount: number;
+  reviews: Review[];
+
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
+};
+
+type Props = {
+  activityId: number;
+  className?: string;
+  initialData: InitialData;
+};
+
+export default function ActivityReviewsClient({
+  activityId,
+  className,
+  initialData,
+}: Props) {
+  const [page, setPage] = useState<number>(initialData.page ?? 1);
+
+  const pageSize = initialData.pageSize ?? 5;
+
+  const totalPages = useMemo(() => {
+    return (
+      initialData.totalPages ??
+      Math.max(1, Math.ceil(initialData.totalCount / pageSize))
+    );
+  }, [initialData.totalCount, initialData.totalPages, pageSize]);
+
+  // ✅ 지금은 목업: initialData.reviews 그대로
+  // 나중에 API 연결: page 바뀔 때 fetch해서 reviews 교체
+  const reviews = initialData.reviews;
+
+  return (
+    <section className={className ?? ""}>
+      <h2 className="text-16-b text-gray-950 mb-2 lg:text-18-b ">
+        체험 후기{" "}
+        <span className="text-gray-500 text-14-sb lg:text-16-b ">
+          {initialData.totalCount.toLocaleString()}개
+        </span>
+      </h2>
+
+      <ReviewSummary
+        averageRating={initialData.averageRating}
+        totalCount={initialData.totalCount}
+      />
+
+      <ReviewList reviews={reviews} />
+
+      <div className="mt-8">
+        <ReviewsPagination
+          page={page}
+          totalPages={totalPages}
+          onChange={setPage}
+        />
+      </div>
+    </section>
+  );
+}
