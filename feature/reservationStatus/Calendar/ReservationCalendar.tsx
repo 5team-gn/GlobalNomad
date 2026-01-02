@@ -42,7 +42,7 @@ export default function ReservationCalendar({
   };
 
   return (
-    <div>
+    <div className="relative border border-white rounded-2xl pt-5 pb-2.5 shadow-xl">
       <CalendarHeader
         year={current.year}
         month={current.month}
