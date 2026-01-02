@@ -35,8 +35,6 @@ export default function ReservationStatusView({
     key: string,
     position: { top: number; left: number }
   ) => {
-    console.log("클릭한 날짜:", key);
-    console.log("좌표:", position);
     if (selectedDateKey === key) {
       setSelectedDateKey(null);
       setModalPosition(null);
