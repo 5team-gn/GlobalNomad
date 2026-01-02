@@ -21,7 +21,7 @@ export default function CalendarHeader({
         <ArrowLeft className="text-gray-600" />
       </button>
 
-      <h2 className="text-xl font-bold">
+      <h2 className="text-20-b">
         {year}년 {month + 1}월
       </h2>
 

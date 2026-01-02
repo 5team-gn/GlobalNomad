@@ -4,12 +4,17 @@ import { CalendarDate } from "../types/calendar";
 import { ReservationBadge } from "@/feature/reservationStatus/types/reservationStatus";
 import { cn } from "@/lib/utils/twmerge";
 import { StatusBadge } from "./StatusBadge";
+import { toDateKey } from "@/lib/utils/date";
 
 interface Props {
   date: CalendarDate;
   badges: ReservationBadge[];
   isSelected: boolean;
-  onClick: (position: { top: number; left: number }) => void;
+  onClick: (
+    key: string,
+    position: { top: number; left: number; width: number; height: number }
+  ) => void;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function CalendarCell({
@@ -17,35 +22,42 @@ export default function CalendarCell({
   badges,
   isSelected,
   onClick,
+  containerRef,
 }: Props) {
-  const handleClick = (
-    e: React.MouseEvent<HTMLDivElement>
-  ) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!date.isCurrentMonth) return;
+    if (!containerRef.current) return;
 
-    onClick({
-      top: rect.top + window.scrollY,
-      left: rect.right + 12, 
+    const rect = e.currentTarget.getBoundingClientRect();
+    const containerRect = containerRef.current.getBoundingClientRect();
+
+    const dateKey = toDateKey(date.date);
+    const OFFSET_Y = 70;
+
+    onClick(dateKey, {
+      top: rect.top - containerRect.top + rect.height / 2 + OFFSET_Y,
+      left: rect.left - containerRect.left + rect.width + 12,
+      width: rect.width,
+      height: rect.height,
     });
   };
-
   return (
     <div
       onClick={handleClick}
       className={cn(
-        "relative min-h-25 border-b border-r p-2 cursor-pointer transition-colors",
-        "hover:bg-gray-100",
-        !date.isCurrentMonth && "bg-gray-50 text-gray-300",
-        isSelected && "bg-black text-white hover:bg-black"
+        "relative min-h-25 cursor-pointer transition-colors px-3 pt-4.5 pb-2.5",
+        "hover:text-black",
+        !date.isCurrentMonth && "text-gray-300",
+        isSelected && "bg-gray-50 text-gray-950 hover:bg-gray-100"
       )}
     >
       {/* 날짜 숫자 */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-center items-center mb-1.5 ">
         <span
           className={cn(
             "text-sm",
             date.isToday &&
-              "flex h-6 w-6 items-center justify-center rounded-full bg-black text-white",
+              "flex h-6 w-6 items-center justify-center rounded-full bg-gray-100",
             isSelected && date.isToday && "bg-white text-black"
           )}
         >
@@ -57,14 +69,14 @@ export default function CalendarCell({
           <span
             className={cn(
               "h-1.5 w-1.5 rounded-full",
-              isSelected ? "bg-white" : "bg-red-500"
+              isSelected ? "bg-primary-500" : "bg-red-500"
             )}
           />
         )}
       </div>
 
       {/* 상태 배지 */}
-      <div className="mt-1 flex flex-col gap-1">
+      <div className=" flex flex-col gap-1">
         {badges.map((badge) => (
           <StatusBadge
             key={badge.status}
