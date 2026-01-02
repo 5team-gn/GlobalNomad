@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import Category from "./Category";
 import ReservationStatusView from "./ReservaionStatusView";
-import { mockReservations } from "@/Mocks/reservationStatus.mock"; 
+import { mockReservations } from "@/Mocks/reservationStatus.mock";
 
 export default function ReservationStatusPage() {
+  const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
+
   return (
     <section>
       {/* 헤더 */}
@@ -14,14 +18,20 @@ export default function ReservationStatusPage() {
         </p>
       </header>
 
-      {/* 드롭다운 영역 */}
+      {/* 카테고리 */}
       <div className="mb-7.5">
-        드롭다운 자리
+        <Category
+          reservations={mockReservations}
+          selectedTitle={selectedTitle}
+          onChange={setSelectedTitle}
+        />
       </div>
 
-      {/* 핵심 기능 */}
-      
-      <ReservationStatusView reservations={mockReservations} />
+      {/* 달력 */}
+      <ReservationStatusView
+        reservations={mockReservations}
+        selectedTitle={selectedTitle}
+      />
     </section>
   );
 }
