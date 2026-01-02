@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { toDateKey } from "@/lib/utils/date";
 import ReservationCalendar from "./Calendar/ReservationCalendar";
-import ReservationSideModal from "./ReservationSidemdal";
+import ReservationSideModal from "./ReservationSidemodal";
 import { Reservation } from "./types/reservation";
+import { useIsCompact } from "@/hooks/useIsCompact";
+import ReservationBottomSheet from "./MobileBottomSheet";
 
 export default function ReservationStatusView({
   reservations,
@@ -14,7 +16,6 @@ export default function ReservationStatusView({
   selectedTitle: string | null;
 }) {
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
-  // 클릭한 날짜 요소의 위치 정보를 저장할 상태
   const [modalPosition, setModalPosition] = useState<{
     top: number;
     left: number;
@@ -44,6 +45,8 @@ export default function ReservationStatusView({
     }
   };
 
+  const isCompact = useIsCompact();
+
   return (
     <div className="relative w-full ">
       <div className="w-full">
@@ -54,7 +57,7 @@ export default function ReservationStatusView({
         />
       </div>
 
-      {selectedDateKey && modalPosition && (
+      {!isCompact && selectedDateKey && modalPosition && (
         <div
           className="absolute z-50 shadow-2xl animate-in fade-in zoom-in duration-200"
           style={{
@@ -74,6 +77,15 @@ export default function ReservationStatusView({
             position={modalPosition}
           />
         </div>
+      )}
+      {isCompact && selectedDateKey && (
+        <ReservationBottomSheet
+          dateKey={selectedDateKey}
+          reservations={dateFiltered}
+          onClose={() => {
+            setSelectedDateKey(null);
+          }}
+        />
       )}
     </div>
   );
