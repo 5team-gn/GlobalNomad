@@ -1,13 +1,12 @@
 import { useId, ReactNode } from "react";
-import { Input } from "./Input";
 import clsx from "clsx";
+import { Input } from "./Input";
 
-interface InputFieldProps {
+interface InputFieldProps extends React.ComponentProps<typeof Input> {
   label?: string;
   error?: string;
   helperText?: string;
   children?: ReactNode;
-  inputProps?: React.ComponentProps<typeof Input>;
 }
 
 export function InputField({
@@ -15,7 +14,8 @@ export function InputField({
   error,
   helperText,
   children,
-  inputProps,
+  className,
+  ...props
 }: InputFieldProps) {
   const id = useId();
 
@@ -30,13 +30,12 @@ export function InputField({
       {children ?? (
         <Input
           id={id}
-          {...inputProps}
+          {...props}
           className={clsx(
-            "h-[54px] w-full rounded-[16px] border px-[20px]",
             error
               ? "border-red-500 focus:ring-red-500"
               : "border-gray-200 focus:ring-primary-500",
-            inputProps?.className
+            className
           )}
         />
       )}
