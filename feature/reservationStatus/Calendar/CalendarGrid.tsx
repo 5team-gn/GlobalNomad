@@ -2,6 +2,7 @@ import { CalendarDate } from "@/feature/reservationStatus/types/calendar";
 import { ReservationMap } from "../utils/mapReservationsToCalendar";
 import { toDateKey } from "@/lib/utils/date";
 import CalendarCell from "./CalendarCell";
+import { useRef } from "react";
 
 const DAYS = [
   { id: 0, label: "S" },
@@ -26,19 +27,20 @@ export default function CalendarGrid({
   selectedDateKey,
   onSelectDate,
 }: Props) {
+  const gridRef = useRef<HTMLDivElement>(null);
   return (
-    <>
+    <div>
       {/* 요일 */}
-      <div className="grid grid-cols-7 mb-4">
+      <div className="grid grid-cols-7 mb-4 ">
         {DAYS.map((day) => (
-          <div key={day.id} className="...">
+          <div key={day.id} className="p-3 text-16-b items-center">
             {day.label}
           </div>
         ))}
       </div>
 
       {/* 날짜 */}
-      <div className="grid grid-cols-7 border-t">
+      <div ref={gridRef} className="relative grid grid-cols-7 ">
         {dates.map((date) => {
           const key = toDateKey(date.date);
 
@@ -48,11 +50,14 @@ export default function CalendarGrid({
               date={date}
               badges={badgesMap[key] ?? []}
               isSelected={selectedDateKey === key}
-              onClick={(position) => onSelectDate(key, position)}
+              onClick={(clickedKey, position) =>
+                onSelectDate(clickedKey, position)
+              }
+              containerRef={gridRef}
             />
           );
         })}
       </div>
-    </>
+    </div>
   );
 }
