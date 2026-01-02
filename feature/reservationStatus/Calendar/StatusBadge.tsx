@@ -12,7 +12,7 @@ export function StatusBadge({ status, count }: StatusBadgeProps) {
 
   return (
     <div
-      className={`rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${styleMap[status]}`}
+      className={`rounded-md px-2.5 py-0.5 text-14-m  ${styleMap[status]}`}
     >
       {status} {count}
     </div>
