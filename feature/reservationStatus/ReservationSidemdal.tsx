@@ -27,7 +27,7 @@ const TABS: { label: string; status: ReservationStatusCode }[] = [
   { label: "거절", status: "declined" },
 ];
 
-export default function ReservationSideModal({ dateKey, reservations, onClose }: Props) {
+export default function ReservationSideModal({ dateKey, reservations, onClose,position }: Props) {
   const [activeTab, setActiveTab] = useState<ReservationStatusCode>("pending");
   const [selectedTime, setSelectedTime] = useState<string>("전체");
 
@@ -48,7 +48,7 @@ export default function ReservationSideModal({ dateKey, reservations, onClose }:
     reservations.filter((r) => r.status === status).length;
 
   return (
-    <aside className="w-[360px] shrink-0 rounded-2xl border bg-white p-6 shadow-xl">
+    <aside className="absolute w-90 rounded-2xl border bg-white p-6 shadow-xl z-50">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-900">{dateKey}</h2>
         <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full">
@@ -74,7 +74,7 @@ export default function ReservationSideModal({ dateKey, reservations, onClose }:
       </nav>
 
       <div className="mb-6">
-        <label className="mb-2 block text-18-b font-bold mb-3">예약 시간</label>
+        <label className="block text-18-b font-bold mb-3">예약 시간</label>
         <div className="relative">
           <select
             value={selectedTime}
