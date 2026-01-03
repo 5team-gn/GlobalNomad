@@ -8,6 +8,11 @@ import {
   buttonLabelVariants,
 } from "./ButtonVariants";
 
+const DEFAULT_BUTTON_PROPS = {
+  variant: "primary",
+  size: "md",
+} as const;
+
 type BaseButtonProps = {
   variant?: "primary" | "secondary" | "text" | "ghost";
   size?: "lg" | "md" | "sm";
@@ -22,14 +27,14 @@ export type ButtonLabelProps = ButtonProps & {
 };
 
 export const Button = ({
-  variant = "primary",
-  size = "md",
+  variant = DEFAULT_BUTTON_PROPS.variant, 
+  size = DEFAULT_BUTTON_PROPS.size,       
   disabled = false,
   className,
   children,
   leftIcon,
   rightIcon,
-  ref, 
+  ref,
   ...props
 }: ButtonProps) => {
   return (
@@ -43,9 +48,7 @@ export const Button = ({
       {leftIcon && (
         <span className={cn(buttonIconVariants({ variant }))}>{leftIcon}</span>
       )}
-
       {children}
-
       {rightIcon && (
         <span className={cn(buttonIconVariants({ variant }))}>{rightIcon}</span>
       )}
@@ -56,14 +59,18 @@ export const Button = ({
 export const ButtonLabel = ({
   label,
   children,
-  variant = "primary",
-  size = "md",
-  ref, 
+  variant = DEFAULT_BUTTON_PROPS.variant, 
+  size = DEFAULT_BUTTON_PROPS.size,       
+  ref,
   ...buttonProps
 }: ButtonLabelProps) => {
   return (
     <Button variant={variant} size={size} ref={ref} {...buttonProps}>
-      {label && <span className={cn(buttonLabelVariants({ variant, size }))}>{label}</span>}
+      {label && (
+        <span className={cn(buttonLabelVariants({ variant, size }))}>
+          {label}
+        </span>
+      )}
       {children}
     </Button>
   );
