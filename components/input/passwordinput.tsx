@@ -28,7 +28,7 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
       >
         <Image
           src={visible ? "/icon_active_on.svg" : "/icon_active_off.svg"}
-          alt={visible ? "비밀번호 숨기기 아이콘" : "비밀번호 보기 아이콘"}
+          alt=""
           width={20}
           height={20}
         />
