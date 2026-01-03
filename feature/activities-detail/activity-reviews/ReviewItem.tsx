@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 리뷰 아이템
+ */
+
 import { Review } from "@/types/reviews/review.types";
 import { StarRating } from "./StarRating";
 import { formatKoreanDate } from "@/utils/detail-utils";

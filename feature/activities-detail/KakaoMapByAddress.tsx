@@ -1,7 +1,13 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 카카오맵 컴포넌트 (주소 -> 지도)
+ */
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { mockActivityDetail } from "@/app/mocks/activityDetail.mock";
+import { mockActivityDetail } from "@/Mocks/detail/activityDetail.mock";
 
 declare global {
   interface Window {
@@ -205,7 +211,7 @@ export default function KakaoMapByAddress({
 
   if (error) {
     return (
-      <div className="w-full h-[320] lg:h-[420] rounded-2xl border border-gray-100 flex items-center justify-center text-sm text-gray-500">
+      <div className="w-full h-[320px] lg:h-[420px] rounded-2xl border border-gray-100 flex items-center justify-center text-sm text-gray-500">
         지오코딩 실패: {error}
       </div>
     );
@@ -217,7 +223,7 @@ export default function KakaoMapByAddress({
       <p className="text-14-sb opacity-75 my-2">{mock.address}</p>
       <div
         ref={mapRef}
-        className="w-full h-[320] lg:h-[420] rounded-2xl overflow-hidden"
+        className="w-full h-[320px] lg:h-[420px] rounded-2xl overflow-hidden"
       />
     </div>
   );

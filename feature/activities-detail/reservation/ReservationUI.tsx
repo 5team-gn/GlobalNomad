@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 예약 UI
+ */
+
 "use client";
 
 import type {
@@ -13,29 +19,22 @@ import ReservationSheet from "./ReservationSheet";
 type Props = {
   price: number;
   maxPeople: number;
-
   open: boolean;
   step: ReservationStep;
-
   selection: ReservationSelection;
   slots: TimeSlot[];
-
   openPicker: () => void;
   close: () => void;
-
   setDate: (d: Date) => void;
   setTimeSlot: (s: TimeSlot) => void;
   incPeople: () => void;
   decPeople: () => void;
-
   goNext: () => void;
   goBack: () => void;
   goPeople: () => void;
   goBackMobile: () => void;
-
   canReserve: boolean;
   canConfirm: boolean;
-
   onReserve: () => void;
 };
 
@@ -67,7 +66,7 @@ export default function ReservationUI(props: Props) {
         />
       </div>
 
-      {/* TB / MB */}
+      {/* 테블릿 / 모바일 */}
       <div className="lg:hidden">
         <ReservationBarMobile
           price={props.price}
@@ -78,6 +77,7 @@ export default function ReservationUI(props: Props) {
           onReserve={props.onReserve}
         />
 
+        {/* 바텀시트 */}
         <ReservationSheet
           open={props.open}
           onClose={props.close}

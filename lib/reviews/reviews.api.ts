@@ -5,7 +5,7 @@ export async function getActivityReviews(
 ): Promise<ReviewResponse> {
   // 실제 API 붙기 전에는 목업 반환
   const { mockActivityReviewsResponse } = await import(
-    "@/app/mocks/activity-reviews.mock"
+    "@/Mocks/detail/activity-reviews.mock"
   );
   return mockActivityReviewsResponse;
 

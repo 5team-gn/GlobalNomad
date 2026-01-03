@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 모바일 예약 바텀
++ */
+
 "use client";
 
 import { formatDateKR } from "@/types/reservation/types";
@@ -54,7 +60,9 @@ export default function ReservationBarMobile({
           disabled={!canReserve}
           className={[
             "mt-[14px] w-full rounded-xl py-4 text-16-b",
-            canReserve ? "bg-primary-500 text-white" : "bg-gray-200 text-gray-50",
+            canReserve
+              ? "bg-primary-500 text-white"
+              : "bg-gray-200 text-gray-50",
           ].join(" ")}
         >
           예약하기

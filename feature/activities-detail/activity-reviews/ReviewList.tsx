@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 리뷰 리스트
+ */
+
 import { Review } from "@/types/reviews/review.types";
 import { ReviewItem } from "./ReviewItem";
 

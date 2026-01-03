@@ -1,7 +1,12 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 데스크탑 예약 패널
+ */
 "use client";
 
 import { useMemo } from "react";
-import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
+import { MOCK_AVAILABLE_SCHEDULE } from "@/Mocks/detail/availableSchedule.mock";
 import type { TimeSlot } from "@/types/reservation/types";
 import clsx from "clsx";
 
@@ -12,18 +17,14 @@ import PeopleSection from "./sections/PeopleSection";
 type Props = {
   price: number;
   maxPeople: number;
-
   selectedDate: Date | null;
   onSelectDate: (d: Date) => void;
-
   slots: TimeSlot[];
   selectedSlot: TimeSlot | null;
   onSelectSlot: (s: TimeSlot) => void;
-
   people: number;
   onInc: () => void;
   onDec: () => void;
-
   canReserve: boolean;
   onReserve: () => void;
 };
@@ -56,7 +57,6 @@ export default function ReservationPanelDesktop({
         <p className="text-20-m text-gray-79747E tracking-[1px]">/인</p>
       </div>
 
-      {/* ✅ 원본: 날짜 라벨은 항상 보임 */}
       <CalendarSection
         label="날짜"
         labelClassName="text-16-b"
@@ -65,7 +65,6 @@ export default function ReservationPanelDesktop({
         enabledDateSet={enabledDateSet}
       />
 
-      {/* ✅ 원본: 참여 인원 수 블록은 항상 있고, selectedSlot 없으면 dim */}
       <div
         className={clsx(
           "flex justify-between items-center my-6",
@@ -83,7 +82,6 @@ export default function ReservationPanelDesktop({
       </div>
 
       <div className="mt-6 space-y-10">
-        {/* ✅ 원본: '예약 가능한 시간'은 날짜 선택 전에도 항상 보임 */}
         <TimeSlotsSection
           labelText="예약 가능한 시간"
           labelClassName="text-14-b text-gray-950"

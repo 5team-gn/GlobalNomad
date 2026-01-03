@@ -53,17 +53,17 @@ export default function ActivityHeaderInfo({
         {openMenu && (
           <div
             ref={menuRef}
-            className="absolute right-[20] top-0 w-[95] rounded-lg border border-gray-100 bg-white shadow-md overflow-hidden"
+            className="absolute right-[20px] top-0 w-[95px] rounded-lg border border-gray-100 bg-white shadow-md overflow-hidden"
           >
             <button
               onClick={() => onEdit(mock)}
-              className="w-full px-4 py-[18] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
+              className="w-full px-4 py-[18px] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
             >
               수정하기
             </button>
             <button
               onClick={() => onDelete(mock.id)}
-              className="w-full px-4 py-[18] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
+              className="w-full px-4 py-[18px] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
             >
               삭제하기
             </button>
@@ -73,16 +73,16 @@ export default function ActivityHeaderInfo({
           className="cursor-pointer p-2"
           onClick={() => setOpenMenu((prev) => !prev)}
         >
-          <Image src="/icons/icon_more.svg" width={3.5} height={5} alt="" />
+          <Image src="/icons/icon_more.svg" width={28} height={28} alt="" />
         </button>
       </div>
 
       <h1 className="text-24-b font-bold text-gray-950">{mock.title}</h1>
 
-      <div className="my-[17]">
-        <div className="flex mb-[10]">
+      <div className="my-[17px]">
+        <div className="flex mb-[10px]">
           <Image
-            className="mr-[6]"
+            className="mr-[6px]"
             src="/icons/star.svg"
             width={16}
             height={16}
@@ -95,10 +95,10 @@ export default function ActivityHeaderInfo({
 
         <div className="flex">
           <Image
-            className="mr-[2]"
+            className="mr-[2px]"
             src="/icons/icon_map.svg"
-            width={16}
-            height={16}
+            width={28}
+            height={28}
             alt=""
           />
           <p className="text-14- text-gray-700">{mock.address}</p>

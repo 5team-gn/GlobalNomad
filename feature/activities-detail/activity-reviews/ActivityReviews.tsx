@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 리뷰 (서버 컴포넌트)
+ */
+
 import ActivityReviewsClient from "./ActivityReviewsClient";
 import { getActivityReviews } from "@/lib/reviews/reviews.api";
 

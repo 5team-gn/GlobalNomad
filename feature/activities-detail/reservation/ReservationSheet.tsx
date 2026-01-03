@@ -1,8 +1,14 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 예약 시트
+ */
+
 "use client";
 
 import { useMemo } from "react";
 import type { ReservationStep, TimeSlot } from "@/types/reservation/types";
-import { MOCK_AVAILABLE_SCHEDULE } from "@/app/mocks/availableSchedule.mock";
+import { MOCK_AVAILABLE_SCHEDULE } from "@/Mocks/detail/availableSchedule.mock";
 import Image from "next/image";
 
 import CalendarSection from "./sections/CalendarSection";
@@ -12,25 +18,19 @@ import PeopleSection from "./sections/PeopleSection";
 type Props = {
   open: boolean;
   onClose: () => void;
-
   step: ReservationStep;
   onBack: () => void;
   onNext: () => void;
-
   selectedDate: Date | null;
   onSelectDate: (d: Date) => void;
-
   slots: TimeSlot[];
   selectedSlot: TimeSlot | null;
   onSelectSlot: (s: TimeSlot) => void;
-
   people: number;
   onInc: () => void;
   onDec: () => void;
-
   tabletConfirmDisabled: boolean;
   onTabletConfirm: () => void;
-
   mobileConfirmDisabled: boolean;
   onGoPeople: () => void;
   onGoBackMobile: () => void;
@@ -112,7 +112,7 @@ export default function ReservationSheet({
             </div>
           </div>
 
-          {/* TB (md~lg-1) */}
+          {/* 테블릿,pc */}
           <div className="hidden md:block mt-6">
             <div className="grid gap-6 md:grid-cols-[1fr_320px]">
               <section>
@@ -173,7 +173,7 @@ export default function ReservationSheet({
             </button>
           </div>
 
-          {/* MB (<md) */}
+          {/* 모바일 사이즈 */}
           <div className="md:hidden mt-2">
             <div className="max-h-[70vh] overflow-auto pb-[30px]">
               {step === "date" && (

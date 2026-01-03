@@ -1,3 +1,8 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 인원 선택 섹션
+ */
 "use client";
 
 import Image from "next/image";
@@ -5,7 +10,6 @@ import Image from "next/image";
 type Props = {
   label?: string;
   labelClassName?: string;
-
   people: number;
   onInc: () => void;
   onDec: () => void;

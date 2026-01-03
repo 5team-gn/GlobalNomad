@@ -1,18 +1,20 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 리뷰 (클라이언트 컴포넌트)
+ */
 "use client";
 
 import { useMemo, useState } from "react";
 import { ReviewSummary } from "./ReviewSummary";
 import { ReviewList } from "./ReviewList";
-import ReviewsPagination from "./ReviewsPagination"; // 경로 맞게
-
-// import type { Review } from "@/types/reviews/types"; // 프로젝트에 맞게 수정
+import ReviewsPagination from "./ReviewsPagination";
 import { Review } from "@/types/reviews/review.types";
 
 type InitialData = {
   averageRating: number;
   totalCount: number;
   reviews: Review[];
-
   page?: number;
   pageSize?: number;
   totalPages?: number;
@@ -40,7 +42,7 @@ export default function ActivityReviewsClient({
     );
   }, [initialData.totalCount, initialData.totalPages, pageSize]);
 
-  // ✅ 지금은 목업: initialData.reviews 그대로
+  // 지금은 목업: initialData.reviews 그대로
   // 나중에 API 연결: page 바뀔 때 fetch해서 reviews 교체
   const reviews = initialData.reviews;
 

@@ -1,3 +1,8 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 리뷰 요약
+ */
 import { getSatisfactionLabel } from "@/utils/detail-utils";
 import Image from "next/image";
 
@@ -13,15 +18,14 @@ export function ReviewSummary({
   const label = getSatisfactionLabel(averageRating);
 
   return (
-    <div className="flex flex-col items-center pb-[30]">
+    <div className="flex flex-col items-center pb-[30px]">
       <p className="text-24-b lg:text-32-b leading-[32px] lg:leading-[48px] text-gray-950">
         {averageRating.toFixed(1)}
       </p>
-      <p className="text-14-b leading-[24px] text-gray-950 mt-[2] lg:text-16-b">
+      <p className="text-14-b leading-[24px] text-gray-950 mt-[2px] lg:text-16-b">
         {label}
       </p>
-
-      <div className="flex items-center gap-1 mt-[6] text-14-m">
+      <div className="flex items-center gap-1 mt-[6px] text-14-m">
         <Image
           src={"/icons/star.svg"}
           alt="별점"

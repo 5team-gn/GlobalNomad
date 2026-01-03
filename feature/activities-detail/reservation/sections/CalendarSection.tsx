@@ -1,3 +1,8 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 캘린더 섹션
+ */
 "use client";
 
 import SimpleCalendar from "../SimpleCalendar";
@@ -5,7 +10,6 @@ import SimpleCalendar from "../SimpleCalendar";
 type Props = {
   label?: string;
   labelClassName?: string;
-
   value: Date | null;
   onChange: (d: Date) => void;
   enabledDateSet: Set<string>;

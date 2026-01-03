@@ -1,18 +1,20 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 시간대 선택 섹션
+ */
+
 "use client";
 
 import type { TimeSlot } from "@/types/reservation/types";
 
 type Props = {
   selectedDate: Date | null;
-
   slots: TimeSlot[];
   selectedSlot: TimeSlot | null;
   onSelectSlot: (s: TimeSlot) => void;
-
-  // ✅ ReservationSheet에서 쓰는 이름 그대로 받기
   labelText: string;
   emptyText: string;
-
   labelClassName: string;
   emptyClassName: string;
   listClassName: string;
