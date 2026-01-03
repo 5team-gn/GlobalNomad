@@ -1,23 +1,33 @@
+/**
+ *
+ *
+ * @description 액티비티 상세 - 헤더 정보 컴포넌트
+ */
+
 "use client";
 
+import { ActivityHeaderInfoMock } from "@/types/activities/activity.types";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-export default function ActivityHeaderInfo({ mock }: { mock: any }) {
+export default function ActivityHeaderInfo({
+  mock,
+}: {
+  mock: ActivityHeaderInfoMock;
+}) {
   const [openMenu, setOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // 케밥 메뉴 외부 클릭 시 닫기
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setOpenMenu(false);
       }
     }
-
     if (openMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -39,7 +49,7 @@ export default function ActivityHeaderInfo({ mock }: { mock: any }) {
       <div className="flex items-center justify-between mb-2">
         <p className="text-14-m text-gray-950">{mock.category}</p>
 
-        {/* 더보기팝업 */}
+        {/* 케밥메뉴 */}
         {openMenu && (
           <div
             ref={menuRef}
@@ -47,13 +57,13 @@ export default function ActivityHeaderInfo({ mock }: { mock: any }) {
           >
             <button
               onClick={() => onEdit(mock)}
-              className="w-full px-4 py-[18] text-left text-14-m text-gray-950 hover:bg-gray-25"
+              className="w-full px-4 py-[18] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
             >
               수정하기
             </button>
             <button
               onClick={() => onDelete(mock.id)}
-              className="w-full px-4 py-[18] text-left text-14-m text-gray-950 hover:bg-gray-25"
+              className="w-full px-4 py-[18] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
             >
               삭제하기
             </button>

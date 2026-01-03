@@ -24,7 +24,7 @@ export default function KakaoMapByAddress({
   const [coord, setCoord] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ 카카오 객체 참조(정리용)
+  // 카카오 객체 참조(정리용)
   const kakaoMapObjRef = useRef<any>(null);
   const kakaoMarkerRef = useRef<any>(null);
   const kakaoOverlayRef = useRef<any>(null);
@@ -40,7 +40,7 @@ export default function KakaoMapByAddress({
       kakaoMarkerRef.current.setMap(null);
       kakaoMarkerRef.current = null;
     }
-    // map 객체는 setMap(null)이 없어서 참조만 끊습니다.
+    // map 객체는 setMap(null)이 없어서 참조만 끊기
     kakaoMapObjRef.current = null;
   };
 
@@ -76,7 +76,7 @@ export default function KakaoMapByAddress({
   useEffect(() => {
     if (!coord) return;
 
-    // ✅ StrictMode/HMR 대비: 새로 만들기 전 기존 것 정리
+    // StrictMode/HMR 대비: 새로 만들기 전 기존 것 정리
     cleanupKakao();
 
     let timer: number | null = null;

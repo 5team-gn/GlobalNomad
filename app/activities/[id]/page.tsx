@@ -1,9 +1,9 @@
 import ActivityReviews from "@/app/feature/activities-detail/activity-reviews/ActivityReviews";
 import ActivityCalendarClient from "@/app/feature/activities-detail/ActivityCalendar.client";
 import KakaoMapByAddress from "@/app/feature/activities-detail/KakaoMapByAddress";
-import ActivityHeaderGallery from "@/app/feature/activities-detail/reservation/ActivityHeaderGallery";
-import ActivityHeaderInfo from "@/app/feature/activities-detail/reservation/ActivityHeaderInfo";
+import ActivityHeaderInfo from "@/app/feature/activities-detail/ActivityHeaderInfo";
 import { mockActivityDetail } from "@/app/mocks/activityDetail.mock";
+import ActivityHeaderGallery from "@/app/feature/activities-detail/ActivityHeaderGallery";
 
 export default function Page() {
   const mock = mockActivityDetail;
@@ -11,9 +11,7 @@ export default function Page() {
   return (
     <main className="max-w-[1200px] mx-auto font-pretendard mt-[34px] lg:mt-22 mb-45 text-gray-950">
       <div className="detail_wrap px-6 md:px-[30px] lg:px-[3.3333vw]">
-        {/* ======================
-           TB/MB (< lg): 세로 스택
-           ====================== */}
+        {/* 태블릿,모바일 */}
         <div className="lg:hidden">
           <ActivityHeaderGallery mock={mock} />
           <div className="mt-6 ">
@@ -45,15 +43,13 @@ export default function Page() {
             <ActivityReviews activityId={mock.id} />
           </div>
 
-          {/* tb 이하 fixed 달력/바 가림 방지(기존 쓰던 값 유지) */}
+          {/* tb 이하 fixed 달력/바 가림 방지 */}
           <div className="h-[96]" />
         </div>
 
-        {/* ======================
-           PC (lg+): 2컬럼 flex
-           ====================== */}
+        {/* 데스크탑 */}
         <div className="hidden lg:flex lg:gap-x-10 lg:items-start">
-          {/* LEFT: 이미지 + 본문 */}
+          {/*왼쪽 + 본문 */}
           <div className="flex-1 min-w-0">
             <ActivityHeaderGallery mock={mock} />
 
@@ -84,7 +80,7 @@ export default function Page() {
             </div>
           </div>
 
-          {/* RIGHT: 상세헤더 + 달력 */}
+          {/*오른쪽 + 달력 */}
           <aside className="w-[410px] self-start">
             <ActivityHeaderInfo mock={mock} />
             <div className="mt-6 sticky top-10">
