@@ -34,16 +34,12 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
       {/* 3. 사이드바 본체 */}
       <aside
         className={`
-          /* 공통 스타일 */
           bg-white transition-all duration-300 ease-in-out z-40
           
-          /* 데스크탑 (lg 이상): 기존 기본 스타일 */
           lg:relative lg:translate-x-0 lg:w-64 lg:h-112.5 lg:border lg:rounded-xl lg:px-6 lg:py-3.5 lg:shadow lg:flex lg:flex-col
           
-          /* 태블릿 (md ~ lg 미만): 178 x 342 고정 크기 */
           md:relative md:translate-x-0 md:w-44.5 md:h-85.5 md:border md:rounded-xl md:px-3 md:py-3 md:shadow md:flex md:flex-col
           
-          /* 모바일 (md 미만): 숨겨져 있다가 Drawer로 등장 */
           fixed inset-y-0 left-0 w-64 border-r border-gray-100 shadow-xl transform
           ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
         `}
