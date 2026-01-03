@@ -3,7 +3,7 @@ import MyInfoClient from "@/feature/MyInfo/MyInfoClient";
 
 export default function MyInfoPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<div>로딩중...</div>}>
       <MyInfoClient />
     </Suspense>
   );
