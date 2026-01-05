@@ -20,20 +20,24 @@ export function useReservationList() {
   const filteredList = reservations.filter((r) => r.status === filter);
 
   useEffect(() => {
-    try {
-      setLoading(true);
+    const loadReservations = async () => {
+      try {
+        setLoading(true);
 
-      // TODO: API 연동 브랜치에서 교체
-      // const data = await fetchMyReservations();
-      // setReservations(data);
+        // TODO: API 연동 브랜치에서 교체
+        // const data = await fetchMyReservations();
+        // setReservations(data);
 
-      setReservations(RESERVATION_MOCK_LIST);
-    } catch (err) {
-      console.error(err);
-      setError("예약 목록을 불러오는데 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
+        setReservations(RESERVATION_MOCK_LIST);
+      } catch (err) {
+        console.error(err);
+        setError("예약 목록을 불러오는데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadReservations();
   }, []);
 
   return {
