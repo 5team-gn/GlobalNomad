@@ -43,9 +43,9 @@ export function CancelContent({
             variant="secondary"
             size="md"
             onClick={onClose}
-            className="flex-1 h-[48px] rounded-[12px]"
+            className="flex-1 h-[48px] rounded-[12px] transition-all hover:bg-gray-100 active:!bg-gray-100"
           >
-            <span className="text-[16px] font-medium text-gray-700)]">
+            <span className="text-[16px] font-medium text-gray-700">
               아니오
             </span>
           </Button>
@@ -54,7 +54,7 @@ export function CancelContent({
             variant="primary"
             size="md"
             onClick={onConfirm}
-            className="flex-1 h-[48px] rounded-[12px]"
+            className="flex-1 h-[48px] rounded-[12px] transition-all hover:brightness-110 active:!brightness-100"
           >
             <span className="text-[16px] font-medium text-white">취소하기</span>
           </Button>
