@@ -33,6 +33,7 @@ export const RESERVATION_MOCK_LIST: Reservation[] = [
     price: 40000,
     people: 2,
     status: "completed",
+    reviewWritten: true,
   },
   {
     id: 5,
@@ -41,6 +42,7 @@ export const RESERVATION_MOCK_LIST: Reservation[] = [
     price: 25000,
     people: 1,
     status: "completed",
+    reviewWritten: false,
   },
   {
     id: 6,
