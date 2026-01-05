@@ -22,7 +22,7 @@ export function ReservationEmpty(props: Props) {
         height={182}
         className="p-[30px]"
       />
-      <p className="text-[18px] text-[var(--color-gray-400)] text-center mb-[30px]">
+      <p className="text-[18px] text-gray-400)] text-center mb-[30px]">
         {message}
       </p>
       {props.type === "all" && (
