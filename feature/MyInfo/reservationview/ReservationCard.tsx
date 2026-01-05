@@ -16,7 +16,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
 
   return (
     <div className="relative h-[181px]">
-      <div className="absolute right-[-10px] top-0 h-full w-[181px] bg-[var(--color-primary-100)] rounded-r-[32px] overflow-hidden">
+      <div className="absolute right-[-10px] top-0 h-full w-[181px] bg-primary-100 rounded-r-[32px] overflow-hidden">
         <Image
           src="/Image/thumbnail.svg"
           alt={reservation.title}
@@ -32,20 +32,18 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
           {STATUS_LABEL[status]}
         </span>
 
-        <h3 className="mt-[12px] text-18-b text-[var(--color-gray-950)]">
+        <h3 className="mt-[12px] text-18-b text-gray-950">
           {reservation.title}
         </h3>
 
-        <p className="mt-[10px] text-16-m text-[var(--color-gray-500)]">
-          {reservation.date}
-        </p>
+        <p className="mt-[10px] text-16-m text-gray-500">{reservation.date}</p>
 
         <div className="mt-[10px] relative">
           <div className="flex items-center gap-1">
-            <span className="text-18-b text-[var(--color-gray-950)]">
+            <span className="text-18-b text-gray-950">
               ₩{reservation.price.toLocaleString()}
             </span>
-            <span className="text-16-m text-[var(--color-gray-400)]">
+            <span className="text-16-m text-gray-400">
               {reservation.people}명
             </span>
           </div>
