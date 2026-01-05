@@ -80,7 +80,6 @@ export default function ReservationView() {
         ) : (
           <ReservationList
             reservations={filteredList}
-            filter={filter}
             onCancel={openCancelModal}
             onReview={openReviewModal}
           />
