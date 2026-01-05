@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ButtonLabel } from "@/components/button/Button";
 import type { ReservationStatus } from "@/types/reservationview.types";
+import { STATUS_LABEL } from "./ReservationView.constants";
 
 type Props = { type: "all" } | { type: "filtered"; filter: ReservationStatus };
 
@@ -10,15 +11,7 @@ export function ReservationEmpty(props: Props) {
   const message =
     props.type === "all"
       ? "아직 예약한 체험이 없어요"
-      : `아직 ${
-          {
-            pending: "예약 신청",
-            canceled: "예약 취소",
-            confirmed: "예약 승인",
-            declined: "예약 거절",
-            completed: "체험 완료",
-          }[props.filter]
-        } 내역이 없어요`;
+      : `아직 ${STATUS_LABEL[props.filter]} 내역이 없어요`;
 
   return (
     <div className="flex flex-col items-center justify-center py-20">
