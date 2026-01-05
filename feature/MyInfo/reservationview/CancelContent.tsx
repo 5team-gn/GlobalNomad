@@ -34,7 +34,7 @@ export function CancelContent({
           height={88}
         />
 
-        <h3 className="text-[20px] font-bold text-[var(--color-gray-950)] mb-[24px] text-center mt-[16px]">
+        <h3 className="text-[20px] font-bold text-gray-950 mb-[24px] text-center mt-[16px]">
           예약을 취소하시겠어요?
         </h3>
 
@@ -45,7 +45,7 @@ export function CancelContent({
             onClick={onClose}
             className="flex-1 h-[48px] rounded-[12px]"
           >
-            <span className="text-[16px] font-medium text-[var(--color-gray-700)]">
+            <span className="text-[16px] font-medium text-gray-700)]">
               아니오
             </span>
           </Button>
