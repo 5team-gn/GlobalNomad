@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/header/header';
 import Footer from '@/components/footer/footer';
 import { InputField } from '@/components/input/inputfield';
 import { Input } from '@/components/input/Input';
 import { Button, ButtonLabel } from '@/components/button/Button';
 import { generateTimeOptions } from '@/lib/utils/time';
+import { BasicModal, AlertModal } from '@/components/modal';
 import Image from 'next/image';
 
 interface TimeSlot {
@@ -17,6 +19,8 @@ interface TimeSlot {
 }
 
 export default function RegisterActivityPage() {
+  const router = useRouter();
+
   // 폼 상태
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -35,19 +39,80 @@ export default function RegisterActivityPage() {
   const [introImages, setIntroImages] = useState<File[]>([]);
   const [introPreviews, setIntroPreviews] = useState<string[]>([]);
 
+  // 모달 상태
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [isFormDirty, setIsFormDirty] = useState(false);
+  const [nextUrl, setNextUrl] = useState<string | null>(null);
+
   const timeOptions = generateTimeOptions();
+
+  // 폼이 수정되었는지 추적
+  useEffect(() => {
+    if (title || category || description || price || address || timeSlots.length > 1 || bannerImage || introImages.length > 0) {
+      setIsFormDirty(true);
+    }
+  }, [title, category, description, price, address, timeSlots, bannerImage, introImages]);
+
+  // 브라우저 새로고침/닫기 감지
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isFormDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isFormDirty]);
+
+  // 브라우저 뒤로가기 감지
+  useEffect(() => {
+    if (isFormDirty) {
+      // 히스토리에 현재 페이지 추가
+      window.history.pushState(null, '', window.location.href);
+
+      const handlePopState = () => {
+        // 뒤로가기 버튼 클릭 시
+        window.history.pushState(null, '', window.location.href);
+        setShowExitModal(true);
+      };
+
+      window.addEventListener('popstate', handlePopState);
+
+      return () => {
+        window.removeEventListener('popstate', handlePopState);
+      };
+    }
+  }, [isFormDirty]);
 
   // 시간대 추가
   const handleAddTimeSlot = () => {
-    const newId = String(Date.now());
-    setTimeSlots([...timeSlots, { id: newId, date: '', startTime: '12:00', endTime: '12:00' }]);
+    const firstSlot = timeSlots[0];
+    
+    if (!firstSlot.date) {
+      alert('날짜를 입력해주세요');
+      return;
+    }
+
+    const newSlot = {
+      id: String(Date.now()),
+      date: firstSlot.date,
+      startTime: firstSlot.startTime,
+      endTime: firstSlot.endTime,
+    };
+
+    setTimeSlots([
+      { id: '1', date: '', startTime: '12:00', endTime: '12:00' },
+      newSlot,
+      ...timeSlots.slice(1),
+    ]);
   };
 
   // 시간대 삭제
   const handleRemoveTimeSlot = (id: string) => {
-    if (timeSlots.length > 1) {
-      setTimeSlots(timeSlots.filter(slot => slot.id !== id));
-    }
+    setTimeSlots(timeSlots.filter(slot => slot.id !== id));
   };
 
   // 시간대 업데이트
@@ -103,7 +168,7 @@ export default function RegisterActivityPage() {
 
   // 폼 제출
   const handleSubmit = async () => {
-    // 유효성 검사
+    
     if (!title || !category || !description || !price || !address) {
       alert('모든 필드를 입력해주세요');
       return;
@@ -131,8 +196,24 @@ export default function RegisterActivityPage() {
       introImages,
     });
 
-    // TODO: API 호출
-    alert('체험이 등록되었습니다!');
+    
+    setIsFormDirty(false); 
+    setShowSuccessModal(true);
+  };
+
+  // 성공 모달 닫기 후 페이지 이동
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    router.push('/myactivities'); 
+  };
+
+  // 페이지 이탈 확인 
+  const handleNavigateAway = () => {
+    if (isFormDirty) {
+      setShowExitModal(true);
+    } else {
+      router.back();
+    }
   };
 
   return (
@@ -140,10 +221,10 @@ export default function RegisterActivityPage() {
       <Header />
       
       <main className="flex-1 bg-white">
-        <div className="max-w-[700px] mx-auto py-[60px]">
-          <h1 className="text-32-b text-gray-950 mb-[40px]">내 체험 등록</h1>
+        <div className="max-w-[700px] mx-auto py-[60px] px-[16px] md:px-0">
+          <h1 className="text-24-b md:text-32-b text-gray-950 mb-[24px] md:mb-[40px]">내 체험 등록</h1>
 
-          <div className="space-y-[40px]">
+          <div className="space-y-[24px] md:space-y-[40px]">
             {/* 제목 */}
             <InputField
               label="제목"
@@ -158,7 +239,9 @@ export default function RegisterActivityPage() {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[20px] text-sm outline-none focus:ring-primary-500"
+                className={`h-[54px] w-full rounded-[16px] border border-gray-200 px-[20px] text-16-m outline-none focus:ring-primary-500 ${
+                  !category ? 'text-gray-400' : 'text-gray-900'
+                }`}
               >
                 <option value="">카테고리를 선택해 주세요</option>
                 <option value="문화 · 예술">문화 · 예술</option>
@@ -178,7 +261,7 @@ export default function RegisterActivityPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="체험에 대한 설명을 입력해 주세요"
                 rows={10}
-                className="w-full rounded-[16px] border border-gray-200 px-[20px] py-[16px] text-sm outline-none focus:ring-primary-500 resize-none"
+                className="w-full rounded-[16px] border border-gray-200 px-[20px] py-[16px] text-16-m outline-none focus:ring-primary-500 resize-none"
               />
             </div>
 
@@ -188,7 +271,7 @@ export default function RegisterActivityPage() {
               type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder="체험 금액을 입력해 주세요"
+              placeholder="가격을 입력해 주세요"
             />
 
             {/* 주소 */}
@@ -200,84 +283,194 @@ export default function RegisterActivityPage() {
             />
 
             {/* 예약 가능한 시간대 */}
-            <div className="flex flex-col gap-[10px]">
-              <div className="flex items-center justify-between">
-                <label className="text-16-m text-gray-900">예약 가능한 시간대</label>
-                <button
-                  type="button"
-                  onClick={handleAddTimeSlot}
-                  className="text-14-m text-primary-500 hover:text-primary-600"
-                >
-                  + 시간대 추가
-                </button>
-              </div>
+            <div className="flex flex-col gap-[16px] md:gap-[24px]">
+              <label className="text-18-b md:text-20-b text-gray-950">예약 가능한 시간대</label>
 
-              <div className="space-y-[16px]">
-                {timeSlots.map((slot) => (
-                  <div key={slot.id} className="flex items-center gap-[8px]">
-                    {/* 날짜 */}
-                    <div className="flex-1">
-                      <Input
-                        type="date"
-                        value={slot.date}
-                        onChange={(e) => handleTimeSlotChange(slot.id, 'date', e.target.value)}
-                        placeholder="YY/MM/DD"
-                      />
+              {/* Desktop 버전 */}
+              <div className="hidden md:block space-y-[8px]">
+                {/* 헤더 라벨 */}
+                <div className="grid grid-cols-[1fr_140px_20px_140px_56px] gap-[8px] mb-[8px]">
+                  <div className="text-14-m text-gray-700">날짜</div>
+                  <div className="text-14-m text-gray-700">시작 시간</div>
+                  <div></div>
+                  <div className="text-14-m text-gray-700">종료 시간</div>
+                  <div></div>
+                </div>
+
+                {/* 첫 번째 줄 - + 버튼 */}
+                <div className="grid grid-cols-[1fr_140px_20px_140px_56px] gap-[8px] items-center">
+                  <input
+                    type="text"
+                    value={timeSlots[0]?.date || ''}
+                    onChange={(e) => handleTimeSlotChange(timeSlots[0]?.id, 'date', e.target.value)}
+                    placeholder="yy/mm/dd"
+                    onFocus={(e) => {
+                      e.target.type = 'date';
+                      e.target.placeholder = '';
+                    }}
+                    onBlur={(e) => {
+                      if (!e.target.value) {
+                        e.target.type = 'text';
+                        e.target.placeholder = 'yy/mm/dd';
+                      }
+                    }}
+                    className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[20px] text-16-m outline-none focus:border-primary-500"
+                  />
+
+                  <select
+                    value={timeSlots[0]?.startTime || '12:00'}
+                    onChange={(e) => handleTimeSlotChange(timeSlots[0]?.id, 'startTime', e.target.value)}
+                    className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[16px] text-16-m outline-none focus:border-primary-500"
+                  >
+                    {timeOptions.map((time: string) => (
+                      <option key={`start-${time}`} value={time}>
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span className="text-18-m text-gray-400 text-center">~</span>
+
+                  <select
+                    value={timeSlots[0]?.endTime || '12:00'}
+                    onChange={(e) => handleTimeSlotChange(timeSlots[0]?.id, 'endTime', e.target.value)}
+                    className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[16px] text-16-m outline-none focus:border-primary-500"
+                  >
+                    {timeOptions.map((time: string) => (
+                      <option key={`end-${time}`} value={time}>
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="button"
+                    onClick={handleAddTimeSlot}
+                    className="w-[56px] h-[56px] flex items-center justify-center rounded-full bg-primary-500 hover:bg-primary-600 transition-colors"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+
+                {/* 추가된 시간대들 */}
+                {timeSlots.slice(1).map((slot) => (
+                  <div key={slot.id} className="grid grid-cols-[1fr_140px_20px_140px_56px] gap-[8px] items-center">
+                    <div className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[20px] flex items-center text-16-m text-gray-900">
+                      {slot.date}
                     </div>
 
-                    {/* 시작 시간 */}
-                    <div className="w-[120px]">
+                    <div className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[16px] flex items-center text-16-m text-gray-900">
+                      {slot.startTime}
+                    </div>
+
+                    <span className="text-18-m text-gray-400 text-center">~</span>
+
+                    <div className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[16px] flex items-center text-16-m text-gray-900">
+                      {slot.endTime}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTimeSlot(slot.id)}
+                      className="w-[56px] h-[56px] flex items-center justify-center rounded-[6px] border border-gray-300 hover:bg-gray-50"
+                    >
+                      <span className="text-20-m text-gray-600">-</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile 버전 */}
+              <div className="md:hidden space-y-[16px]">
+                {timeSlots.map((slot, index) => (
+                  <div key={slot.id} className="space-y-[8px]">
+                    <div className="text-14-m text-gray-700">날짜</div>
+                    
+                    <div className="flex gap-[8px]">
+                      <input
+                        type="text"
+                        value={slot.date}
+                        onChange={(e) => handleTimeSlotChange(slot.id, 'date', e.target.value)}
+                        placeholder="yy/mm/dd"
+                        onFocus={(e) => {
+                          e.target.type = 'date';
+                          e.target.placeholder = '';
+                        }}
+                        onBlur={(e) => {
+                          if (!e.target.value) {
+                            e.target.type = 'text';
+                            e.target.placeholder = 'yy/mm/dd';
+                          }
+                        }}
+                        className="flex-1 h-[54px] rounded-[16px] border border-gray-200 px-[20px] text-16-m outline-none focus:border-primary-500"
+                        readOnly={index !== 0}
+                      />
+                      
+                      {index === 0 ? (
+                        <button
+                          type="button"
+                          onClick={handleAddTimeSlot}
+                          className="w-[56px] h-[56px] flex items-center justify-center rounded-full bg-primary-500 hover:bg-primary-600 transition-colors shrink-0"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                        </button>
+                      ) : null}
+                    </div>
+
+                    <div className="flex items-center gap-[8px]">
                       <select
                         value={slot.startTime}
                         onChange={(e) => handleTimeSlotChange(slot.id, 'startTime', e.target.value)}
-                        className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[12px] text-sm outline-none"
+                        className="flex-1 h-[54px] rounded-[16px] border border-gray-200 px-[16px] text-16-m outline-none focus:border-primary-500"
+                        disabled={index !== 0}
                       >
-                        {timeOptions.map((time) => (
+                        {timeOptions.map((time: string) => (
                           <option key={`start-${time}`} value={time}>
                             {time}
                           </option>
                         ))}
                       </select>
-                    </div>
 
-                    <span className="text-gray-500">~</span>
+                      <span className="text-16-m text-gray-400">~</span>
 
-                    {/* 종료 시간 */}
-                    <div className="w-[120px]">
                       <select
                         value={slot.endTime}
                         onChange={(e) => handleTimeSlotChange(slot.id, 'endTime', e.target.value)}
-                        className="h-[54px] w-full rounded-[16px] border border-gray-200 px-[12px] text-sm outline-none"
+                        className="flex-1 h-[54px] rounded-[16px] border border-gray-200 px-[16px] text-16-m outline-none focus:border-primary-500"
+                        disabled={index !== 0}
                       >
-                        {timeOptions.map((time) => (
+                        {timeOptions.map((time: string) => (
                           <option key={`end-${time}`} value={time}>
                             {time}
                           </option>
                         ))}
                       </select>
-                    </div>
 
-                    {/* 삭제 버튼 */}
-                    {timeSlots.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTimeSlot(slot.id)}
-                        className="w-[54px] h-[54px] flex items-center justify-center rounded-[16px] border border-gray-200 hover:bg-gray-50"
-                      >
-                        <span className="text-gray-500">-</span>
-                      </button>
-                    )}
+                      {index !== 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTimeSlot(slot.id)}
+                          className="w-[56px] h-[56px] flex items-center justify-center rounded-[6px] border border-gray-300 hover:bg-gray-50 shrink-0"
+                        >
+                          <span className="text-20-m text-gray-600">-</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* 배너 이미지 등록 */}
-            <div className="flex flex-col gap-[10px]">
-              <label className="text-16-m text-gray-900">배너 이미지 등록</label>
+            <div className="flex flex-col gap-[16px]">
+              <label className="text-18-b md:text-20-b text-gray-950">배너 이미지 등록</label>
               
               {bannerPreview ? (
-                <div className="relative w-full h-[200px] rounded-[16px] overflow-hidden border border-gray-200">
+                <div className="relative w-full h-[167px] md:h-[180px] rounded-[24px] overflow-hidden">
                   <Image
                     src={bannerPreview}
                     alt="배너 이미지"
@@ -287,20 +480,20 @@ export default function RegisterActivityPage() {
                   <button
                     type="button"
                     onClick={handleRemoveBanner}
-                    className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70"
+                    className="absolute top-3 right-3 w-10 h-10 bg-black/60 rounded-full flex items-center justify-center text-white text-20-b hover:bg-black/80"
                   >
                     ×
                   </button>
                 </div>
               ) : (
-                <label className="w-full h-[200px] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-[16px] cursor-pointer hover:border-primary-500">
-                  <div className="text-center">
-                    <div className="text-gray-400 mb-2">
-                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" className="mx-auto">
-                        <path d="M24 16V32M16 24H32" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <label className="w-full h-[167px] md:h-[180px] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-[24px] cursor-pointer hover:border-primary-500 transition-colors bg-gray-25">
+                  <div className="flex flex-col items-center gap-[12px]">
+                    <div className="w-[48px] h-[48px] rounded-full bg-gray-200 flex items-center justify-center">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 5V19M5 12H19" stroke="#9FA0A7" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
                     </div>
-                    <p className="text-14-m text-gray-500">이미지 등록</p>
+                    <p className="text-16-m text-gray-600">이미지 등록</p>
                   </div>
                   <input
                     type="file"
@@ -313,13 +506,12 @@ export default function RegisterActivityPage() {
             </div>
 
             {/* 소개 이미지 등록 */}
-            <div className="flex flex-col gap-[10px]">
-              <label className="text-16-m text-gray-900">소개 이미지 등록</label>
+            <div className="flex flex-col gap-[16px]">
+              <label className="text-18-b md:text-20-b text-gray-950">소개 이미지 등록</label>
               
-              <div className="grid grid-cols-4 gap-[16px]">
-                {/* 업로드된 이미지들 */}
+              <div className="grid grid-cols-2 gap-[16px]">
                 {introPreviews.map((preview, index) => (
-                  <div key={index} className="relative aspect-square rounded-[16px] overflow-hidden border border-gray-200">
+                  <div key={index} className="relative aspect-square rounded-[24px] overflow-hidden">
                     <Image
                       src={preview}
                       alt={`소개 이미지 ${index + 1}`}
@@ -329,35 +521,37 @@ export default function RegisterActivityPage() {
                     <button
                       type="button"
                       onClick={() => handleRemoveIntroImage(index)}
-                      className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center text-white text-sm hover:bg-black/70"
+                      className="absolute top-3 right-3 w-10 h-10 bg-black/60 rounded-full flex items-center justify-center text-white text-20-b hover:bg-black/80"
                     >
                       ×
                     </button>
                   </div>
                 ))}
 
-                {/* 추가 업로드 버튼 */}
-                {introImages.length < 4 && (
-                  <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-[16px] cursor-pointer hover:border-primary-500">
-                    <div className="text-center">
-                      <div className="text-gray-400 mb-1">
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="mx-auto">
-                          <path d="M16 10V22M10 16H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                {Array.from({ length: 4 - introImages.length }).map((_, index) => (
+                  <label
+                    key={`empty-${index}`}
+                    className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-[24px] cursor-pointer hover:border-primary-500 transition-colors bg-gray-25"
+                  >
+                    <div className="flex flex-col items-center gap-[12px]">
+                      <div className="w-[48px] h-[48px] rounded-full bg-gray-200 flex items-center justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 5V19M5 12H19" stroke="#9FA0A7" strokeWidth="2" strokeLinecap="round"/>
                         </svg>
                       </div>
-                      <p className="text-12-m text-gray-500">이미지 등록</p>
+                      <p className="text-14-m md:text-16-m text-gray-600">이미지 등록</p>
+                      <p className="text-12-m text-gray-400">{introImages.length}/{index + introImages.length + 1}</p>
                     </div>
                     <input
                       type="file"
                       accept="image/*"
-                      multiple
                       onChange={handleIntroImagesUpload}
                       className="hidden"
                     />
                   </label>
-                )}
+                ))}
               </div>
-              <p className="text-12-m text-gray-500">*최대 4개까지 등록 가능합니다</p>
+              <p className="text-14-m text-gray-500">*최대 4개까지 등록 가능합니다</p>
             </div>
 
             {/* 등록하기 버튼 */}
@@ -374,6 +568,31 @@ export default function RegisterActivityPage() {
       </main>
 
       <Footer />
+
+      {/* 저장 성공 모달 */}
+      <BasicModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessModalClose}
+        text="체험 등록이 완료되었습니다"
+        buttonText="확인"
+        onConfirm={handleSuccessModalClose}
+      />
+
+      {/* 페이지 이탈 확인 모달 */}
+      <AlertModal
+        isOpen={showExitModal}
+        onClose={() => setShowExitModal(false)}
+        text={'저장되지 않았습니다.\n정말 뒤로 가시겠습니까?'}
+        cancelText="아니요"
+        confirmText="네"
+        onCancel={() => setShowExitModal(false)}
+        onConfirm={() => {
+          setIsFormDirty(false);
+          setShowExitModal(false);
+          // 실제 뒤로가기 실행
+          window.history.back();
+        }}
+      />
     </div>
   );
 }
