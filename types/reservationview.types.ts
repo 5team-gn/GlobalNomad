@@ -12,4 +12,5 @@ export type Reservation = {
   price: number;
   people: number;
   status: ReservationStatus;
+  reviewWritten?: boolean;
 };
