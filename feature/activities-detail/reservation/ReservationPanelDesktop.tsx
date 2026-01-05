@@ -5,48 +5,28 @@
  */
 "use client";
 
-import { useMemo } from "react";
-import { MOCK_AVAILABLE_SCHEDULE } from "@/Mocks/detail/availableSchedule.mock";
 import type { TimeSlot } from "@/types/reservation/types";
 import clsx from "clsx";
-
 import CalendarSection from "./sections/CalendarSection";
 import TimeSlotsSection from "./sections/TimeSlotsSection";
 import PeopleSection from "./sections/PeopleSection";
-
-type Props = {
-  price: number;
-  maxPeople: number;
-  selectedDate: Date | null;
-  onSelectDate: (d: Date) => void;
-  slots: TimeSlot[];
-  selectedSlot: TimeSlot | null;
-  onSelectSlot: (s: TimeSlot) => void;
-  people: number;
-  onInc: () => void;
-  onDec: () => void;
-  canReserve: boolean;
-  onReserve: () => void;
-};
+import type { ReservationPanelDesktopProps } from "@/types/reservation/ui";
 
 export default function ReservationPanelDesktop({
   price,
   selectedDate,
-  onSelectDate,
+  setDate,
   slots,
   selectedSlot,
-  onSelectSlot,
+  setTimeSlot,
   people,
-  onInc,
-  onDec,
+  incPeople,
+  decPeople,
   canReserve,
   onReserve,
-}: Props) {
-  const enabledDateSet = useMemo(
-    () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
-    []
-  );
-
+  enabledDateSet,
+  clearTimeSlot,
+}: ReservationPanelDesktopProps) {
   const totalPrice = price * people;
   const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
 
@@ -61,8 +41,9 @@ export default function ReservationPanelDesktop({
         label="날짜"
         labelClassName="text-16-b"
         value={selectedDate}
-        onChange={onSelectDate}
+        onChange={setDate}
         enabledDateSet={enabledDateSet}
+        onMonthNavigate={clearTimeSlot}
       />
 
       <div
@@ -75,8 +56,8 @@ export default function ReservationPanelDesktop({
           labelText="참여 인원 수"
           labelClassName="text-14-b text-gray-950"
           people={people}
-          onInc={onInc}
-          onDec={onDec}
+          onInc={incPeople}
+          onDec={decPeople}
           wrapperClassName="mt-3 flex items-center justify-between w-35 h-10 rounded-3xl bg-white px-4 py-3 border border-gray-200"
         />
       </div>
@@ -92,7 +73,7 @@ export default function ReservationPanelDesktop({
           buttonClassName="px-4 py-[16px] text-16-m cursor-pointer"
           slots={slots}
           selectedSlot={selectedSlot}
-          onSelectSlot={onSelectSlot}
+          onSelectSlot={setTimeSlot}
         />
 
         <div className="flex items-center justify-between pt-5  border-t border-gray-100 ">

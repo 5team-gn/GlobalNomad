@@ -6,35 +6,11 @@
 
 "use client";
 
-import { useMemo } from "react";
-import type { ReservationStep, TimeSlot } from "@/types/reservation/types";
-import { MOCK_AVAILABLE_SCHEDULE } from "@/Mocks/detail/availableSchedule.mock";
 import Image from "next/image";
-
+import type { ReservationSheetProps } from "@/types/reservation/ui";
 import CalendarSection from "./sections/CalendarSection";
 import TimeSlotsSection from "./sections/TimeSlotsSection";
 import PeopleSection from "./sections/PeopleSection";
-
-type Props = {
-  open: boolean;
-  onClose: () => void;
-  step: ReservationStep;
-  onBack: () => void;
-  onNext: () => void;
-  selectedDate: Date | null;
-  onSelectDate: (d: Date) => void;
-  slots: TimeSlot[];
-  selectedSlot: TimeSlot | null;
-  onSelectSlot: (s: TimeSlot) => void;
-  people: number;
-  onInc: () => void;
-  onDec: () => void;
-  tabletConfirmDisabled: boolean;
-  onTabletConfirm: () => void;
-  mobileConfirmDisabled: boolean;
-  onGoPeople: () => void;
-  onGoBackMobile: () => void;
-};
 
 export default function ReservationSheet({
   open,
@@ -55,12 +31,9 @@ export default function ReservationSheet({
   mobileConfirmDisabled,
   onGoPeople,
   onGoBackMobile,
-}: Props) {
-  const enabledDateSet = useMemo(
-    () => new Set(MOCK_AVAILABLE_SCHEDULE.map((x) => x.date)),
-    []
-  );
-
+  enabledDateSet,
+  clearTimeSlot,
+}: ReservationSheetProps) {
   const mobileTitle =
     step === "date" ? "날짜" : step === "time" ? "예약 가능한 시간" : "인원";
 
@@ -105,6 +78,7 @@ export default function ReservationSheet({
                 </button>
               )}
 
+              {/* 예약 단계 상단 타이틀 */}
               <p className="text-18-b md:text-20-b text-gray-950">
                 <span className="hidden md:inline">날짜</span>
                 <span className="md:hidden text-18-b ml-1">{mobileTitle}</span>
@@ -112,7 +86,7 @@ export default function ReservationSheet({
             </div>
           </div>
 
-          {/* 테블릿,pc */}
+          {/* 테블릿 */}
           <div className="hidden md:block mt-6">
             <div className="grid gap-6 md:grid-cols-[1fr_320px]">
               <section>
@@ -120,6 +94,7 @@ export default function ReservationSheet({
                   value={selectedDate}
                   onChange={onSelectDate}
                   enabledDateSet={enabledDateSet}
+                  onMonthNavigate={clearTimeSlot}
                 />
               </section>
 
@@ -173,7 +148,7 @@ export default function ReservationSheet({
             </button>
           </div>
 
-          {/* 모바일 사이즈 */}
+          {/* 모바일 */}
           <div className="md:hidden mt-2">
             <div className="max-h-[70vh] overflow-auto pb-[30px]">
               {step === "date" && (
@@ -182,6 +157,7 @@ export default function ReservationSheet({
                     value={selectedDate}
                     onChange={onSelectDate}
                     enabledDateSet={enabledDateSet}
+                    onMonthNavigate={clearTimeSlot}
                   />
 
                   <div className="mt-8">
@@ -194,7 +170,7 @@ export default function ReservationSheet({
                       emptyText="날짜를 선택해주세요."
                       labelClassName="text-14-b text-gray-950"
                       emptyClassName="mt-2 text-14-m text-gray-500"
-                      listClassName="px-[1px] mt-[14px] space-y-3"
+                      listClassName="px-[1px] mt-[14px] space-y-3 px-[2px]"
                       buttonClassName="px-14 py-[19px] text-14-m c"
                     />
                   </div>

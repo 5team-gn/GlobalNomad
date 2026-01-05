@@ -70,7 +70,7 @@ export default function ActivityHeaderInfo({
           </div>
         )}
         <button
-          className="cursor-pointer p-2"
+          className="cursor-pointer p-2 mr-[-18px]"
           onClick={() => setOpenMenu((prev) => !prev)}
         >
           <Image src="/icons/icon_more.svg" width={28} height={28} alt="" />

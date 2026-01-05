@@ -11,14 +11,17 @@ import type {
   ReservationSelection,
   ReservationStep,
   TimeSlot,
+  AvailableScheduleItem,
 } from "@/types/reservation/types";
 
-const MOCK_SLOTS: TimeSlot[] = [
-  { id: "t1", label: "14:00~15:00" },
-  { id: "t2", label: "15:00~16:00" },
-];
+function toYmd(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 
-export function useReservationFlow() {
+export function useReservationFlow(schedule: AvailableScheduleItem[]) {
   // 모달/시트 오픈 여부
   const [open, setOpen] = useState(false);
 
@@ -32,23 +35,35 @@ export function useReservationFlow() {
     people: 1,
   });
 
-  // 선택된 날짜에 따른 사용 가능한 시간대 목록(목업 데이터 사용)
-  const availableSlots = useMemo(() => {
-    return selection.date ? MOCK_SLOTS : [];
-  }, [selection.date]);
+  // 달력에서 활성화할 날짜 집합
+  const enabledDateSet = useMemo(() => {
+    return new Set(schedule.map((x) => x.date));
+  }, [schedule]);
+
+  // 현재 선택된 날짜에 대한 사용 가능한 시간대 목록
+  const availableSlots: TimeSlot[] = (() => {
+    // 선택된 날짜가 없으면 빈 배열 반환
+    if (!selection.date) return [];
+    const ymd = toYmd(selection.date);
+    // 일정 데이터에서 해당 날짜의 시간대 찾기
+    const found = schedule.find((s) => s.date === ymd);
+    if (!found) return [];
+    return found.times.map((t) => ({
+      id: String(t.id),
+      label: `${t.startTime}~${t.endTime}`,
+    }));
+  })();
 
   // 현재 단계에서 다음으로 진행할 수 있는지 여부
-  const canConfirm = useMemo(() => {
-    if (step === "date") return !!selection.date;
-    if (step === "time") return !!selection.timeSlot;
-    if (step === "people") return selection.people >= 1;
-    return true;
-  }, [step, selection]);
+  const canConfirm =
+    (step === "date" && !!selection.date) ||
+    (step === "time" && !!selection.timeSlot) ||
+    (step === "people" && selection.people >= 1) ||
+    (step !== "date" && step !== "time" && step !== "people");
 
   // 예약 가능 여부(최종 확인용)
-  const canReserve = useMemo(() => {
-    return !!selection.date && !!selection.timeSlot && selection.people >= 1;
-  }, [selection]);
+  const canReserve =
+    !!selection.date && !!selection.timeSlot && selection.people >= 1;
 
   // 특정 단계로 오픈(단계 초기화 없이)
   const openFor = (next: ReservationStep) => {
@@ -96,9 +111,7 @@ export function useReservationFlow() {
   };
 
   // 다음 단계로 이동
-  // - date -> time
-  // - time -> people
-  // - people -> done(모달/시트 닫기)
+  // - date -> time -> people -> done(모달/시트 닫기)
   const goNext = () => {
     setSelection((sel) => {
       setStep((prevStep) => {
@@ -115,9 +128,7 @@ export function useReservationFlow() {
   };
 
   // 이전 단계로 이동
-  // - people -> time
-  // - time -> date
-  // - date -> 닫기
+  // - people -> time -> date -> 닫기
   const goBack = () => {
     if (step === "people") setStep("time");
     else if (step === "time") setStep("date");
@@ -161,6 +172,15 @@ export function useReservationFlow() {
     setStep("date");
   };
 
+  // 시간대 선택 초기화 함수
+  const clearTimeSlot = () => {
+    setSelection({
+      date: null, //날짜 초기화(ui랜더링 조건)
+      timeSlot: null, //시간대 초기화
+      people: 1,
+    });
+  };
+
   return {
     open,
     step,
@@ -179,5 +199,7 @@ export function useReservationFlow() {
     goBack,
     goPeople,
     goBackMobile,
+    enabledDateSet,
+    clearTimeSlot,
   };
 }

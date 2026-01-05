@@ -8,18 +8,20 @@
 
 import { mockActivityDetail } from "@/Mocks/detail/activityDetail.mock";
 import ReservationUI from "./reservation/ReservationUI";
+import { MOCK_AVAILABLE_SCHEDULE } from "@/Mocks/detail/availableSchedule.mock";
 import { useReservationFlow } from "./reservation/useReservationFlow";
+import { ReservationUIProps } from "@/types/reservation/ui";
 
 export default function ActivityCalendarClient() {
   const mock = mockActivityDetail;
-  const flow = useReservationFlow();
+  const flow = useReservationFlow(MOCK_AVAILABLE_SCHEDULE);
   const maxPeople = 10;
 
   const reserve = () => {
-    alert("예약 API 호출 자리");
+    alert("api호출");
   };
 
-  const props = {
+  const props: ReservationUIProps = {
     price: mock.price,
     maxPeople,
     open: flow.open,
@@ -39,7 +41,9 @@ export default function ActivityCalendarClient() {
     canReserve: flow.canReserve,
     canConfirm: flow.canConfirm,
     onReserve: reserve,
-  } as const;
+    enabledDateSet: flow.enabledDateSet,
+    clearTimeSlot: flow.clearTimeSlot,
+  };
 
   return <ReservationUI {...props} />;
 }

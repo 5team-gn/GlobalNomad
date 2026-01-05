@@ -5,7 +5,7 @@
  */
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ReviewSummary } from "./ReviewSummary";
 import { ReviewList } from "./ReviewList";
 import ReviewsPagination from "./ReviewsPagination";
@@ -35,15 +35,10 @@ export default function ActivityReviewsClient({
 
   const pageSize = initialData.pageSize ?? 5;
 
-  const totalPages = useMemo(() => {
-    return (
-      initialData.totalPages ??
-      Math.max(1, Math.ceil(initialData.totalCount / pageSize))
-    );
-  }, [initialData.totalCount, initialData.totalPages, pageSize]);
+  const totalPages =
+    initialData.totalPages ??
+    Math.max(1, Math.ceil(initialData.totalCount / pageSize));
 
-  // 지금은 목업: initialData.reviews 그대로
-  // 나중에 API 연결: page 바뀔 때 fetch해서 reviews 교체
   const reviews = initialData.reviews;
 
   return (

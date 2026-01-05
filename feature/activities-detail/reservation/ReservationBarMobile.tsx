@@ -7,25 +7,17 @@
 "use client";
 
 import { formatDateKR } from "@/types/reservation/types";
-import type { ReservationSelection } from "@/types/reservation/types";
-
-type Props = {
-  price: number;
-  selection: ReservationSelection;
-  canReserve: boolean;
-  people: number;
-  onOpen: () => void; // 날짜 선택하기
-  onReserve: () => void; // 예약하기
-};
+import { ReservationBarMobileProps } from "@/types/reservation/ui";
 
 export default function ReservationBarMobile({
   price,
   selection,
   canReserve,
-  people,
-  onOpen,
+  openPicker,
   onReserve,
-}: Props) {
+}: ReservationBarMobileProps) {
+  const people = selection.people;
+
   const rightText =
     selection.date && selection.timeSlot
       ? `${formatDateKR(selection.date)} ${selection.timeSlot.label}`
@@ -48,7 +40,7 @@ export default function ReservationBarMobile({
           </div>
 
           <button
-            onClick={onOpen}
+            onClick={openPicker}
             className="text-16-b text-primary-500 tracking-[-0.5px] decoration-2 underline underline-offset-4 cursor-pointer"
           >
             {rightText}

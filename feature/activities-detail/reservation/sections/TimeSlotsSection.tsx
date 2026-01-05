@@ -6,20 +6,7 @@
 
 "use client";
 
-import type { TimeSlot } from "@/types/reservation/types";
-
-type Props = {
-  selectedDate: Date | null;
-  slots: TimeSlot[];
-  selectedSlot: TimeSlot | null;
-  onSelectSlot: (s: TimeSlot) => void;
-  labelText: string;
-  emptyText: string;
-  labelClassName: string;
-  emptyClassName: string;
-  listClassName: string;
-  buttonClassName: string;
-};
+import { TimeSlotsSectionProps } from "@/types/reservation/ui";
 
 export default function TimeSlotsSection({
   selectedDate,
@@ -32,7 +19,7 @@ export default function TimeSlotsSection({
   emptyClassName,
   listClassName,
   buttonClassName,
-}: Props) {
+}: TimeSlotsSectionProps) {
   return (
     <div>
       <p className={labelClassName}>{labelText}</p>

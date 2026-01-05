@@ -15,17 +15,19 @@ import {
 import Image from "next/image";
 import { toISODate } from "@/utils/date";
 
-type Props = {
+export type SimpleCalendarProps = {
   value: Date | null;
   onChange: (d: Date) => void;
   enabledDateSet: Set<string>;
+  onMonthNavigate?: () => void;
 };
 
 export default function SimpleCalendar({
   value,
   onChange,
   enabledDateSet,
-}: Props) {
+  onMonthNavigate,
+}: SimpleCalendarProps) {
   // "오늘" 기준을 컴포넌트 마운트 시점으로 고정 (렌더마다 new Date() 재생성 방지)
   const [today] = useState(() => new Date());
 
@@ -51,7 +53,10 @@ export default function SimpleCalendar({
         mode="single"
         showOutsideDays
         month={month}
-        onMonthChange={setMonth}
+        onMonthChange={(nextMonth) => {
+          setMonth(nextMonth);
+          onMonthNavigate?.();
+        }}
         selected={value ?? undefined}
         onSelect={(d) => {
           if (!d) return;

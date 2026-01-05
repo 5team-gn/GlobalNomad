@@ -5,14 +5,11 @@
  */
 "use client";
 
-import SimpleCalendar from "../SimpleCalendar";
+import SimpleCalendar, { SimpleCalendarProps } from "../SimpleCalendar";
 
-type Props = {
+type Props = SimpleCalendarProps & {
   label?: string;
   labelClassName?: string;
-  value: Date | null;
-  onChange: (d: Date) => void;
-  enabledDateSet: Set<string>;
 };
 
 export default function CalendarSection({
@@ -21,6 +18,7 @@ export default function CalendarSection({
   value,
   onChange,
   enabledDateSet,
+  onMonthNavigate,
 }: Props) {
   return (
     <>
@@ -29,6 +27,7 @@ export default function CalendarSection({
         value={value}
         onChange={onChange}
         enabledDateSet={enabledDateSet}
+        onMonthNavigate={onMonthNavigate}
       />
     </>
   );
