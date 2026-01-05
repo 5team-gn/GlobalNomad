@@ -76,7 +76,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
               </>
             )}
 
-            {status === "completed" && (
+            {status === "completed" && !reservation.reviewWritten && (
               <ButtonLabel
                 onClick={() => onReview(reservation)}
                 label="후기 작성"
