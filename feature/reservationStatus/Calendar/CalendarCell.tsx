@@ -10,7 +10,7 @@ interface Props {
   date: CalendarDate;
   badges: ReservationBadge[];
   isSelected: boolean;
-  onClick: (
+  onSelectDate: (
     key: string,
     position: { top: number; left: number; width: number; height: number }
   ) => void;
@@ -21,7 +21,7 @@ export default function CalendarCell({
   date,
   badges,
   isSelected,
-  onClick,
+  onSelectDate,
   containerRef,
 }: Props) {
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -34,13 +34,26 @@ export default function CalendarCell({
     const dateKey = toDateKey(date.date);
     const MODAL_VERTICAL_OFFSET = 70;
 
-    onClick(dateKey, {
-      top: rect.top - containerRect.top + rect.height / 2 + MODAL_VERTICAL_OFFSET,
-      left: rect.left - containerRect.left + rect.width + 12,
+    const position = {
+      top:
+        rect.top -
+        containerRect.top +
+        rect.height / 2 +
+        MODAL_VERTICAL_OFFSET,
+      left:
+        rect.left -
+        containerRect.left +
+        rect.width +
+        12,
       width: rect.width,
       height: rect.height,
-    });
+    };
+
+    
+
+    onSelectDate(dateKey, position);
   };
+
   return (
     <div
       onClick={handleClick}
@@ -52,7 +65,7 @@ export default function CalendarCell({
       )}
     >
       {/* 날짜 숫자 */}
-      <div className="flex justify-center items-center mb-1.5 ">
+      <div className="flex justify-center items-center mb-1.5">
         <span
           className={cn(
             "text-sm",
@@ -68,7 +81,7 @@ export default function CalendarCell({
         {badges.length > 0 && (
           <span
             className={cn(
-              "h-1.5 w-1.5 rounded-full",
+              "ml-1 h-1.5 w-1.5 rounded-full",
               isSelected ? "bg-primary-500" : "bg-red-500"
             )}
           />
@@ -76,7 +89,7 @@ export default function CalendarCell({
       </div>
 
       {/* 상태 배지 */}
-      <div className=" flex flex-col gap-1">
+      <div className="flex flex-col gap-1">
         {badges.map((badge) => (
           <StatusBadge
             key={badge.status}
