@@ -32,7 +32,7 @@ export type ReservationFlowProps = {
   goBack: () => void;
   goPeople: () => void;
   goBackMobile: () => void;
-  clearTimeSlot: () => void;
+  resetSelection: () => void;
   canReserve: boolean;
   canConfirm: boolean;
   onReserve: () => void;
@@ -44,7 +44,7 @@ export type ReservationUIProps = ReservationCoreProps & ReservationFlowProps;
 // 공통으로 사용하는 속성만 Pick으로 뽑아냄
 type SheetSharedFromFlow = Pick<
   ReservationFlowProps,
-  "open" | "step" | "slots" | "enabledDateSet" | "clearTimeSlot"
+  "open" | "step" | "slots" | "enabledDateSet" | "resetSelection"
 >;
 
 // 예약 시트 컴포넌트 prop 타입
@@ -91,7 +91,7 @@ type DesktopSharedFromFlow = Pick<
   | "canReserve"
   | "onReserve"
   | "enabledDateSet"
-  | "clearTimeSlot"
+  | "resetSelection"
 >;
 
 // 데스크탑 예약 prop 타입

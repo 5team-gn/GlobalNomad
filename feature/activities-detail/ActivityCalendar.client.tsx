@@ -13,16 +13,21 @@ import { useReservationFlow } from "./reservation/useReservationFlow";
 import { ReservationUIProps } from "@/types/reservation/ui";
 
 export default function ActivityCalendarClient() {
-  const mock = mockActivityDetail;
+  const activity = mockActivityDetail;
   const flow = useReservationFlow(MOCK_AVAILABLE_SCHEDULE);
-  const maxPeople = 10;
+
+  // 최대 참여 인원 수
+  const maxPeople = Math.max(
+    1,
+    Number(process.env.NEXT_PUBLIC_RESERVATION_MAX_PEOPLE ?? 20) || 20
+  );
 
   const reserve = () => {
     alert("api호출");
   };
 
   const props: ReservationUIProps = {
-    price: mock.price,
+    price: activity.price,
     maxPeople,
     open: flow.open,
     step: flow.step === "idle" || flow.step === "done" ? "date" : flow.step,
@@ -42,7 +47,7 @@ export default function ActivityCalendarClient() {
     canConfirm: flow.canConfirm,
     onReserve: reserve,
     enabledDateSet: flow.enabledDateSet,
-    clearTimeSlot: flow.clearTimeSlot,
+    resetSelection: flow.resetSelection,
   };
 
   return <ReservationUI {...props} />;

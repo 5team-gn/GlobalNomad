@@ -6,7 +6,7 @@
 
 "use client";
 
-import { formatDateKR } from "@/types/reservation/types";
+import { formatDateKR } from "@/lib/utils/time";
 import { ReservationBarMobileProps } from "@/types/reservation/ui";
 
 export default function ReservationBarMobile({

@@ -20,7 +20,9 @@ export async function apiFetch<T>(path: string, init?: RequestInit) {
   let data: unknown = null;
   try {
     data = await res.json();
-  } catch {}
+  } catch (e) {
+    console.error("API 응답을 JSON으로 파싱하는 데 실패했습니다.", e);
+  }
 
   if (!res.ok) {
     const msg =

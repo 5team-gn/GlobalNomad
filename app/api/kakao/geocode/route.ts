@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
   const res = await fetch(url, {
     headers: { Authorization: `KakaoAK ${restKey}` },
-    cache: "no-store",
+    next: { revalidate: 60 }, // 60초 동안 캐시
   });
 
   if (!res.ok) {

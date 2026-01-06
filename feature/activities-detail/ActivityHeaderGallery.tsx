@@ -7,10 +7,10 @@
 import { Activity } from "@/types/activities/activity.types";
 import Image from "next/image";
 
-type Props = { mock: Activity };
+type Props = { activity: Activity };
 
-export default function ActivityHeaderGallery({ mock }: Props) {
-  const count = mock.subImages?.length ?? 0;
+export default function ActivityHeaderGallery({ activity }: Props) {
+  const count = activity.subImages?.length ?? 0;
 
   //모바일 일떄 1~2개 일때.
   const mobileSubH =
@@ -22,10 +22,9 @@ export default function ActivityHeaderGallery({ mock }: Props) {
         {/* 메인 배너이미지 */}
         <div className="relative w-full md:flex-1 min-w-0 h-[260px] md:h-[400px]">
           <Image
-            src={mock.bannerImageUrl}
-            alt={mock.title}
+            src={activity.bannerImageUrl}
+            alt={activity.title}
             fill
-            priority
             className="object-cover"
             sizes="(max-width: 767px) 100vw, (max-width: 1199px) 60vw, 790px"
           />
@@ -46,9 +45,9 @@ export default function ActivityHeaderGallery({ mock }: Props) {
               : "md:grid-cols-2 md:grid-rows-2",
           ].join(" ")}
         >
-          {mock.subImages?.slice(0, 4).map((img, i: number) => (
+          {activity.subImages?.slice(0, 4).map((img, i: number) => (
             <div
-              key={img.imageUrl ?? i}
+              key={img.id}
               className={[
                 "relative",
                 // 테블릿 이상 1개면 세로 꽉채우기
@@ -59,7 +58,7 @@ export default function ActivityHeaderGallery({ mock }: Props) {
             >
               <Image
                 src={img.imageUrl}
-                alt={`${mock.title}-${i + 1}`}
+                alt={`${activity.title}-${i + 1}`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 767px) 50vw, 165px"

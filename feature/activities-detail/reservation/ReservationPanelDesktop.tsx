@@ -25,7 +25,7 @@ export default function ReservationPanelDesktop({
   canReserve,
   onReserve,
   enabledDateSet,
-  clearTimeSlot,
+  resetSelection,
 }: ReservationPanelDesktopProps) {
   const totalPrice = price * people;
   const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
@@ -43,7 +43,7 @@ export default function ReservationPanelDesktop({
         value={selectedDate}
         onChange={setDate}
         enabledDateSet={enabledDateSet}
-        onMonthNavigate={clearTimeSlot}
+        onMonthNavigate={resetSelection}
       />
 
       <div

@@ -1,10 +1,15 @@
+export type ActivitySubImage = {
+  id: number;
+  imageUrl: string;
+};
 export type Activity = {
-  subImages?: readonly { imageUrl: string }[];
+  id: number;
+  subImages?: readonly ActivitySubImage[];
   bannerImageUrl: string;
   title: string;
 };
 
-export type ActivityHeaderInfoMock = {
+export type ActivityHeaderInfoType = {
   id: number;
   category: string;
   title: string;

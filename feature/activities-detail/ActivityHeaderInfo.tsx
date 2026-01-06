@@ -6,14 +6,14 @@
 
 "use client";
 
-import { ActivityHeaderInfoMock } from "@/types/activities/activity.types";
+import { ActivityHeaderInfoType } from "@/types/activities/activity.types";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 export default function ActivityHeaderInfo({
-  mock,
+  activity,
 }: {
-  mock: ActivityHeaderInfoMock;
+  activity: ActivityHeaderInfoType;
 }) {
   const [openMenu, setOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -33,7 +33,7 @@ export default function ActivityHeaderInfo({
     };
   }, [openMenu]);
 
-  const onEdit = (item: typeof mock) => {
+  const onEdit = (item: typeof activity) => {
     // 수정하기 로직 구현
     console.log("수정하기:", item);
     setOpenMenu(false);
@@ -47,7 +47,7 @@ export default function ActivityHeaderInfo({
   return (
     <div className="detail_header relative">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-14-m text-gray-950">{mock.category}</p>
+        <p className="text-14-m text-gray-950">{activity.category}</p>
 
         {/* 케밥메뉴 */}
         {openMenu && (
@@ -56,13 +56,13 @@ export default function ActivityHeaderInfo({
             className="absolute right-[20px] top-0 w-[95px] rounded-lg border border-gray-100 bg-white shadow-md overflow-hidden"
           >
             <button
-              onClick={() => onEdit(mock)}
+              onClick={() => onEdit(activity)}
               className="w-full px-4 py-[18px] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
             >
               수정하기
             </button>
             <button
-              onClick={() => onDelete(mock.id)}
+              onClick={() => onDelete(activity.id)}
               className="w-full px-4 py-[18px] text-left text-14-m text-gray-950 hover:bg-gray-25 cursor-pointer"
             >
               삭제하기
@@ -77,7 +77,7 @@ export default function ActivityHeaderInfo({
         </button>
       </div>
 
-      <h1 className="text-24-b font-bold text-gray-950">{mock.title}</h1>
+      <h1 className="text-24-b font-bold text-gray-950">{activity.title}</h1>
 
       <div className="my-[17px]">
         <div className="flex mb-[10px]">
@@ -89,7 +89,7 @@ export default function ActivityHeaderInfo({
             alt=""
           />
           <div className="text-14-m text-gray-700">
-            {mock.rating} ({mock.reviewCount})
+            {activity.rating} ({activity.reviewCount})
           </div>
         </div>
 
@@ -97,11 +97,11 @@ export default function ActivityHeaderInfo({
           <Image
             className="mr-[2px]"
             src="/icons/icon_map.svg"
-            width={28}
-            height={28}
+            width={16}
+            height={16}
             alt=""
           />
-          <p className="text-14- text-gray-700">{mock.address}</p>
+          <p className="text-14-m text-gray-700">{activity.address}</p>
         </div>
       </div>
     </div>

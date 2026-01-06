@@ -40,7 +40,7 @@ export default function ReservationUI(props: ReservationUIProps) {
           canReserve={props.canReserve}
           onReserve={props.onReserve}
           enabledDateSet={props.enabledDateSet}
-          clearTimeSlot={props.clearTimeSlot}
+          resetSelection={props.resetSelection}
         />
       </div>
 
@@ -75,7 +75,7 @@ export default function ReservationUI(props: ReservationUIProps) {
           onGoPeople={props.goPeople}
           onGoBackMobile={props.goBackMobile}
           enabledDateSet={props.enabledDateSet}
-          clearTimeSlot={props.clearTimeSlot}
+          resetSelection={props.resetSelection}
         />
       </div>
     </div>

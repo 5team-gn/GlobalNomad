@@ -32,7 +32,7 @@ export default function ReservationSheet({
   onGoPeople,
   onGoBackMobile,
   enabledDateSet,
-  clearTimeSlot,
+  resetSelection,
 }: ReservationSheetProps) {
   const mobileTitle =
     step === "date" ? "날짜" : step === "time" ? "예약 가능한 시간" : "인원";
@@ -43,7 +43,6 @@ export default function ReservationSheet({
         "fixed inset-0 z-[60] lg:hidden",
         open ? "pointer-events-auto" : "pointer-events-none",
       ].join(" ")}
-      aria-hidden={!open}
     >
       <div
         className={[
@@ -94,7 +93,7 @@ export default function ReservationSheet({
                   value={selectedDate}
                   onChange={onSelectDate}
                   enabledDateSet={enabledDateSet}
-                  onMonthNavigate={clearTimeSlot}
+                  onMonthNavigate={resetSelection}
                 />
               </section>
 
@@ -157,7 +156,7 @@ export default function ReservationSheet({
                     value={selectedDate}
                     onChange={onSelectDate}
                     enabledDateSet={enabledDateSet}
-                    onMonthNavigate={clearTimeSlot}
+                    onMonthNavigate={resetSelection}
                   />
 
                   <div className="mt-8">
@@ -171,7 +170,7 @@ export default function ReservationSheet({
                       labelClassName="text-14-b text-gray-950"
                       emptyClassName="mt-2 text-14-m text-gray-500"
                       listClassName="px-[1px] mt-[14px] space-y-3 px-[2px]"
-                      buttonClassName="px-14 py-[19px] text-14-m c"
+                      buttonClassName="px-14 py-[19px] text-14-m cursor-pointer"
                     />
                   </div>
                 </>

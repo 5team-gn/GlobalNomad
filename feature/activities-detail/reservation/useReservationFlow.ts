@@ -13,14 +13,9 @@ import type {
   TimeSlot,
   AvailableScheduleItem,
 } from "@/types/reservation/types";
+import { toISODate } from "@/utils/date";
 
-function toYmd(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
+//
 export function useReservationFlow(schedule: AvailableScheduleItem[]) {
   // 모달/시트 오픈 여부
   const [open, setOpen] = useState(false);
@@ -41,10 +36,10 @@ export function useReservationFlow(schedule: AvailableScheduleItem[]) {
   }, [schedule]);
 
   // 현재 선택된 날짜에 대한 사용 가능한 시간대 목록
-  const availableSlots: TimeSlot[] = (() => {
+  const availableSlots: TimeSlot[] = useMemo(() => {
     // 선택된 날짜가 없으면 빈 배열 반환
     if (!selection.date) return [];
-    const ymd = toYmd(selection.date);
+    const ymd = toISODate(selection.date);
     // 일정 데이터에서 해당 날짜의 시간대 찾기
     const found = schedule.find((s) => s.date === ymd);
     if (!found) return [];
@@ -52,7 +47,7 @@ export function useReservationFlow(schedule: AvailableScheduleItem[]) {
       id: String(t.id),
       label: `${t.startTime}~${t.endTime}`,
     }));
-  })();
+  }, [schedule, selection.date]);
 
   // 현재 단계에서 다음으로 진행할 수 있는지 여부
   const canConfirm =
@@ -173,7 +168,7 @@ export function useReservationFlow(schedule: AvailableScheduleItem[]) {
   };
 
   // 시간대 선택 초기화 함수
-  const clearTimeSlot = () => {
+  const resetSelection = () => {
     setSelection({
       date: null, //날짜 초기화(ui랜더링 조건)
       timeSlot: null, //시간대 초기화
@@ -200,6 +195,6 @@ export function useReservationFlow(schedule: AvailableScheduleItem[]) {
     goPeople,
     goBackMobile,
     enabledDateSet,
-    clearTimeSlot,
+    resetSelection,
   };
 }

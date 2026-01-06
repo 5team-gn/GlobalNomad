@@ -7,8 +7,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { mockActivityDetail } from "@/Mocks/detail/activityDetail.mock";
-
 declare global {
   interface Window {
     kakao: any;
@@ -34,8 +32,6 @@ export default function KakaoMapByAddress({
   const kakaoMapObjRef = useRef<any>(null);
   const kakaoMarkerRef = useRef<any>(null);
   const kakaoOverlayRef = useRef<any>(null);
-
-  const mock = mockActivityDetail;
 
   const cleanupKakao = () => {
     if (kakaoOverlayRef.current) {
@@ -82,7 +78,6 @@ export default function KakaoMapByAddress({
   useEffect(() => {
     if (!coord) return;
 
-    // StrictMode/HMR 대비: 새로 만들기 전 기존 것 정리
     cleanupKakao();
 
     let timer: number | null = null;
@@ -111,71 +106,74 @@ export default function KakaoMapByAddress({
           const displayText =
             markerText.length > 17 ? `${markerText.slice(0, 17)}…` : markerText;
 
-          const content = document.createElement("div");
-          content.innerHTML = `
-            <div style="
-              position: relative;
-              display: inline-flex;
-              align-items: center;
-              gap: 8px;
-              padding: 7px 12px 7px 9px;
-              border: 2px solid #1e6fff;
-              border-radius: 9999px;
-              background: #fff;
-              box-shadow: 0 2px 10px rgba(0,0,0,0.10);
-              white-space: nowrap;
-            ">
-              <span style="
-                width: 30px;
-                height: 30px;
-                border-radius: 9999px;
-                background: #1e6fff;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                flex: 0 0 auto;
-              ">
-                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="#fff"/>
-                  <circle cx="12" cy="10" r="2.4" fill="#1e6fff"/>
-                </svg>
-              </span>
+          const wrap = document.createElement("div");
+          wrap.style.position = "relative";
+          wrap.style.display = "inline-flex";
+          wrap.style.alignItems = "center";
+          wrap.style.gap = "8px";
+          wrap.style.padding = "7px 12px 7px 9px";
+          wrap.style.border = "2px solid #1e6fff";
+          wrap.style.borderRadius = "9999px";
+          wrap.style.background = "#fff";
+          wrap.style.boxShadow = "0 2px 10px rgba(0,0,0,0.10)";
+          wrap.style.whiteSpace = "nowrap";
 
-              <span style="
-                font-size: 14px;
-                font-weight: 700;
-                color: #111;
-                max-width: 250px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                letter-spacing: -0.2px;
-              ">${displayText}</span>
+          const iconWrap = document.createElement("span");
+          iconWrap.style.width = "30px";
+          iconWrap.style.height = "30px";
+          iconWrap.style.borderRadius = "9999px";
+          iconWrap.style.background = "#1e6fff";
+          iconWrap.style.display = "inline-flex";
+          iconWrap.style.alignItems = "center";
+          iconWrap.style.justifyContent = "center";
+          iconWrap.style.flex = "0 0 auto";
 
-              <span style="
-                position:absolute;
-                left: 22px;
-                bottom: -10px;
-                width:0;height:0;
-                border-left: 9px solid transparent;
-                border-right: 9px solid transparent;
-                border-top: 10px solid #1e6fff;
-              "></span>
-              <span style="
-                position:absolute;
-                left: 23px;
-                bottom: -7px;
-                width:0;height:0;
-                border-left: 8px solid transparent;
-                border-right: 8px solid transparent;
-                border-top: 9px solid #fff;
-              "></span>
-            </div>
+          iconWrap.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="#fff"/>
+              <circle cx="12" cy="10" r="2.4" fill="#1e6fff"/>
+            </svg>
           `;
+
+          const textSpan = document.createElement("span");
+          textSpan.style.fontSize = "14px";
+          textSpan.style.fontWeight = "700";
+          textSpan.style.color = "#111";
+          textSpan.style.maxWidth = "250px";
+          textSpan.style.overflow = "hidden";
+          textSpan.style.textOverflow = "ellipsis";
+          textSpan.style.whiteSpace = "nowrap";
+          textSpan.style.letterSpacing = "-0.2px";
+          textSpan.textContent = displayText; // XSS 방지
+
+          const tipBorder = document.createElement("span");
+          tipBorder.style.position = "absolute";
+          tipBorder.style.left = "22px";
+          tipBorder.style.bottom = "-10px";
+          tipBorder.style.width = "0";
+          tipBorder.style.height = "0";
+          tipBorder.style.borderLeft = "9px solid transparent";
+          tipBorder.style.borderRight = "9px solid transparent";
+          tipBorder.style.borderTop = "10px solid #1e6fff";
+
+          const tipFill = document.createElement("span");
+          tipFill.style.position = "absolute";
+          tipFill.style.left = "23px";
+          tipFill.style.bottom = "-7px";
+          tipFill.style.width = "0";
+          tipFill.style.height = "0";
+          tipFill.style.borderLeft = "8px solid transparent";
+          tipFill.style.borderRight = "8px solid transparent";
+          tipFill.style.borderTop = "9px solid #fff";
+
+          wrap.appendChild(iconWrap);
+          wrap.appendChild(textSpan);
+          wrap.appendChild(tipBorder);
+          wrap.appendChild(tipFill);
 
           const overlay = new window.kakao.maps.CustomOverlay({
             position: center,
-            content,
+            content: wrap,
             xAnchor: 0.5,
             yAnchor: 1.03,
             zIndex: 10,
@@ -220,7 +218,7 @@ export default function KakaoMapByAddress({
   return (
     <div className="order-4 lg:col-start-1 lg:pb-0 mt-10">
       <p className="text-18-b">오시는 길</p>
-      <p className="text-14-sb opacity-75 my-2">{mock.address}</p>
+      <p className="text-14-sb opacity-75 my-2">{address}</p>
       <div
         ref={mapRef}
         className="w-full h-[320px] lg:h-[420px] rounded-2xl overflow-hidden"
