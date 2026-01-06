@@ -6,10 +6,8 @@ import type {
   ReservationStatus,
 } from "@/types/reservationview.types";
 
-import { RESERVATION_MOCK_LIST } from "@/Mocks/ReservationView.mock";
-
-// TODO: API 연동 브랜치에서 활성화
-// import { fetchMyReservations } from "@/lib/api/reservationApi";
+import { fetchMyReservations } from "@/lib/api/reservationApi";
+import axios from "axios";
 
 export function useReservationList() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -17,20 +15,22 @@ export function useReservationList() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<ReservationStatus>("pending");
 
-  const filteredList = reservations.filter((r) => r.status === filter);
-
   useEffect(() => {
     const loadReservations = async () => {
       try {
         setLoading(true);
+        setError(null);
 
-        // TODO: API 연동 브랜치에서 교체
-        // const data = await fetchMyReservations();
-        // setReservations(data);
-
-        setReservations(RESERVATION_MOCK_LIST);
-      } catch (err) {
+        const data = await fetchMyReservations({ status: filter });
+        setReservations(data);
+      } catch (err: unknown) {
         console.error(err);
+
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+          setError("로그인이 필요합니다.");
+          return;
+        }
+
         setError("예약 목록을 불러오는데 실패했습니다.");
       } finally {
         setLoading(false);
@@ -38,14 +38,13 @@ export function useReservationList() {
     };
 
     loadReservations();
-  }, []);
+  }, [filter]);
 
   return {
     reservations,
-    setReservations, // 액션 훅에서 사용
+    setReservations,
     filter,
     setFilter,
-    filteredList,
     loading,
     error,
   };
