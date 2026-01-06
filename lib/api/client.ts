@@ -7,18 +7,16 @@ const client = axios.create({
 
 /**
  * 인증 토큰 처리
- * - 현재: testToken 사용
- * - TODO: 로그인 API 연동 후 accessToken으로 교체
+ * - accessToken이 있을 때만 Authorization 헤더 설정
+ * - 토큰이 없으면 인증 헤더 없이 요청 (서버에서 401 처리)
  */
 client.interceptors.request.use((config) => {
-  const testToken = "TEST_TOKEN";
-  const token =
-    typeof window !== "undefined"
-      ? localStorage.getItem("accessToken") || testToken
-      : testToken;
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("accessToken");
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   return config;
