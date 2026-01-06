@@ -19,15 +19,10 @@ import { CancelContent } from "./reservationview/CancelContent";
 import { ReviewContent } from "./reservationview/ReviewContent";
 
 export default function ReservationView() {
-  const {
-    reservations,
-    setReservations,
-    filter,
-    setFilter,
-    filteredList,
-    loading,
-    error,
-  } = useReservationList();
+  const { reservations, setReservations, filter, setFilter, loading, error } =
+    useReservationList();
+
+  const safeFilter = filter ?? "all";
 
   const {
     modalType,
@@ -70,16 +65,14 @@ export default function ReservationView() {
         </div>
 
         {reservations.length > 0 && (
-          <ReservationFilter value={filter} onChange={setFilter} />
+          <ReservationFilter value={safeFilter} onChange={setFilter} />
         )}
 
         {reservations.length === 0 ? (
-          <ReservationEmpty type="all" />
-        ) : filteredList.length === 0 ? (
-          <ReservationEmpty type="filtered" filter={filter} />
+          <ReservationEmpty type="filtered" filter={safeFilter} />
         ) : (
           <ReservationList
-            reservations={filteredList}
+            reservations={reservations}
             onCancel={openCancelModal}
             onReview={openReviewModal}
           />
