@@ -1,8 +1,9 @@
 import { useId, ReactNode } from "react";
 import clsx from "clsx";
+import type { ComponentPropsWithRef } from "react";
 import { Input } from "./Input";
 
-interface InputFieldProps extends React.ComponentProps<typeof Input> {
+interface InputFieldProps extends ComponentPropsWithRef<typeof Input> {
   label?: string;
   error?: string;
   helperText?: string;
