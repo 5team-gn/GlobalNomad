@@ -1,14 +1,12 @@
-import { ComponentProps } from "react";
+import { ComponentPropsWithRef } from "react";
 import clsx from "clsx";
 
-type InputProps = ComponentProps<"input"> & {
-  inputRef?: React.Ref<HTMLInputElement>;
-};
+type InputProps = ComponentPropsWithRef<"input">;
 
-export function Input({ className, inputRef, ...props }: InputProps) {
+export function Input({ className, ref, ...props }: InputProps) {
   return (
     <input
-      ref={inputRef}
+      ref={ref}
       {...props}
       className={clsx(
         "h-[54px] w-full rounded-[16px] border px-[20px] text-sm outline-none",
