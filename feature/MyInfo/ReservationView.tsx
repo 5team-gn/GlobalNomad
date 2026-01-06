@@ -22,8 +22,6 @@ export default function ReservationView() {
   const { reservations, setReservations, filter, setFilter, loading, error } =
     useReservationList();
 
-  const safeFilter = filter ?? "all";
-
   const {
     modalType,
     selectedReservation,
@@ -65,11 +63,11 @@ export default function ReservationView() {
         </div>
 
         {reservations.length > 0 && (
-          <ReservationFilter value={safeFilter} onChange={setFilter} />
+          <ReservationFilter value={filter} onChange={setFilter} />
         )}
 
         {reservations.length === 0 ? (
-          <ReservationEmpty type="filtered" filter={safeFilter} />
+          <ReservationEmpty type="filtered" filter={filter} />
         ) : (
           <ReservationList
             reservations={reservations}
