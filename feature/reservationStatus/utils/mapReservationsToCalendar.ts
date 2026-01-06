@@ -1,11 +1,7 @@
-// mapReservationsToCalendar.ts
+import dayjs from "dayjs";
 import { Reservation } from "../types/reservation";
-import {
-  ReservationBadge,
-  ReservationStatusLabel,
-} from "@/feature/reservationStatus/types/reservationStatus";
-import { STATUS_TO_CALENDAR } from "../constants/statusMap";
-import { toDateKey } from "@/lib/utils/date";
+import { ReservationBadge } from
+  "@/feature/reservationStatus/types/reservationStatus";
 
 export type ReservationMap = Record<string, ReservationBadge[]>;
 
@@ -15,26 +11,23 @@ export function mapReservationsToCalendar(
   const map: ReservationMap = {};
 
   reservations.forEach((reservation) => {
-    const calendarStatus = STATUS_TO_CALENDAR[reservation.status];
-    if (!calendarStatus) return;
+    const dateKey = dayjs(reservation.date).format("YYYY-MM-DD");
 
-    /** ✅ 안전한 날짜 키 생성 */
-    const key = toDateKey(new Date(reservation.date));
-
-    if (!map[key]) {
-      map[key] = [];
+    if (!map[dateKey]) {
+      map[dateKey] = [];
     }
 
-    const existing = map[key].find(
-      (item) => item.status === calendarStatus
+    const existing = map[dateKey].find(
+      (badge) => badge.status === reservation.status
     );
 
     if (existing) {
-      existing.count += reservation.people;
+      existing.count += 1;
     } else {
-      map[key].push({
-        status: calendarStatus as ReservationStatusLabel,
-        count: reservation.people,
+      map[dateKey].push({
+        id: `${dateKey}-${reservation.status}`,
+        status: reservation.status, 
+        count: 1,
       });
     }
   });
