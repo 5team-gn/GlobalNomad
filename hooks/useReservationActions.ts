@@ -1,12 +1,7 @@
 "use client";
 
 import type { Reservation } from "@/types/reservationview.types";
-
-// TODO: API 연동 브랜치에서 활성화
-// import {
-//   cancelReservation,
-//   createReview,
-// } from "@/lib/api/reservationApi";
+import { cancelReservation, createReview } from "@/lib/api/reservationApi";
 
 type Params = {
   selectedReservation: Reservation | null;
@@ -23,9 +18,9 @@ export function useReservationActions({
     if (!selectedReservation) return;
 
     try {
-      // TODO: API 연동 브랜치에서 활성화
-      // await cancelReservation(selectedReservation.id);
+      await cancelReservation(selectedReservation.id);
 
+      // 낙관적 UI 업데이트
       setReservations((prev) =>
         prev.map((r) =>
           r.id === selectedReservation.id ? { ...r, status: "canceled" } : r
@@ -42,8 +37,7 @@ export function useReservationActions({
     if (!selectedReservation) return;
 
     try {
-      // TODO: API 연동 브랜치에서 활성화
-      // await createReview(selectedReservation.id, { rating, content });
+      await createReview(selectedReservation.id, { rating, content });
 
       setReservations((prev) =>
         prev.map((r) =>
