@@ -63,7 +63,6 @@ export default function ReservationStatusView({
           style={{
             top: modalPosition.top,
             left: modalPosition.left,
-            transform: "translate(-50%, 10px)",
           }}
         >
           <ReservationSideModal
@@ -73,8 +72,6 @@ export default function ReservationStatusView({
               setSelectedDateKey(null);
               setModalPosition(null);
             }}
-            // 위치 좌표 전달
-            position={modalPosition}
           />
         </div>
       )}

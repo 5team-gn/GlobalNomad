@@ -23,40 +23,46 @@ const TABS: { label: string; status: ReservationStatusCode }[] = [
   { label: "거절", status: "declined" },
 ];
 
-/**  상태별 스타일 설정 */
-const styleConfig: Record<
+const STATUS_UI_CONFIG: Record<
   ReservationStatusCode,
-  { badge: string; card: string }
+  { label: string; badgeStyle: string }
 > = {
   pending: {
-    badge: "bg-blue-50 text-blue-600 border-blue-100",
-    card: "bg-white",
+    label: "신청",
+    badgeStyle: "bg-blue-50 text-blue-600 border-blue-100",
   },
   confirmed: {
-    badge: "bg-blue-50 text-blue-600 border-blue-100",
-    card: "bg-white",
-  },
-  canceled: {
-    badge: "bg-gray-100 text-gray-500 border-gray-200",
-    card: "bg-gray-50 opacity-80",
+    label: "예약 승인",
+    badgeStyle: "bg-cyan-50 text-cyan-500 border-cyan-100",
   },
   declined: {
-    badge: "bg-red-50 text-red-600 border-red-100",
-    card: "bg-red-50/30 opacity-80",
+    label: "예약 거절",
+    badgeStyle: "bg-red-50 text-red-400 border-red-100",
+  },
+  canceled: {
+    label: "예약 취소",
+    badgeStyle: "bg-gray-100 text-gray-500 border-gray-200",
   },
   completed: {
-    badge: "bg-blue-50 text-blue-600 border-blue-100",
-    card: "bg-white",
+    label: "방문 완료",
+    badgeStyle: "bg-blue-50 text-blue-600 border-blue-100",
   },
 };
 
 export default function ReservationDetailContent({
   dateKey,
-  reservations,
+  reservations: initialReservations,
   onClose,
 }: Props) {
+  const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
   const [activeTab, setActiveTab] = useState<ReservationStatusCode>("pending");
   const [selectedTime, setSelectedTime] = useState("전체");
+
+  const handleStatusChange = (id: string | number, newStatus: ReservationStatusCode) => {
+    setReservations((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+    );
+  };
 
   const filteredReservations = reservations.filter((r) => {
     if (r.status !== activeTab) return false;
@@ -72,7 +78,6 @@ export default function ReservationDetailContent({
 
   return (
     <>
-      {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold">{dateKey}</h2>
         <button onClick={onClose}>
@@ -80,7 +85,6 @@ export default function ReservationDetailContent({
         </button>
       </div>
 
-      {/* 탭 */}
       <nav className="mb-6 flex border-b border-gray-100 text-16-b">
         {TABS.map((tab) => (
           <button
@@ -98,7 +102,6 @@ export default function ReservationDetailContent({
         ))}
       </nav>
 
-      {/* 시간 선택 */}
       <div className="mb-6">
         <label className="block text-18-b font-bold mb-3">예약 시간</label>
         <div className="relative">
@@ -119,71 +122,61 @@ export default function ReservationDetailContent({
         </div>
       </div>
 
-      {/* 예약 내역 */}
       <div className="space-y-4 mt-7.5">
-        <h3 className="text-18-b">예약 내역</h3>
+        <h3 className="text-18-b font-bold">예약 내역</h3>
 
         {filteredReservations.length === 0 ? (
           <p className="py-10 text-center text-sm text-gray-400">
-            {selectedTime === "전체"
-              ? "예약 내역이 없습니다."
-              : `${selectedTime}에 해당하는 내역이 없습니다.`}
+            내역이 없습니다.
           </p>
         ) : (
           <ul className="space-y-3">
-            {filteredReservations.map((r) => {
-              const { badge: badgeStyle, card: cardStyle } =
-                styleConfig[r.status] ?? styleConfig.pending;
-
-              return (
-                <li
-                  key={r.id}
-                  className={`rounded-2xl border border-gray-100 shadow-sm ${cardStyle}`}
-                >
-                  <div className="flex items-start justify-between px-4 py-3.5">
-                    <div className="space-y-2.5">
-                      <span
-                        className={`inline-block px-2 py-0.5 text-[10px] font-bold border rounded ${badgeStyle}`}
-                      >
-                        {r.status === "pending" && "신청"}
-                        {r.status === "canceled" && "예약 취소"}
-                        {r.status === "declined" && "예약 거절"}
-                        {r.status === "completed" && "예약 승인"}
-                      </span>
-
-                      <div className="flex gap-2">
-                        <span className="text-16-b font-medium text-gray-400">
-                          닉네임
-                        </span>
-                        <span className="text-16-m font-bold text-gray-800">
-                          {r.id}
-                        </span>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <span className="text-16-b font-medium text-gray-400">
-                          인원
-                        </span>
-                        <span className="text-16-m font-bold text-gray-800">
-                          {r.people}명
-                        </span>
-                      </div>
+            {filteredReservations.map((r) => (
+              <li
+                key={r.id}
+                className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <div className="flex gap-4">
+                      <span className="text-gray-400 font-medium w-12">닉네임</span>
+                      <span className="text-gray-800 font-bold">{r.id}</span>
                     </div>
+                    <div className="flex gap-4">
+                      <span className="text-gray-400 font-medium w-12">인원</span>
+                      <span className="text-gray-800 font-bold">{r.people}명</span>
+                    </div>
+                  </div>
 
-                    {activeTab === "pending" && (
+                  <div>
+                    {activeTab === "pending" ? (
                       <div className="flex flex-col gap-2">
-                        <button className="rounded-lg border border-gray-200 px-4 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-50">
+                        <button 
+                          onClick={() => handleStatusChange(r.id, "confirmed")}
+                          className="rounded-lg border border-gray-200 px-5 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-50"
+                        >
                           승인하기
                         </button>
-                        <button className="rounded-lg bg-gray-100 px-4 py-1.5 text-xs font-bold text-gray-400 hover:bg-gray-200">
+                        <button 
+                          onClick={() => handleStatusChange(r.id, "declined")}
+                          className="rounded-lg bg-gray-100 px-5 py-1.5 text-xs font-bold text-gray-400 hover:bg-gray-200"
+                        >
                           거절하기
                         </button>
                       </div>
+                    ) : (
+                      <span
+                        className={`inline-block px-3 py-1.5 text-xs font-bold border rounded-full ${
+                          STATUS_UI_CONFIG[r.status]?.badgeStyle
+                        }`}
+                      >
+                        {STATUS_UI_CONFIG[r.status]?.label}
+                      </span>
                     )}
                   </div>
-                </li>
-              );
-            })}
+                </div>
+              </li>
+            ))}
           </ul>
         )}
       </div>
