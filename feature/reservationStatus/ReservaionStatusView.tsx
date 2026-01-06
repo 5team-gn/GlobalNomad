@@ -66,6 +66,7 @@ export default function ReservationStatusView({
           }}
         >
           <ReservationSideModal
+            key={selectedDateKey}
             dateKey={selectedDateKey}
             reservations={dateFiltered}
             onClose={() => {
