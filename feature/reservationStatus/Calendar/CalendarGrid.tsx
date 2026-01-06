@@ -18,8 +18,12 @@ interface Props {
   dates: CalendarDate[];
   badgesMap: ReservationMap;
   selectedDateKey: string | null;
-  onSelectDate: (key: string, position: { top: number; left: number }) => void;
+  onSelectDate: (
+    key: string,
+    position: { top: number; left: number; width: number; height: number }
+  ) => void;
 }
+
 
 export default function CalendarGrid({
   dates,
@@ -28,10 +32,11 @@ export default function CalendarGrid({
   onSelectDate,
 }: Props) {
   const gridRef = useRef<HTMLDivElement>(null);
+
   return (
     <div>
       {/* 요일 */}
-      <div className="grid grid-cols-7 mb-4 ">
+      <div className="grid grid-cols-7 mb-4">
         {DAYS.map((day) => (
           <div key={day.id} className="p-3 text-16-b items-center">
             {day.label}
@@ -40,19 +45,17 @@ export default function CalendarGrid({
       </div>
 
       {/* 날짜 */}
-      <div ref={gridRef} className="relative grid grid-cols-7 ">
+      <div ref={gridRef} className="relative grid grid-cols-7">
         {dates.map((date) => {
-          const key = toDateKey(date.date);
+          const dateKey = toDateKey(date.date);
 
           return (
             <CalendarCell
-              key={key}
+              key={dateKey}
               date={date}
-              badges={badgesMap[key] ?? []}
-              isSelected={selectedDateKey === key}
-              onClick={(clickedKey, position) =>
-                onSelectDate(clickedKey, position)
-              }
+              badges={badgesMap[dateKey] ?? []}
+              isSelected={selectedDateKey === dateKey}
+              onSelectDate={onSelectDate}
               containerRef={gridRef}
             />
           );
