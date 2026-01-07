@@ -4,6 +4,7 @@ import { useState, useRef, useId } from "react";
 import ArrowDown from "@/public/icon_arrow_down.svg";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useEsc } from "@/hooks/useEsc";
+import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation"; // 훅 경로 확인
 
 interface CategorySelectProps {
   options: string[];
@@ -20,58 +21,65 @@ export default function CategorySelect({
 }: CategorySelectProps) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const listboxId = useId();
 
-  useClickOutside(dropdownRef, () => setOpen(false));
+  // 모든 옵션을 하나의 배열로 관리 (인덱스 계산용)
+  const allOptions = ["", ...options];
 
+  // ✅ 공통 선택 로직
+  const handleSelect = (selectedValue: string) => {
+    onChange(selectedValue);
+    setOpen(false);
+  };
+
+  // ✅ 키보드 네비게이션 적용
+  const { activeIndex, handleKeyDown } = useKeyboardNavigation({
+    itemCount: allOptions.length,
+    isOpen: open,
+    setIsOpen: setOpen,
+    onSelect: (index) => handleSelect(allOptions[index]), // handleSelect 재사용
+  });
+
+  useClickOutside(dropdownRef, () => setOpen(false));
   useEsc(() => setOpen(false));
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* 버튼 */}
+    <div 
+      className="relative" 
+      ref={dropdownRef} 
+      onKeyDown={handleKeyDown} // 키보드 이벤트 감지
+    >
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
-        className="w-full h-13.5 border rounded-xl px-5 flex justify-between items-center"
+        className="w-full h-13.5 border rounded-xl px-5 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-gray-200"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
       >
-        <span className={value ? "text-gray-900" : ""}>
+        <span className={value ? "text-gray-900" : "text-gray-400"}>
           {value || placeholder}
         </span>
-        <ArrowDown className={`transition ${open ? "rotate-180" : ""}`} />
+        <ArrowDown className={`transition ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
 
-      {/* 드롭다운 */}
       {open && (
-        <ul className="absolute z-10 mt-2 w-full rounded-xl border bg-white shadow">
-          {/*  전체 옵션 */}
-          <li
-            role="option"
-            aria-selected={value === ""}
-            onClick={() => {
-              onChange("");
-              setOpen(false);
-            }}
-            className="px-5 py-3 hover:bg-gray-25 cursor-pointer "
-          >
-            {placeholder}
-          </li>
-
-          {options.map((option) => (
+        <ul
+          id={listboxId}
+          role="listbox"
+          className="absolute z-10 mt-2 w-full rounded-xl border bg-white shadow py-2"
+        >
+          {allOptions.map((option, index) => (
             <li
-              key={option}
+              key={option || "all"}
               role="option"
               aria-selected={value === option}
-              onClick={() => {
-                onChange(option);
-                setOpen(false);
-              }}
-              className="px-5 py-3 hover:bg-gray-25 cursor-pointer"
+              onClick={() => handleSelect(option)} // handleSelect 재사용
+              className={`px-5 py-3 cursor-pointer transition-colors ${
+                activeIndex === index ? "bg-gray-100" : "hover:bg-gray-25"
+              }`}
             >
-              {option}
+              {option || placeholder}
             </li>
           ))}
         </ul>
