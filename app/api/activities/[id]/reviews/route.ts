@@ -1,9 +1,9 @@
+/**
+ * @description 액티비티 상세 - 리뷰 API 라우트
+ */
+
 import { getActivityReviews } from "@/feature/activities-detail/api/getActivityDetail";
 import { NextResponse } from "next/server";
-
-// type RouteContext = {
-//   params: Promise<{ id: string }>;
-// };
 
 export async function GET(
   req: Request,

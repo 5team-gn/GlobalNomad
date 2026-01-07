@@ -12,7 +12,6 @@ function getTeamId() {
 //상세 정보
 export async function getActivityDetail(activityId: number) {
   const teamId = getTeamId();
-  if (!teamId) throw new Error("팀아이디 없음");
   return apiFetch<ActivityDetail>(`/${teamId}/activities/${activityId}`, {
     cache: "no-store",
   });

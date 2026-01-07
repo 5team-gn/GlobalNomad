@@ -220,7 +220,7 @@ export default function KakaoMapByAddress({
   }
 
   return (
-    <div className="order-4 lg:col-start-1 lg:pb-0 mt-10 ">
+    <div className="order-4 lg:col-start-1 lg:pb-0 mt-10">
       <p className="text-18-b">오시는 길</p>
       <p className="text-14-sb opacity-75 my-2">{address}</p>
       <div className="relative w-full h-[320px] lg:h-[420px] rounded-2xl overflow-hidden">

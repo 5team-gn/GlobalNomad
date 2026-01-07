@@ -7,8 +7,6 @@
 
 export default function SkeletonMap() {
   return (
-    <div>
-      <div className="mt-4 h-[320px] w-full rounded-2xl bg-gray-100 animate-pulse" />
-    </div>
+    <div className="mt-4 h-[320px] w-full rounded-2xl bg-gray-100 animate-pulse" />
   );
 }

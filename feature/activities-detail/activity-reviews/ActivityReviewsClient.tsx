@@ -40,7 +40,8 @@ function ReviewsInner({
   });
 
   if (isLoading) return <SkeletonReviews />;
-  if (isError || !data) return <div className={className}>에러</div>;
+  if (isError || !data)
+    return <div className={className}>리뷰를 불러오는 데 실패했습니다.</div>;
 
   return (
     <section className={className ?? ""}>
