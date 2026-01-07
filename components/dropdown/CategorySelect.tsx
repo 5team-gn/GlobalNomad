@@ -26,7 +26,7 @@ export default function CategorySelect({
   useEsc(() => setOpen(false));
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       {/* 버튼 */}
       <button
         type="button"
