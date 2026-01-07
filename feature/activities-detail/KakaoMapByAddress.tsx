@@ -7,6 +7,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import SkeletonMap from "./activity-reviews/SkeletonMap";
 declare global {
   interface Window {
     kakao: any;
@@ -27,6 +28,7 @@ export default function KakaoMapByAddress({
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [coord, setCoord] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
 
   // 카카오 객체 참조(정리용)
   const kakaoMapObjRef = useRef<any>(null);
@@ -77,7 +79,7 @@ export default function KakaoMapByAddress({
   // 2) 좌표 -> 지도 생성
   useEffect(() => {
     if (!coord) return;
-
+    setReady(false);
     cleanupKakao();
 
     let timer: number | null = null;
@@ -182,6 +184,8 @@ export default function KakaoMapByAddress({
           overlay.setMap(map);
           kakaoOverlayRef.current = overlay;
         }
+
+        setReady(true);
       });
     };
 
@@ -219,10 +223,14 @@ export default function KakaoMapByAddress({
     <div className="order-4 lg:col-start-1 lg:pb-0 mt-10">
       <p className="text-18-b">오시는 길</p>
       <p className="text-14-sb opacity-75 my-2">{address}</p>
-      <div
-        ref={mapRef}
-        className="w-full h-[320px] lg:h-[420px] rounded-2xl overflow-hidden"
-      />
+      <div className="relative w-full h-[320px] lg:h-[420px] rounded-2xl overflow-hidden">
+        <div ref={mapRef} className="w-full h-full" />
+        {!ready && (
+          <div className="absolute inset-0 z-10">
+            <SkeletonMap />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
