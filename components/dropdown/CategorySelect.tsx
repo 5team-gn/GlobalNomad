@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import ArrowDown from "@/public/icon_arrow_down.svg";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { useEsc } from "@/hooks/useEsc";
 
 interface CategorySelectProps {
   options: string[];
@@ -18,9 +19,11 @@ export default function CategorySelect({
   onChange,
 }: CategorySelectProps) {
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useClickOutside(dropdownRef,()=> setOpen(false))
+  useClickOutside(dropdownRef, () => setOpen(false));
+
+  useEsc(() => setOpen(false));
 
   return (
     <div className="relative">
