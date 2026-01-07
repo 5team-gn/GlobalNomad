@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/button/Button";
 import { ImageSection } from "./ImageSection";
 import { ScheduleSection } from "./ScheduleSection";
@@ -16,13 +16,7 @@ interface Props {
   submitLabel?: string;
 }
 
-const CATEGORY_OPTIONS = [
-  "문화 · 예술",
-  "식음료",
-  "투어",
-  "관광",
-  "웰빙",
-];
+const CATEGORY_OPTIONS = ["문화 · 예술", "식음료", "투어", "관광", "웰빙"];
 
 export default function ExperienceForm({
   initialValues,
@@ -30,6 +24,7 @@ export default function ExperienceForm({
   submitLabel = "등록하기",
 }: Props) {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -48,9 +43,6 @@ export default function ExperienceForm({
   const detailImages = useImageManager();
 
   /** 🔑 카테고리 로컬 상태 */
-  const [category, setCategory] = useState(
-    initialValues?.category ?? ""
-  );
 
   const onValidSubmit = (data: ExperienceFormValues) => {
     onSubmit({
@@ -82,27 +74,22 @@ export default function ExperienceForm({
       {/* ================= 카테고리 ================= */}
       <label>카테고리</label>
 
-      {/* 🔑 react-hook-form 연결용 hidden input */}
-      <input
-        type="hidden"
-        value={category}
-        {...register("category", {
-          required: "카테고리를 선택해 주세요",
-        })}
-      />
-
-      {/* 🔑 실제 UI는 커스텀 드롭다운 */}
-      <CategorySelect
-        options={CATEGORY_OPTIONS}
-        value={category}
-        placeholder="카테고리를 선택해 주세요"
-        onChange={setCategory}
+      <Controller
+        name="category"
+        control={control}
+        rules={{ required: "카테고리를 선택해 주세요" }}
+        render={({ field: { value, onChange } }) => (
+          <CategorySelect
+            options={CATEGORY_OPTIONS}
+            value={value} // field에서 제공하는 value 사용
+            placeholder="카테고리를 선택해 주세요"
+            onChange={onChange} // field에서 제공하는 onChange 사용 (내부적으로 setValue 실행)
+          />
+        )}
       />
 
       {errors.category && (
-        <p className="text-red-500 text-sm">
-          {errors.category.message}
-        </p>
+        <p className="text-red-500 text-sm">{errors.category.message}</p>
       )}
 
       {/* 설명 */}
