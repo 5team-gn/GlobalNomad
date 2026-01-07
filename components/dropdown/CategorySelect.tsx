@@ -7,6 +7,7 @@ import { useEsc } from "@/hooks/useEsc";
 import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation"; // 훅 경로 확인
 
 interface CategorySelectProps {
+  id?: string | number
   options: string[];
   value: string;
   placeholder?: string;
@@ -71,7 +72,7 @@ export default function CategorySelect({
         >
           {allOptions.map((option, index) => (
             <li
-              key={option || "all"}
+              key={index}
               role="option"
               aria-selected={value === option}
               onClick={() => handleSelect(option)} // handleSelect 재사용

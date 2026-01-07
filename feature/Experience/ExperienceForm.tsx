@@ -69,8 +69,7 @@ export default function ExperienceForm({
         <p className="text-red-500 text-sm">{errors.title.message}</p>
       )}
 
-      {/* ================= 카테고리 ================= */}
-      <label>카테고리</label>
+      <label htmlFor="category">카테고리</label>
 
       <Controller
         name="category"
@@ -78,6 +77,7 @@ export default function ExperienceForm({
         rules={{ required: "카테고리를 선택해 주세요" }}
         render={({ field: { value, onChange } }) => (
           <CategorySelect
+            id="category"
             options={CATEGORY_OPTIONS}
             value={value}
             placeholder="카테고리를 선택해 주세요"

@@ -17,7 +17,15 @@ export function useKeyboardNavigation({
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!isOpen) {
-       if (["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) {
+       if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setIsOpen(true);
+        setActiveIndex(0);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setIsOpen(true);
+        setActiveIndex(itemCount - 1);
+      } else if (["Enter", " "].includes(e.key)) {
         e.preventDefault();
         setIsOpen(true);
       }
@@ -39,6 +47,8 @@ export function useKeyboardNavigation({
         if (activeIndex >= 0) {
           onSelect(activeIndex);
           setActiveIndex(-1);
+        } else {
+            setIsOpen(false)
         }
         break;
       case "Tab":
