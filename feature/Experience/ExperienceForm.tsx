@@ -1,15 +1,12 @@
 "use client";
 
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/common/input";
-import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
-
-import { useExperienceForm } from "@/hooks/useExperienceForm";
+import { ImageSection } from "./ImageSection";
+import { ScheduleSection } from "./ScheduleSection";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
 import { useImageManager } from "@/hooks/useImageManager";
-
-import { ImageSection } from "./ImageSection"; 
-import { ScheduleSection } from "./ScheduleSection"; 
+import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
 
 interface Props {
   initialValues?: Partial<ExperienceFormValues>;
@@ -22,21 +19,28 @@ export default function ExperienceForm({
   onSubmit,
   submitLabel = "등록하기",
 }: Props) {
-  /** 기본 폼 상태 */
-  const { values, handleChange } = useExperienceForm(initialValues);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ExperienceFormValues>({
+    defaultValues: {
+      title: initialValues?.title ?? "",
+      category: initialValues?.category ?? "",
+      description: initialValues?.description ?? "",
+      price: initialValues?.price ?? 0,
+      address: initialValues?.address ?? "",
+    },
+  });
 
-  /** 스케줄 관리 */
-  const scheduleManager = useScheduleManager(
-    initialValues?.schedules ?? []
-  );
+  const scheduleManager = useScheduleManager(initialValues?.schedules ?? []);
 
-  /** 이미지 관리 */
   const bannerImages = useImageManager();
   const detailImages = useImageManager();
 
-  const handleSubmit = () => {
+  const onValidSubmit = (data: ExperienceFormValues) => {
     onSubmit({
-      ...values,
+      ...data,
       schedules: scheduleManager.schedules,
       bannerImageUrl: bannerImages.images[0]?.preview ?? "",
       subImageUrls: detailImages.images.map((img) => img.preview),
@@ -46,58 +50,52 @@ export default function ExperienceForm({
   return (
     <form
       className="flex lg:w-175 flex-col gap-6"
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
+      onSubmit={handleSubmit(onValidSubmit)}
     >
       <h1 className="text-18-b">내 체험 등록</h1>
 
       {/* 제목 */}
       <label>제목</label>
-      <Input
-        name="title"
-        value={values.title}
-        onChange={handleChange}
+      <input
+        {...register("title", { required: "제목을 입력해 주세요" })}
         placeholder="제목을 입력해 주세요"
+        className="border p-3 rounded-xl"
       />
+      {errors.title && (
+        <p className="text-red-500 text-sm">{errors.title.message}</p>
+      )}
 
       {/* 카테고리 */}
       <label>카테고리</label>
-      <Input
-        name="category"
-        value={values.category}
-        onChange={handleChange}
+      <input
+        {...register("category", { required: "카테고리를 입력해 주세요" })}
         placeholder="카테고리를 선택해 주세요"
+        className="border p-3 rounded-xl"
       />
 
       {/* 설명 */}
       <label>설명</label>
       <textarea
-        name="description"
-        value={values.description}
-        onChange={handleChange}
+        {...register("description")}
         placeholder="체험에 대한 설명을 입력해 주세요"
         className="border p-3 rounded-xl"
       />
 
       {/* 가격 */}
       <label>가격</label>
-      <Input
-        name="price"
+      <input
         type="number"
-        value={values.price}
-        onChange={handleChange}
+        {...register("price", { valueAsNumber: true, min: 0 })}
         placeholder="체험 금액을 입력해주세요"
+        className="border p-3 rounded-xl"
       />
 
       {/* 주소 */}
       <label>주소</label>
-      <Input
-        name="address"
-        value={values.address}
-        onChange={handleChange}
+      <input
+        {...register("address")}
         placeholder="주소를 입력해 주세요"
+        className="border p-3 rounded-xl"
       />
 
       {/* 예약 가능한 시간대 */}
@@ -107,7 +105,7 @@ export default function ExperienceForm({
       <ImageSection
         title="배너 이미지 등록"
         images={bannerImages.images}
-        maxCount={4}
+        maxCount={1}
         onUpload={bannerImages.addImages}
         onRemove={bannerImages.removeImage}
       />
