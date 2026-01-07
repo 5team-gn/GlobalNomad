@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import CategorySelect from "./CategorySelect";
 import { Reservation } from "@/feature/reservationStatus/types/reservation";
 
@@ -13,14 +14,17 @@ export default function ReservationCategoryFilter({
   selectedTitle,
   onChange,
 }: Props) {
-  const titles = Array.from(new Set(reservations.map((r) => r.title)));
+  const titles = useMemo(
+    () => Array.from(new Set(reservations.map((r) => r.title))),
+    [reservations],
+  );
 
   return (
     <CategorySelect
       options={titles}
       value={selectedTitle ?? ""}
       placeholder="전체"
-      onChange={(value) => onChange(value=== "" ? null : value)}
+      onChange={(value) => onChange(value === "" ? null : value)}
     />
   );
 }
