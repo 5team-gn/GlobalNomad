@@ -2,9 +2,9 @@
  * @description 액티비티 상세 - 리뷰 (서버 컴포넌트)
  */
 
-import { QueryClient, dehydrate } from "@tanstack/react-query";
-import ActivityReviewsRQWrap from "./ActivityReviewsRQWrap";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { getActivityReviews } from "@/feature/activities-detail/api/getActivityReviews"; // 경로 정리 추천
+import ActivityReviewsClient from "./ActivityReviewsClient";
 
 type ActivityReviewsProps = {
   activityId: number;
@@ -27,12 +27,12 @@ export default async function ActivityReviews({
   });
 
   return (
-    <ActivityReviewsRQWrap
+    <ActivityReviewsClient
       activityId={activityId}
       className={className}
-      dehydratedState={dehydrate(qc)}
       initialPage={INITIAL_PAGE}
       pageSize={PAGE_SIZE}
+      dehydratedState={dehydrate(qc)}
     />
   );
 }

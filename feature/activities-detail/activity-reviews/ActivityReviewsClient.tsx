@@ -5,12 +5,16 @@
  */
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import {
+  DehydratedState,
+  HydrationBoundary,
+  useQuery,
+} from "@tanstack/react-query";
+import { useState } from "react";
 import { getActivityReviews } from "@/feature/activities-detail/api/getActivityReviews";
 import { ReviewSummary } from "./ReviewSummary";
 import { ReviewList } from "./ReviewList";
 import ReviewsPagination from "./ReviewsPagination";
-import { useState } from "react";
 import { SkeletonReviews } from "./SkeletonReviews";
 
 type Props = {
@@ -18,14 +22,15 @@ type Props = {
   className?: string;
   initialPage: number;
   pageSize: number;
+  dehydratedState: DehydratedState;
 };
 
-export default function ActivityReviewsClient({
+function ReviewsInner({
   activityId,
+  className,
   initialPage,
   pageSize,
-  className,
-}: Props) {
+}: Omit<Props, "dehydratedState">) {
   const [page, setPage] = useState(initialPage);
 
   const { data, isLoading, isError } = useQuery({
@@ -37,13 +42,11 @@ export default function ActivityReviewsClient({
   if (isLoading) return <SkeletonReviews />;
   if (isError || !data) return <div className={className}>에러</div>;
 
-  const totalPages = Math.max(1, Math.ceil(data.totalCount / pageSize));
-
   return (
     <section className={className ?? ""}>
-      <h2 className="text-16-b text-gray-950 mb-2 lg:text-18-b ">
+      <h2 className="text-16-b text-gray-950 mb-2 lg:text-18-b">
         체험 후기{" "}
-        <span className="text-gray-500 text-14-sb lg:text-16-b ">
+        <span className="text-gray-500 text-14-sb lg:text-16-b">
           {data.totalCount.toLocaleString()}개
         </span>
       </h2>
@@ -52,16 +55,25 @@ export default function ActivityReviewsClient({
         averageRating={data.averageRating}
         totalCount={data.totalCount}
       />
-
       <ReviewList reviews={data.reviews} />
 
       <div className="mt-8">
         <ReviewsPagination
           page={page}
-          totalPages={totalPages}
+          totalPages={Math.max(1, Math.ceil(data.totalCount / pageSize))}
           onChange={setPage}
         />
       </div>
     </section>
+  );
+}
+
+export default function ActivityReviewsClient(props: Props) {
+  const { dehydratedState, ...rest } = props;
+
+  return (
+    <HydrationBoundary state={dehydratedState}>
+      <ReviewsInner {...rest} />
+    </HydrationBoundary>
   );
 }
