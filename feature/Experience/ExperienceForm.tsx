@@ -7,6 +7,7 @@ import { ScheduleSection } from "./ScheduleSection";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
 import { useImageManager } from "@/hooks/useImageManager";
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
+import { Input } from "@/components/input/Input";
 
 interface Props {
   initialValues?: Partial<ExperienceFormValues>;
@@ -56,7 +57,7 @@ export default function ExperienceForm({
 
       {/* 제목 */}
       <label>제목</label>
-      <input
+      <Input
         {...register("title", { required: "제목을 입력해 주세요" })}
         placeholder="제목을 입력해 주세요"
         className="border p-3 rounded-xl"
@@ -67,7 +68,7 @@ export default function ExperienceForm({
 
       {/* 카테고리 */}
       <label>카테고리</label>
-      <input
+      <Input
         {...register("category", { required: "카테고리를 입력해 주세요" })}
         placeholder="카테고리를 선택해 주세요"
         className="border p-3 rounded-xl"
@@ -83,7 +84,7 @@ export default function ExperienceForm({
 
       {/* 가격 */}
       <label>가격</label>
-      <input
+      <Input
         type="number"
         {...register("price", { valueAsNumber: true, min: 0 })}
         placeholder="체험 금액을 입력해주세요"
@@ -92,7 +93,7 @@ export default function ExperienceForm({
 
       {/* 주소 */}
       <label>주소</label>
-      <input
+      <Input
         {...register("address")}
         placeholder="주소를 입력해 주세요"
         className="border p-3 rounded-xl"
