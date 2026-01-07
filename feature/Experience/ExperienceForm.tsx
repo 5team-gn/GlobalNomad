@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/button/Button";
 import { ImageSection } from "./ImageSection";
@@ -42,8 +42,6 @@ export default function ExperienceForm({
   const bannerImages = useImageManager();
   const detailImages = useImageManager();
 
-  /** 🔑 카테고리 로컬 상태 */
-
   const onValidSubmit = (data: ExperienceFormValues) => {
     onSubmit({
       ...data,
@@ -81,9 +79,9 @@ export default function ExperienceForm({
         render={({ field: { value, onChange } }) => (
           <CategorySelect
             options={CATEGORY_OPTIONS}
-            value={value} // field에서 제공하는 value 사용
+            value={value}
             placeholder="카테고리를 선택해 주세요"
-            onChange={onChange} // field에서 제공하는 onChange 사용 (내부적으로 setValue 실행)
+            onChange={onChange}
           />
         )}
       />
