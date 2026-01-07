@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Input } from "./Input";
-import type { ComponentProps } from "react";
 import clsx from "clsx";
+import type { ComponentPropsWithRef } from "react";
+import { Input } from "./Input";
 
-type PasswordInputProps = ComponentProps<typeof Input>;
+type PasswordInputProps = ComponentPropsWithRef<typeof Input>;
 
 export function PasswordInput({ className, ...props }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
