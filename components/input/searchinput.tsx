@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { Input } from "./Input";
-import type { ComponentProps } from "react";
 import clsx from "clsx";
+import type { ComponentPropsWithRef } from "react";
+import { Input } from "./Input";
 
-export function SearchInput({
-  className,
-  ...props
-}: ComponentProps<typeof Input>) {
+type SearchInputProps = ComponentPropsWithRef<typeof Input>;
+
+export function SearchInput({ className, ...props }: SearchInputProps) {
   return (
     <div className="relative w-full">
       <Input {...props} className={clsx("pl-[44px]", className)} />
