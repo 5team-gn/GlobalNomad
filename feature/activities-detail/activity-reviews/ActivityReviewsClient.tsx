@@ -5,97 +5,55 @@
  */
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getActivityReviews } from "@/feature/activities-detail/api/getActivityReviews";
 import { ReviewSummary } from "./ReviewSummary";
 import { ReviewList } from "./ReviewList";
 import ReviewsPagination from "./ReviewsPagination";
-import { Review, ReviewResponse } from "@/types/reviews/review.types";
+import { useState } from "react";
+import { SkeletonReviews } from "./SkeletonReviews";
 
 type Props = {
   activityId: number;
   className?: string;
-  initialData: {
-    averageRating: number;
-    totalCount: number;
-    reviews: Review[];
-  };
-  initialPage?: number;
-  pageSize?: number;
+  initialPage: number;
+  pageSize: number;
 };
 
 export default function ActivityReviewsClient({
   activityId,
+  initialPage,
+  pageSize,
   className,
-  initialData,
-  initialPage = 1,
-  pageSize: pageSizeProp = 3,
 }: Props) {
-  const [page, setPage] = useState<number>(initialPage ?? 1);
-  const [data, setData] = useState(initialData);
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(initialPage);
 
-  // 페이지 크기
-  const pageSize = pageSizeProp;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["activityReviews", activityId, page, pageSize],
+    queryFn: () => getActivityReviews(activityId, page, pageSize),
+    staleTime: 30000,
+  });
 
-  // 총 페이지 수 계산
-  const totalPages = useMemo(() => {
-    return Math.max(1, Math.ceil(initialData.totalCount / pageSize));
-  }, [initialData.totalCount, pageSize]);
+  if (isLoading) return <SkeletonReviews />;
+  if (isError || !data) return <div className={className}>에러</div>;
 
-  // 현재 페이지에 해당하는 리뷰 목록
-  // const reviews = initialData.reviews;
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchReviews() {
-      try {
-        setLoading(true);
-        const res = await fetch(
-          `/api/activities/${activityId}/reviews?page=${page}&size=${pageSize}`,
-          { cache: "no-store", signal: controller.signal }
-        );
-
-        if (!res.ok) {
-          const text = await res.text().catch(() => "");
-          console.error("reviews fetch failed", res.status, text);
-          throw new Error(`Failed to fetch reviews: ${res.status}`);
-        }
-
-        const json: ReviewResponse = await res.json();
-        setData(json);
-      } catch (e: any) {
-        // Abort는 정상 취소로 보고 조용히 무시
-        if (e?.name === "AbortError") return;
-        throw e;
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchReviews();
-    return () => controller.abort();
-  }, [activityId, page, pageSize]);
+  const totalPages = Math.max(1, Math.ceil(data.totalCount / pageSize));
 
   return (
     <section className={className ?? ""}>
       <h2 className="text-16-b text-gray-950 mb-2 lg:text-18-b ">
         체험 후기{" "}
         <span className="text-gray-500 text-14-sb lg:text-16-b ">
-          {initialData.totalCount.toLocaleString()}개
+          {data.totalCount.toLocaleString()}개
         </span>
       </h2>
 
       <ReviewSummary
-        averageRating={initialData.averageRating}
-        totalCount={initialData.totalCount}
+        averageRating={data.averageRating}
+        totalCount={data.totalCount}
       />
 
-      {loading ? (
-        <div className="mt-4">불러오는 중…</div>
-      ) : (
-        <ReviewList reviews={data.reviews} />
-      )}
+      <ReviewList reviews={data.reviews} />
 
       <div className="mt-8">
         <ReviewsPagination

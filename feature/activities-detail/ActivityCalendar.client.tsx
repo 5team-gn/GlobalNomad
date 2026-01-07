@@ -14,6 +14,8 @@ import { ReservationUIProps } from "@/types/reservation/ui";
 
 export default function ActivityCalendarClient() {
   const activity = mockActivityDetail;
+
+  // 예약 플로우 훅
   const flow = useReservationFlow(MOCK_AVAILABLE_SCHEDULE);
 
   // 최대 참여 인원 수
@@ -22,6 +24,7 @@ export default function ActivityCalendarClient() {
     Number(process.env.NEXT_PUBLIC_RESERVATION_MAX_PEOPLE ?? 20) || 20
   );
 
+  // 예약하기
   const reserve = () => {
     alert("api호출");
   };
