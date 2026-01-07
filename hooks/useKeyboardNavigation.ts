@@ -17,7 +17,8 @@ export function useKeyboardNavigation({
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!isOpen) {
-      if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter") {
+       if (["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) {
+        e.preventDefault();
         setIsOpen(true);
       }
       return;
