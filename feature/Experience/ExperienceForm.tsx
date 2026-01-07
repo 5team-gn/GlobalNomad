@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/common/input";
+import { Input } from "@/components/input/Input"; 
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
 
 import { useExperienceForm } from "@/hooks/useExperienceForm";
