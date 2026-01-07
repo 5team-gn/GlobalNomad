@@ -2,11 +2,12 @@ export type ActivitySubImage = {
   id: number;
   imageUrl: string;
 };
+
 export type Activity = {
   id: number;
-  subImages?: readonly ActivitySubImage[];
-  bannerImageUrl: string;
   title: string;
+  bannerImageUrl: string;
+  subImages?: readonly ActivitySubImage[];
 };
 
 export type ActivityHeaderInfoType = {
@@ -17,3 +18,21 @@ export type ActivityHeaderInfoType = {
   reviewCount: number;
   address: string;
 };
+
+export type ActivitySchedule = {
+  id: number;
+  date: string | null;
+  startTime: string;
+  endTime: string;
+};
+
+export type ActivityDetail = Activity &
+  ActivityHeaderInfoType & {
+    userId: number;
+    description: string;
+    price: number;
+    schedules: ActivitySchedule[];
+    createdAt: string;
+    updatedAt: string;
+    subImages: ActivitySubImage[];
+  };

@@ -5,28 +5,29 @@
  */
 
 import ActivityReviewsClient from "./ActivityReviewsClient";
-import { getActivityReviews } from "@/lib/reviews/reviews.api";
+import { getActivityReviews } from "../api/getActivityDetail";
 
 type ActivityReviewsProps = {
   activityId: number;
   className?: string;
 };
 
+const INITIAL_PAGE = 1;
+const PAGE_SIZE = 1; // 끝나면 3으로
+
 export default async function ActivityReviews({
   activityId,
   className,
 }: ActivityReviewsProps) {
-  const data = await getActivityReviews(activityId);
+  const data = await getActivityReviews(activityId, INITIAL_PAGE, PAGE_SIZE);
 
   return (
     <ActivityReviewsClient
       activityId={activityId}
       className={className}
-      initialData={{
-        ...data,
-        page: 1,
-        pageSize: 5,
-      }}
+      initialData={data}
+      initialPage={INITIAL_PAGE}
+      pageSize={PAGE_SIZE}
     />
   );
 }
