@@ -13,4 +13,6 @@ export interface Reservation {
   price: number;
   people: number;
   status: ReservationStatusCode;
+  time:string
+  createdAt: string
 }

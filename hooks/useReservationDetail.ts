@@ -1,36 +1,68 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Reservation,
   ReservationStatusCode,
 } from "@/feature/reservationStatus/types/reservation";
 
-export default function useReservationDetail(
-  reservations: Reservation[]
-) {
-  const [localReservations, setLocalReservations] =
-    useState<Reservation[]>(reservations);
+const PAGE_SIZE = 10;
 
-  const [activeTab, setActiveTab] =
-    useState<ReservationStatusCode>("pending");
-
+export default function useReservationDetail(initialReservations: Reservation[]) {
+  const [localReservations, setLocalReservations] = useState<Reservation[]>(initialReservations);
+  const [activeTab, setActiveTab] = useState<ReservationStatusCode>("pending");
   const [selectedTime, setSelectedTime] = useState("전체");
+  
+  const [displayLimit, setDisplayLimit] = useState(PAGE_SIZE);
 
-  const handleStatusChange = (
-    id: string | number,
-    status: ReservationStatusCode
-  ) => {
-    setLocalReservations((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status } : r))
-    );
+  const handleTabChange = (status: ReservationStatusCode) => {
+    setActiveTab(status);
+    setDisplayLimit(PAGE_SIZE);
   };
 
-  const filteredReservations = localReservations.filter((r) => {
-    if (r.status !== activeTab) return false;
-    if (selectedTime === "전체") return true;
+  const handleTimeChange = (time: string) => {
+    setSelectedTime(time);
+    setDisplayLimit(PAGE_SIZE);
+  };
 
-    const hour = new Date(r.date).getHours();
-    return hour === Number(selectedTime.split(":")[0]);
-  });
+  const allFilteredReservations = useMemo(() => {
+    return localReservations
+      .filter((r) => {
+        if (r.status !== activeTab) return false;
+        if (selectedTime === "전체") return true;
+        return r.time === selectedTime; 
+      })
+      .sort((a, b) => {
+        return new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime();
+      });
+  }, [localReservations, activeTab, selectedTime]);
+
+  const pagedReservations = allFilteredReservations.slice(0, displayLimit);
+
+  const hasMore = displayLimit < allFilteredReservations.length;
+
+  const loadMore = () => {
+    if (hasMore) setDisplayLimit((prev) => prev + PAGE_SIZE);
+  };
+
+  const handleStatusChange = (id: string | number, status: ReservationStatusCode) => {
+    if (status === "confirmed") {
+      const target = localReservations.find((r) => r.id === id);
+      if (!target) return;
+
+      setLocalReservations((prev) =>
+        prev.map((r) => {
+          if (r.time === target.time && r.id !== id && r.status === "pending") {
+            return { ...r, status: "declined" as ReservationStatusCode };
+          }
+          if (r.id === id) return { ...r, status: "confirmed" };
+          return r;
+        })
+      );
+    } else {
+      setLocalReservations((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status } : r))
+      );
+    }
+  };
 
   const getCount = (status: ReservationStatusCode) =>
     localReservations.filter((r) => r.status === status).length;
@@ -38,10 +70,12 @@ export default function useReservationDetail(
   return {
     activeTab,
     selectedTime,
-    setActiveTab,
-    setSelectedTime,
-    filteredReservations,
+    setActiveTab: handleTabChange,
+    setSelectedTime: handleTimeChange,
+    filteredReservations: pagedReservations, 
     getCount,
     handleStatusChange,
+    loadMore, 
+    hasMore,  
   };
 }

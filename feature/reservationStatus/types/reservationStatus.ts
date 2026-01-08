@@ -22,4 +22,5 @@ export interface ReservationBadge {
   id: string;
   status: ReservationStatusCode;
   count: number;
+  times: string[];
 }
