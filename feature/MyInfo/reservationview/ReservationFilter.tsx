@@ -1,5 +1,5 @@
 import { ButtonLabel } from "@/components/button/Button";
-import type { ReservationStatus } from "@/types/reservationview.types";
+import type { ReservationStatus } from "@/types/reservationview/reservationview.types";
 import { STATUS_STYLE } from "./ReservationView.constants";
 
 const FILTER_LABEL: Record<ReservationStatus, string> = {
