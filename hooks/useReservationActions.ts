@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 type Params = {
   selectedReservation: Reservation | null;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
-  pushCanceledReservation: (reservation: Reservation) => void; // ⭐️ 추가
+  pushCanceledReservation: (reservation: Reservation) => void;
   closeModal: () => void;
 };
 
@@ -23,12 +23,10 @@ export function useReservationActions({
     try {
       await cancelReservation(selectedReservation.id);
 
-      // 1️⃣ 현재 필터 리스트에서 제거
       setReservations((prev) =>
         prev.filter((r) => r.id !== selectedReservation.id)
       );
 
-      // 2️⃣ canceled 임시 버퍼에 추가 (⭐️ 핵심)
       pushCanceledReservation({
         ...selectedReservation,
         status: "canceled",
