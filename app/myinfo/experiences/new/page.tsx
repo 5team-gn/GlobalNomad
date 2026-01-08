@@ -2,36 +2,26 @@
 "use client";
 
 import ExperienceForm from "@/feature/Experience/ExperienceForm";
-import { createActivity } from "@/lib/services/createActivity";
+import { createFrom } from "@/lib/services/createForm"; 
+import { mapFormToCreateActivity } from "@/adapters/form.adapter";
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types"; 
+import { useRouter } from "next/navigation";
 
-export default function CreateExperiencePage() {
+export default function NewExperiencePage() {
+  const router = useRouter();
+
   const handleSubmit = async (values: ExperienceFormValues) => {
     try {
-      await createActivity("teamId", {
-        title: values.title,
-        category: values.category,
-        description: values.description,
-        address: values.address,
-        price: values.price,
-        bannerImageUrl: values.bannerImageUrl,
-        subImageUrls: values.subImageUrls,
-        schedules: values.schedules,
-      });
+      const body = mapFormToCreateActivity(values);
+
+      await createFrom("teamId", body);
 
       alert("체험이 등록되었습니다!");
-    } catch (e) {
-      alert((e as Error).message);
+      router.push("/myinfo/experiences");
+    } catch (error) {
+      alert((error as Error).message);
     }
   };
 
-  return (
-    <main className="max-w-160 mx-auto py-10">
-
-      <ExperienceForm
-        submitLabel="체험 등록하기"
-        onSubmit={handleSubmit}
-      />
-    </main>
-  );
+  return <ExperienceForm onSubmit={handleSubmit} />;
 }
