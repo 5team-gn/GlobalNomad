@@ -26,7 +26,7 @@ export default function ReservationView() {
   const {
     reservations,
     setReservations,
-    pushCanceledReservation, // ⭐️ 추가
+    pushCanceledReservation,
     loadMoreRef,
     loading,
     error,
@@ -47,7 +47,7 @@ export default function ReservationView() {
   const { handleCancelConfirm, handleReviewSubmit } = useReservationActions({
     selectedReservation,
     setReservations,
-    pushCanceledReservation, // ⭐️ 전달
+    pushCanceledReservation,
     closeModal,
   });
 
