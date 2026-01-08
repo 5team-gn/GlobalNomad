@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/button/Button";
-import type { Reservation } from "@/types/reservationview.types";
+import type { Reservation } from "@/types/reservationview/reservationview.types";
 import { toast } from "react-hot-toast";
 
 type ReviewContentProps = {
