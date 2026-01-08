@@ -2,7 +2,7 @@
  * @description 액티비티 상세 - 리뷰 API 라우트
  */
 
-import { getActivityReviews } from "@/feature/activities-detail/api/getActivityDetail";
+import { getActivityReviews } from "@/feature/activities-detail/api/getActivityReviews";
 import { NextResponse } from "next/server";
 
 export async function GET(

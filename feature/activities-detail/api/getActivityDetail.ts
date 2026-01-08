@@ -16,24 +16,3 @@ export async function getActivityDetail(activityId: number) {
     cache: "no-store",
   });
 }
-
-//리뷰 리스트
-export async function getActivityReviews(
-  activityId: number,
-  page: number = 1,
-  size: number = 1 //테스트후 3개로 수정해야함
-): Promise<ReviewResponse> {
-  const teamId = getTeamId();
-
-  const qs = new URLSearchParams({
-    page: String(page),
-    size: String(size),
-  });
-
-  return apiFetch<ReviewResponse>(
-    `/${teamId}/activities/${activityId}/reviews?${qs}`,
-    {
-      cache: "no-store",
-    }
-  );
-}

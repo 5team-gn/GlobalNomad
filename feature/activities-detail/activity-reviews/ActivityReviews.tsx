@@ -5,6 +5,7 @@
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { getActivityReviews } from "@/feature/activities-detail/api/getActivityReviews"; // 경로 정리 추천
 import ActivityReviewsClient from "./ActivityReviewsClient";
+// import { getActivityReviews } from "../api/getActivityDetail";
 
 type ActivityReviewsProps = {
   activityId: number;
