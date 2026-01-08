@@ -7,8 +7,13 @@
 "use client";
 
 import { ActivityHeaderInfoType } from "@/types/activities/activity.types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { deleteMyActivity } from "./api/deleteMyActivity";
+import axios from "axios";
 
 export default function ActivityHeaderInfo({
   activity,
@@ -17,6 +22,8 @@ export default function ActivityHeaderInfo({
 }) {
   const [openMenu, setOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     // 케밥 메뉴 외부 클릭 시 닫기
@@ -33,17 +40,48 @@ export default function ActivityHeaderInfo({
     };
   }, [openMenu]);
 
+  // 수정하기
   const onEdit = (item: typeof activity) => {
-    // 수정하기 로직 구현
-    console.log("수정하기:", item);
     setOpenMenu(false);
+    router.push(`/myinfo/experiences/${item.id}/edit`);
   };
 
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteMutate, isPending: isDeleting } = useMutation({
+    mutationFn: (id: number) => deleteMyActivity(id),
+    onSuccess: () => {
+      toast.success("삭제되었습니다.");
+      queryClient.invalidateQueries({ queryKey: ["myActivities"] });
+    },
+    onError: (e) => {
+      if (axios.isAxiosError(e)) {
+        const message = (e.response?.data as any)?.message;
+        toast.error(message ?? "삭제에 실패했습니다.");
+        return;
+        /** 
+         * 실제 로그인후 내려주는 api에 아래가 없다면 주석 해제 후 활용
+         const status = e.response?.status;
+         const message =
+           (e.response?.data as any)?.message ?? "삭제에 실패했습니다.";
+
+         if (status === 400) return toast.error(message);
+         if (status === 401) return toast.error("로그인이 필요합니다.");
+         if (status === 403) return toast.error("권한이 없습니다.");
+         */
+      }
+      toast.error("삭제에 실패했습니다.");
+    },
+  });
+
+  // 삭제하기
   const onDelete = (id: number) => {
-    // 삭제하기 로직 구현
-    console.log("삭제하기:", id);
     setOpenMenu(false);
+    const ok = confirm("정말 삭제하시겠습니까?");
+    if (!ok) return;
+    deleteMutate(id);
   };
+
   return (
     <div className="detail_header relative">
       <div className="flex items-center justify-between mb-2">
