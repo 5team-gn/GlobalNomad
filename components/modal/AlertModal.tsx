@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import Image from 'next/image';
@@ -10,7 +10,7 @@ import type { AlertModalProps } from '@/lib/utils/Modal.types';
  * AlertModal 컴포넌트
  * 
  * 경고 아이콘과 예/아니오 버튼이 있는 모달
-
+ * @size Desktop: 400px × 242px, Mobile: 320px × 185px (반응형)
  */
 export default function AlertModal({
   isOpen,
@@ -18,10 +18,20 @@ export default function AlertModal({
   text,
   cancelText = '아니오',
   confirmText = '취소하기',
-
   onCancel,
   onConfirm,
 }: AlertModalProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -76,21 +86,28 @@ export default function AlertModal({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '400px',
+          width: isMobile ? '320px' : '400px',
           backgroundColor: 'white',
           borderRadius: '16px',
-          padding: '32px 24px 24px 24px',
+          padding: isMobile ? '28px 20px 20px 20px' : '32px 24px 24px 24px',
           zIndex: 10000,
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 경고 아이콘 + 텍스트 */}
-        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-            <Image src="/modalimage.png" alt="경고" width={48} height={48} />
+        <div style={{ marginBottom: isMobile ? '28px' : '32px', textAlign: 'center' }}>
+          <div style={{ marginBottom: isMobile ? '12px' : '16px', display: 'flex', justifyContent: 'center' }}>
+            <Image 
+              src="/modalimage.png" 
+              alt="경고" 
+              width={isMobile ? 40 : 48} 
+              height={isMobile ? 40 : 48} 
+            />
           </div>
-          <p className="text-16-m" style={{ color: '#323236' }}>{text}</p>
+          <p className={isMobile ? 'text-14-m' : 'text-16-m'} style={{ color: '#323236' }}>
+            {text}
+          </p>
         </div>
 
         {/* 버튼 2개 */}
@@ -98,13 +115,13 @@ export default function AlertModal({
           <button
             onClick={handleCancel}
             style={{
-              width: '141px',
-              height: '47px',
+              width: isMobile ? '113px' : '141px',
+              height: isMobile ? '41px' : '47px',
               backgroundColor: 'white',
               color: '#707177',
               border: '1px solid #c6c8cf',
               borderRadius: '8px',
-              fontSize: '16px',
+              fontSize: isMobile ? '14px' : '16px',
               fontWeight: '500',
               cursor: 'pointer',
               transition: 'all 0.2s',
@@ -115,20 +132,19 @@ export default function AlertModal({
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'white';
             }}
-
           >
             {cancelText}
           </button>
           <button
             onClick={handleConfirm}
             style={{
-              width: '141px',
-              height: '47px',
+              width: isMobile ? '113px' : '141px',
+              height: isMobile ? '41px' : '47px',
               backgroundColor: '#3d9ef2',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
-              fontSize: '16px',
+              fontSize: isMobile ? '14px' : '16px',
               fontWeight: '500',
               cursor: 'pointer',
               transition: 'background-color 0.2s',
@@ -139,7 +155,6 @@ export default function AlertModal({
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '#3d9ef2';
             }}
-
           >
             {confirmText}
           </button>
@@ -149,5 +164,4 @@ export default function AlertModal({
   );
 
   return createPortal(modalContent, document.body);
-
 }
