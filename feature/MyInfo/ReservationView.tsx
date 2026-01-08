@@ -5,11 +5,13 @@
  *
  * UI 구조 리팩토링을 위한 컴포넌트
  * 데이터 로딩 / 액션 로직은 hook으로 분리되어 있음
- * 실제 API 연동은 feat/reservation-api 브랜치에서 진행
  */
 
+import { useState } from "react";
+import type { ReservationStatus } from "@/types/reservationview/reservationview.types";
+
 import { useReservationModal } from "@/hooks/useReservationModal";
-import { useReservationList } from "@/hooks/useReservationList";
+import { useReservationInfinite } from "@/hooks/useReservationInfinite";
 import { useReservationActions } from "@/hooks/useReservationActions";
 
 import { ReservationFilter } from "./reservationview/ReservationFilter";
@@ -19,8 +21,20 @@ import { CancelContent } from "./reservationview/CancelContent";
 import { ReviewContent } from "./reservationview/ReviewContent";
 
 export default function ReservationView() {
-  const { reservations, setReservations, filter, setFilter, loading, error } =
-    useReservationList();
+  const [filter, setFilter] = useState<ReservationStatus>("pending");
+
+  const {
+    reservations,
+    setReservations,
+    pushCanceledReservation, // ⭐️ 추가
+    loadMoreRef,
+    loading,
+    error,
+    isFilterChanging,
+  } = useReservationInfinite({
+    status: filter,
+    size: 10,
+  });
 
   const {
     modalType,
@@ -33,16 +47,9 @@ export default function ReservationView() {
   const { handleCancelConfirm, handleReviewSubmit } = useReservationActions({
     selectedReservation,
     setReservations,
+    pushCanceledReservation, // ⭐️ 전달
     closeModal,
   });
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-gray-500">로딩 중...</p>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -62,18 +69,28 @@ export default function ReservationView() {
           </p>
         </div>
 
-        {reservations.length > 0 && (
-          <ReservationFilter value={filter} onChange={setFilter} />
+        <ReservationFilter value={filter} onChange={setFilter} />
+
+        {isFilterChanging && (
+          <p className="text-center text-gray-400 mt-6">불러오는 중...</p>
         )}
 
-        {reservations.length === 0 ? (
+        {!isFilterChanging && reservations.length === 0 && (
           <ReservationEmpty type="filtered" filter={filter} />
-        ) : (
+        )}
+
+        {reservations.length > 0 && (
           <ReservationList
             reservations={reservations}
             onCancel={openCancelModal}
             onReview={openReviewModal}
           />
+        )}
+
+        <div ref={loadMoreRef} />
+
+        {loading && reservations.length > 0 && (
+          <p className="text-center text-gray-400 mt-4">불러오는 중...</p>
         )}
       </div>
 
