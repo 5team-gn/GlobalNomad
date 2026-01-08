@@ -36,3 +36,20 @@ export type ActivityDetail = Activity &
     updatedAt: string;
     subImages: ActivitySubImage[];
   };
+
+export interface CreateActivityScheduleDto {
+  date: string; // "2023-12-01"
+  startTime: string; // "12:00"
+  endTime: string; // "13:00"
+}
+
+export interface CreateActivityBodyDto {
+  title: string;
+  category: string;
+  description: string;
+  price: number;
+  address: string;
+  schedules: CreateActivityScheduleDto[];
+  bannerImageUrl: string;
+  subImageUrls?: string[];
+}
