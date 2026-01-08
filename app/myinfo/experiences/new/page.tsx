@@ -3,7 +3,7 @@
 
 import ExperienceForm from "@/feature/Experience/ExperienceForm";
 import { createFrom } from "@/lib/services/createForm"; 
-import { mapFormToCreateActivity } from "@/adapters/form.adapter";
+import { mapFormToCreateActivity } from "@/adapters/form.adapter"; 
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types"; 
 import { useRouter } from "next/navigation";
 

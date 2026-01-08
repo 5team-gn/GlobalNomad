@@ -38,9 +38,9 @@ export type ActivityDetail = Activity &
   };
 
 export interface CreateActivityScheduleDto {
-  date: string; // "2023-12-01"
-  startTime: string; // "12:00"
-  endTime: string; // "13:00"
+  date: string; 
+  startTime: string; 
+  endTime: string; 
 }
 
 export interface CreateActivityBodyDto {
@@ -52,4 +52,23 @@ export interface CreateActivityBodyDto {
   schedules: CreateActivityScheduleDto[];
   bannerImageUrl: string;
   subImageUrls?: string[];
+}
+
+export interface ActivityDetailResponse {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  address: string;
+  bannerImageUrl: string;
+  subImages: { imageUrl: string; id: number }[];
+  schedules: {
+    date: string;
+    times: {
+      startTime: string;
+      endTime: string;
+      id: number;
+    }[];
+  }[];
 }
