@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "../style/global.css";
 import { Toaster } from "react-hot-toast";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "GlobalNomad",
@@ -19,10 +20,11 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        {children}
-        
-        <Toaster position="top-center" />
-        
+        <Providers>
+          {children}
+          <Toaster position="top-center" />
+        </Providers>
+
         {/* 카카오맵 SDK */}
         {kakaoKey && (
           <Script

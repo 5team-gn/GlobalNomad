@@ -2,27 +2,29 @@ import ActivityReviews from "@/feature/activities-detail/activity-reviews/Activi
 import ActivityCalendarClient from "@/feature/activities-detail/ActivityCalendar.client";
 import KakaoMapByAddress from "@/feature/activities-detail/KakaoMapByAddress";
 import ActivityHeaderInfo from "@/feature/activities-detail/ActivityHeaderInfo";
-import { mockActivityDetail } from "@/Mocks/detail/activityDetail.mock";
 import ActivityHeaderGallery from "@/feature/activities-detail/ActivityHeaderGallery";
 import { notFound } from "next/navigation";
 import { getActivityDetail } from "@/feature/activities-detail/api/getActivityDetail";
+import type { ActivityDetail } from "@/types/activities/activity.types";
 import { ApiError } from "@/lib/api/apiFetch";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const activityId = Number(id);
   if (!Number.isFinite(activityId)) notFound();
 
-  // TODO: API 연동 전까지 목업 사용
-  const activity = mockActivityDetail;
+  let activity: ActivityDetail;
 
-  // api 사용시 주석 해제
-  // try {
-  //   await getActivityDetail(activityId);
-  // } catch (error) {
-  //   if (error instanceof ApiError && error.status === 404) notFound();
-  //   throw error;
-  // }
+  try {
+    activity = await getActivityDetail(activityId);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  }
 
   return (
     <main className="max-w-[1200px] mx-auto font-pretendard mt-[34px] lg:mt-22 mb-45 text-gray-950">
@@ -38,7 +40,10 @@ export default async function Page({ params }: { params: { id: string } }) {
           <aside className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start">
             <ActivityHeaderInfo activity={activity} />
             <div className="mt-6 lg:sticky lg:top-10">
-              <ActivityCalendarClient />
+              <ActivityCalendarClient
+                activityId={activityId}
+                price={activity.price}
+              />
             </div>
           </aside>
 

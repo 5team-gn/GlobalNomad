@@ -1,12 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/button/Button";
 import { ImageSection } from "./ImageSection";
 import { ScheduleSection } from "./ScheduleSection";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
 import { useImageManager } from "@/hooks/useImageManager";
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
+import { Input } from "@/components/input/Input";
+import CategorySelect from "@/components/dropdown/CategorySelect";
 
 interface Props {
   initialValues?: Partial<ExperienceFormValues>;
@@ -14,12 +16,15 @@ interface Props {
   submitLabel?: string;
 }
 
+const CATEGORY_OPTIONS = ["문화 · 예술", "식음료", "투어", "관광", "웰빙"];
+
 export default function ExperienceForm({
   initialValues,
   onSubmit,
   submitLabel = "등록하기",
 }: Props) {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -34,7 +39,6 @@ export default function ExperienceForm({
   });
 
   const scheduleManager = useScheduleManager(initialValues?.schedules ?? []);
-
   const bannerImages = useImageManager();
   const detailImages = useImageManager();
 
@@ -56,7 +60,7 @@ export default function ExperienceForm({
 
       {/* 제목 */}
       <label>제목</label>
-      <input
+      <Input
         {...register("title", { required: "제목을 입력해 주세요" })}
         placeholder="제목을 입력해 주세요"
         className="border p-3 rounded-xl"
@@ -65,13 +69,26 @@ export default function ExperienceForm({
         <p className="text-red-500 text-sm">{errors.title.message}</p>
       )}
 
-      {/* 카테고리 */}
-      <label>카테고리</label>
-      <input
-        {...register("category", { required: "카테고리를 입력해 주세요" })}
-        placeholder="카테고리를 선택해 주세요"
-        className="border p-3 rounded-xl"
+      <label htmlFor="category">카테고리</label>
+
+      <Controller
+        name="category"
+        control={control}
+        rules={{ required: "카테고리를 선택해 주세요" }}
+        render={({ field: { value, onChange } }) => (
+          <CategorySelect
+            id="category"
+            options={CATEGORY_OPTIONS}
+            value={value}
+            placeholder="카테고리를 선택해 주세요"
+            onChange={onChange}
+          />
+        )}
       />
+
+      {errors.category && (
+        <p className="text-red-500 text-sm">{errors.category.message}</p>
+      )}
 
       {/* 설명 */}
       <label>설명</label>
@@ -83,7 +100,7 @@ export default function ExperienceForm({
 
       {/* 가격 */}
       <label>가격</label>
-      <input
+      <Input
         type="number"
         {...register("price", { valueAsNumber: true, min: 0 })}
         placeholder="체험 금액을 입력해주세요"
@@ -92,7 +109,7 @@ export default function ExperienceForm({
 
       {/* 주소 */}
       <label>주소</label>
-      <input
+      <Input
         {...register("address")}
         placeholder="주소를 입력해 주세요"
         className="border p-3 rounded-xl"

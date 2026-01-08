@@ -1,6 +1,6 @@
-import type { Reservation } from "../types/reservationview/reservationview.types";
 // 임시 데이터
 import type { MyActivitiesResponse } from "@/types/MyExperienceTypes";
+import type { Reservation } from "../types/reservationview/reservationview.types";
 // TODO: API 연동 시 삭제
 export const RESERVATION_MOCK_LIST: Reservation[] = [
   {

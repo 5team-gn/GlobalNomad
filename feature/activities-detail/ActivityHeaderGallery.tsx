@@ -23,9 +23,11 @@ export default function ActivityHeaderGallery({ activity }: Props) {
         <div className="relative w-full md:flex-1 min-w-0 h-[260px] md:h-[400px]">
           <Image
             src={activity.bannerImageUrl}
+            // src={activity.bannerImageUrl}
             alt={activity.title}
             fill
             className="object-cover"
+            unoptimized
             sizes="(max-width: 767px) 100vw, (max-width: 1199px) 60vw, 790px"
           />
         </div>

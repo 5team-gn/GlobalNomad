@@ -11,10 +11,21 @@ import ReservationUI from "./reservation/ReservationUI";
 import { MOCK_AVAILABLE_SCHEDULE } from "@/Mocks/detail/availableSchedule.mock";
 import { useReservationFlow } from "./reservation/useReservationFlow";
 import { ReservationUIProps } from "@/types/reservation/ui";
+import { getAvailableSchedule } from "./api/getAvailableSchedule";
 
-export default function ActivityCalendarClient() {
+type Props = {
+  activityId: number;
+  price: number;
+};
+
+export default function ActivityCalendarClient({ activityId, price }: Props) {
   const activity = mockActivityDetail;
+
+  const calList = getAvailableSchedule(activityId);
+
+  // 예약 플로우 훅
   const flow = useReservationFlow(MOCK_AVAILABLE_SCHEDULE);
+  // const flow = useReservationFlow(MOCK_AVAILABLE_SCHEDULE);
 
   // 최대 참여 인원 수
   const maxPeople = Math.max(
@@ -22,12 +33,13 @@ export default function ActivityCalendarClient() {
     Number(process.env.NEXT_PUBLIC_RESERVATION_MAX_PEOPLE ?? 20) || 20
   );
 
+  // 예약하기
   const reserve = () => {
     alert("api호출");
   };
 
   const props: ReservationUIProps = {
-    price: activity.price,
+    price: price,
     maxPeople,
     open: flow.open,
     step: flow.step === "idle" || flow.step === "done" ? "date" : flow.step,

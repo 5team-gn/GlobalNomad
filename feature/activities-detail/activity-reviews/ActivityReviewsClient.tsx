@@ -5,65 +5,76 @@
  */
 "use client";
 
+import {
+  DehydratedState,
+  HydrationBoundary,
+  useQuery,
+} from "@tanstack/react-query";
 import { useState } from "react";
+import { getActivityReviews } from "@/feature/activities-detail/api/getActivityReviews";
 import { ReviewSummary } from "./ReviewSummary";
 import { ReviewList } from "./ReviewList";
 import ReviewsPagination from "./ReviewsPagination";
-import { Review } from "@/types/reviews/review.types";
-
-type InitialData = {
-  averageRating: number;
-  totalCount: number;
-  reviews: Review[];
-  page?: number;
-  pageSize?: number;
-  totalPages?: number;
-};
+import { SkeletonReviews } from "./SkeletonReviews";
 
 type Props = {
   activityId: number;
   className?: string;
-  initialData: InitialData;
+  initialPage: number;
+  pageSize: number;
+  dehydratedState: DehydratedState;
 };
 
-export default function ActivityReviewsClient({
+function ReviewsInner({
   activityId,
   className,
-  initialData,
-}: Props) {
-  const [page, setPage] = useState<number>(initialData.page ?? 1);
+  initialPage,
+  pageSize,
+}: Omit<Props, "dehydratedState">) {
+  const [page, setPage] = useState(initialPage);
 
-  const pageSize = initialData.pageSize ?? 5;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["activityReviews", activityId, page, pageSize],
+    queryFn: () => getActivityReviews(activityId, page, pageSize),
+    staleTime: 30000,
+  });
 
-  const totalPages =
-    initialData.totalPages ??
-    Math.max(1, Math.ceil(initialData.totalCount / pageSize));
-
-  const reviews = initialData.reviews;
+  if (isLoading) return <SkeletonReviews />;
+  if (isError || !data)
+    return <div className={className}>리뷰를 불러오는 데 실패했습니다.</div>;
 
   return (
     <section className={className ?? ""}>
-      <h2 className="text-16-b text-gray-950 mb-2 lg:text-18-b ">
+      <h2 className="text-16-b text-gray-950 mb-2 lg:text-18-b">
         체험 후기{" "}
-        <span className="text-gray-500 text-14-sb lg:text-16-b ">
-          {initialData.totalCount.toLocaleString()}개
+        <span className="text-gray-500 text-14-sb lg:text-16-b">
+          {data.totalCount.toLocaleString()}개
         </span>
       </h2>
 
       <ReviewSummary
-        averageRating={initialData.averageRating}
-        totalCount={initialData.totalCount}
+        averageRating={data.averageRating}
+        totalCount={data.totalCount}
       />
-
-      <ReviewList reviews={reviews} />
+      <ReviewList reviews={data.reviews} />
 
       <div className="mt-8">
         <ReviewsPagination
           page={page}
-          totalPages={totalPages}
+          totalPages={Math.max(1, Math.ceil(data.totalCount / pageSize))}
           onChange={setPage}
         />
       </div>
     </section>
+  );
+}
+
+export default function ActivityReviewsClient(props: Props) {
+  const { dehydratedState, ...rest } = props;
+
+  return (
+    <HydrationBoundary state={dehydratedState}>
+      <ReviewsInner {...rest} />
+    </HydrationBoundary>
   );
 }
