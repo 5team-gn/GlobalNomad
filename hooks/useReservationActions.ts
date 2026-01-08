@@ -52,7 +52,7 @@ export function useReservationActions({
 
       closeModal();
     } catch (err) {
-      toast.error("예약 취소에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      toast.error("후기 작성에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
