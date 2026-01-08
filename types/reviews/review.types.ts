@@ -1,21 +1,20 @@
-export interface ReviewUser {
-  profileImageUrl: string;
-  nickname: string;
-  id: number;
-}
+export type ReservationStatus =
+  | "pending"
+  | "confirmed"
+  | "canceled"
+  | "completed";
 
-export interface Review {
+/**
+ * 예약 카드 UI에서 사용하는 타입
+ */
+export interface ReservationView {
   id: number;
-  user: ReviewUser;
-  activityId: number;
-  rating: number; // 1~5
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ReviewResponse {
-  averageRating: number;
-  totalCount: number;
-  reviews: Review[];
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  totalPrice: number;
+  headCount: number;
+  status: ReservationStatus;
+  reviewWritten: boolean;
 }
