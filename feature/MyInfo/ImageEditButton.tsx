@@ -21,6 +21,7 @@ const ImageEditButton = ({onClick}:Props) => {
         justify-center
         hover:bg-gray-50
         z-10
+        cursor-pointer
       "
     >
       <EditButton />
