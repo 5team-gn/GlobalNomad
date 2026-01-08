@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* White & Black */
@@ -19,10 +19,6 @@
   --color-gray-900: #323236;
   --color-gray-950: #1f1f22;
 
-  --color-gray-4b4b4b: #4b4b4b;
-  --color-gray-a4a1aa: #a4a1aa;
-  --color-gray-79747E: #79747e;
-
   /* Brand Colors (Primary) */
   --color-primary-100: #e5f3ff;
   --color-primary-500: #3d9ef2;
@@ -31,7 +27,7 @@
   --color-red-500: #ff2727;
 
   /* 폰트 고정 */
-  --font-pretendard: "Pretendard", "sans-serif";
+  --font-pretendard: 'Pretendard', 'sans-serif';
 
   /* 기본 폰트 스타일 토큰화 (Size_Weight) */
   --text-11-m: 10px;
@@ -61,10 +57,6 @@
   --text-14-m: 14px;
   --text-14-m--font-weight: 500;
   --text-14-m--line-height: 1;
-
-  --text-14-sb: 14px;
-  --text-14-sb--font-weight: 600;
-  --text-14-sb--line-height: 2.4;
 
   --text-14-b: 14px;
   --text-14-b--font-weight: 700;

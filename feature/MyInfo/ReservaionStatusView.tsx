@@ -7,7 +7,7 @@ type Props = {
   onCancel?: () => void;
 };
 
-export default function ReservationView({
+export default function ReservaionStatusView({
   mode = "view",
   onEdit,
   onCancel,
@@ -18,7 +18,7 @@ export default function ReservationView({
 //   if (error || !data) return <div>에러</div>;
 
   return ( 
-    <div> 예약내역 들어갈곳</div>
+    <div> 예약현황 들어갈곳</div>
     // <MyInfoCard
     //   myInfo={data}
     //   mode={mode}

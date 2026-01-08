@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "../style/global.css";
-import { Toaster } from "react-hot-toast";
-import Providers from "./providers";
 
 export const metadata: Metadata = {
-  title: "GlobalNomad",
-  description:
-    "캘린더와 지도 SDK를 활용해 체험 상품을 예약할 수 있는 글로벌 체험 플랫폼",
+  title: "Design System Docs",
+  description: "Button component documentation",
 };
 
 export default function RootLayout({
@@ -15,23 +11,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
-
   return (
     <html lang="ko">
       <body>
-        <Providers>
-          {children}
-          <Toaster position="top-center" />
-        </Providers>
-
-        {/* 카카오맵 SDK */}
-        {kakaoKey && (
-          <Script
-            strategy="afterInteractive"
-            src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`}
-          />
-        )}
+        {children}
       </body>
     </html>
   );
