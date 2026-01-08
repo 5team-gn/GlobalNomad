@@ -70,7 +70,7 @@ export const fetchMyReservations = async (params?: {
   cursorId?: number;
   status?: string;
 }): Promise<Reservation[]> => {
-  // ✅ MOCK
+  // MOCK
   if (USE_MOCK) {
     if (MOCK_ERROR) throw new Error("🧪 MOCK 예약 목록 조회 실패");
 
@@ -81,7 +81,7 @@ export const fetchMyReservations = async (params?: {
     return data;
   }
 
-  // ✅ REAL API
+  // REAL API
   const response = await apiClient.get<ReservationListApiResponse>(
     "/my-reservations",
     { params }
