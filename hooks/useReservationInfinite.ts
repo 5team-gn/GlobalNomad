@@ -14,7 +14,7 @@ type Params = {
 
 export function useReservationInfinite({ status, size = 10 }: Params) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [canceledBuffer, setCanceledBuffer] = useState<Reservation[]>([]); // ⭐️ 추가
+  const [canceledBuffer, setCanceledBuffer] = useState<Reservation[]>([]);
   const [cursorId, setCursorId] = useState<number | undefined>();
   const [loading, setLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
