@@ -52,7 +52,6 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
           <div className="absolute right-0 top-[-3px] flex gap-2">
             {status === "pending" && (
               <>
-                {/* ✅ 예약 변경 (비활성 + 안내 토스트) */}
                 <div
                   onClick={() =>
                     toast(
@@ -84,7 +83,6 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
                   />
                 </div>
 
-                {/* 예약 취소 */}
                 <ButtonLabel
                   onClick={() => onCancel(reservation)}
                   label="예약 취소"
