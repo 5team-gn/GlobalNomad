@@ -1,13 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ButtonLabel } from "@/components/button/Button";
-import type { ReservationStatus } from "@/types/reservationview.types";
+import type { ReservationStatus } from "@/types/reservationview/reservationview.types";
 import { STATUS_LABEL } from "./ReservationView.constants";
 
 type Props = { type: "all" } | { type: "filtered"; filter: ReservationStatus };
 
 export function ReservationEmpty(props: Props) {
+  const router = useRouter();
+
   const message =
     props.type === "all"
       ? "아직 예약한 체험이 없어요"
@@ -31,6 +34,7 @@ export function ReservationEmpty(props: Props) {
           variant="primary"
           size="md"
           className="px-[40px] py-[14px] rounded-[16px]"
+          onClick={() => router.push("/")}
         />
       )}
     </div>
