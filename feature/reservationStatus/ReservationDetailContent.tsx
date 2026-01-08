@@ -20,6 +20,8 @@ export default function ReservationDetailContent(props: Props) {
     filteredReservations,
     getCount,
     handleStatusChange,
+    loadMore,
+    hasMore,
   } = useReservationDetail(props.reservations);
 
   return (
@@ -35,6 +37,8 @@ export default function ReservationDetailContent(props: Props) {
         reservations={filteredReservations}
         activeTab={activeTab}
         onStatusChange={handleStatusChange}
+        loadMore={loadMore}
+        hasMore={hasMore}
       />
     </>
   );
