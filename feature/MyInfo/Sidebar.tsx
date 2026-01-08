@@ -13,25 +13,31 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // 환경 변수에서 팀 아이디와 베이스 URL 가져오기
+  const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID;
+  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // 연필 버튼 클릭 시 파일 선택창 열기
   const handleImageEditClick = () => {
     fileInputRef.current?.click();
   };
 
-  // 이미지 업로드 핸들러
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // FormData 생성
     const formData = new FormData();
     formData.append("image", file);
 
     try {
-      const response = await fetch(`/${user?.teamId}/users/me/image`, {
+      // 환경 변수를 활용한 정확한 API 경로 설정
+      // https://sp-globalnomad-api.vercel.app/19-5/users/me/image
+      const response = await fetch(`${BASE_URL}${TEAM_ID}/users/me/image`, {
         method: "POST",
         body: formData,
+        // 헤더에 Authorization 토큰이 필요하다면 여기에 추가해야 할 수 있습니다.
       });
 
       if (!response.ok) {
@@ -39,9 +45,7 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
       }
 
       const data = await response.json();
-      const newImageUrl = data.profileImageUrl;
-
-      console.log("업로드 성공:", newImageUrl);
+      console.log("업로드 성공:", data.profileImageUrl);
       
       alert("프로필 이미지가 성공적으로 변경되었습니다.");
       window.location.reload(); 
@@ -54,7 +58,6 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
 
   return (
     <>
-      {/* 숨겨진 파일 input */}
       <input
         type="file"
         ref={fileInputRef}
@@ -63,6 +66,7 @@ export default function Sidebar({ active, onChange, user }: SidebarProps) {
         className="hidden"
       />
 
+      {/* ... (이전과 동일한 UI 코드) ... */}
       <button
         onClick={toggleMenu}
         className="fixed top-4 left-4 z-50 p-2 bg-white border border-gray-200 rounded-md shadow-md md:hidden flex items-center justify-center"
