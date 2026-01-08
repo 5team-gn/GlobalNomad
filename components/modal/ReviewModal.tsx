@@ -85,7 +85,7 @@ export default function ReviewModal({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '510px',
+          width: '385px',
           backgroundColor: 'white',
           borderRadius: '16px',
           padding: '28px 24px 24px 24px',

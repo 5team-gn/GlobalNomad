@@ -9,7 +9,7 @@ import type { NotificationModalProps } from '@/lib/utils/Modal.types';
  * NotificationModal 컴포넌트
  * 
  * 알림 목록을 표시하는 모달
-
+ * @size 231px × 326px
  */
 export default function NotificationModal({
   isOpen,
@@ -61,8 +61,8 @@ export default function NotificationModal({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '368px',
-          height: '480px',
+          width: '231px',
+          height: '326px',
           backgroundColor: 'white',
           borderRadius: '16px',
           zIndex: 10000,
@@ -79,33 +79,31 @@ export default function NotificationModal({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '20px 24px',
+            padding: '16px 20px',
             borderBottom: '1px solid #edeef2',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="text-16-b" style={{ color: '#323236' }}>알림</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span className="text-14-b" style={{ color: '#323236' }}>알림</span>
             {notifications.length > 0 && (
-              <span className="text-12-m" style={{ color: '#84858c' }}>
+              <span className="text-11-m" style={{ color: '#84858c' }}>
                 {notifications.length}개
               </span>
-
             )}
           </div>
           <button
             onClick={onClose}
             style={{
-              width: '24px',
-              height: '24px',
+              width: '20px',
+              height: '20px',
               border: 'none',
               background: 'none',
-              fontSize: '24px',
+              fontSize: '20px',
               color: '#707177',
               cursor: 'pointer',
               padding: 0,
               lineHeight: 1,
             }}
-
           >
             ×
           </button>
@@ -122,8 +120,7 @@ export default function NotificationModal({
                 justifyContent: 'center',
               }}
             >
-              <p className="text-14-m" style={{ color: '#84858c' }}>알림이 없습니다</p>
-
+              <p className="text-12-m" style={{ color: '#84858c' }}>알림이 없습니다</p>
             </div>
           ) : (
             notifications.map((notification) => (
@@ -132,7 +129,7 @@ export default function NotificationModal({
                 onClick={() => onNotificationClick?.(notification.id)}
                 style={{
                   width: '100%',
-                  padding: '20px 24px',
+                  padding: '12px 16px',
                   textAlign: 'left',
                   borderBottom: '1px solid #f8f8f8',
                   backgroundColor: !notification.isRead ? '#e5f3ff' : 'white',
@@ -159,20 +156,19 @@ export default function NotificationModal({
                     marginBottom: '4px',
                   }}
                 >
-                  <h4 className="text-14-b" style={{ color: '#323236' }}>
+                  <h4 className="text-12-b" style={{ color: '#323236' }}>
                     {notification.title}
                   </h4>
                   <span className="text-11-m" style={{ color: '#84858c' }}>
-
                     {notification.date.split('-')[1]}월 {notification.date.split('-')[2]}일
                   </span>
                 </div>
 
-                <p className="text-12-m" style={{ color: '#49494c', marginBottom: '4px' }}>
+                <p className="text-11-m" style={{ color: '#49494c', marginBottom: '2px' }}>
                   {notification.activityTitle}
                 </p>
 
-                <p className="text-11-m" style={{ color: '#84858c', marginBottom: '4px' }}>
+                <p className="text-11-m" style={{ color: '#84858c', marginBottom: '2px' }}>
                   ({notification.date} {notification.time})
                 </p>
 
@@ -183,7 +179,6 @@ export default function NotificationModal({
                       color: notification.status === '승인' ? '#3d9ef2' : '#ff2727',
                       fontWeight: '700',
                     }}
-
                   >
                     {notification.status}
                   </span>
@@ -198,5 +193,4 @@ export default function NotificationModal({
   );
 
   return createPortal(modalContent, document.body);
-
 }
