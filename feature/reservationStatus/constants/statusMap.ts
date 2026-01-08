@@ -5,7 +5,7 @@ export const STATUS_TO_CALENDAR: Record<
   ReservationStatusCode,
   ReservationStatusLabel | null
 > = {
-  pending: "예약",
+  pending: "신청",
   confirmed: "승인",
   completed: "완료",
   declined: null, 
