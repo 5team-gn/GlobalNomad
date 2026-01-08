@@ -1,14 +1,25 @@
-export type ReservationStatus =
-  | "pending"
-  | "confirmed"
-  | "canceled"
-  | "completed";
+import type { ReservationStatus } from "@/types/reservationview/reservationview.types";
 
-/**
- * 예약 카드 UI에서 사용하는 타입
- */
-export interface ReservationView {
+export interface ReviewUser {
   id: number;
+  nickname: string;
+  profileImageUrl: string | null;
+}
+
+export interface Review {
+  id: number;
+  user: ReviewUser;
+  activityId: number;
+  rating: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReviewResponse {
+  averageRating: number;
+  totalCount: number;
+  reviews: Review[];
   title: string;
   date: string;
   startTime: string;
