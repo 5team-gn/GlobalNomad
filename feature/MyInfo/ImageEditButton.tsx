@@ -1,9 +1,14 @@
 import EditButton from "@/public/edit_button.svg";
 
-const ImageEditButton = () => {
+interface  Props {
+  onClick: () => void
+}
+
+const ImageEditButton = ({onClick}:Props) => {
   return (
     <button
       type="button"
+      onClick={onClick}
       className="
         absolute
         bottom-0
