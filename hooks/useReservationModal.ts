@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Reservation } from "@/types/reservationview.types";
+import type { Reservation } from "@/types/reservationview/reservationview.types";
 
 type ModalType = "cancel" | "review" | null;
 
