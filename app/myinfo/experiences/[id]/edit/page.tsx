@@ -7,6 +7,7 @@ import { mapActivityToFormValues } from "@/adapters/activityToform.adapter";
 import { mapFormToUpdateActivity } from "@/adapters/updateActivity.adapter";
 import { updateMyActivity } from "@/lib/services/updateMyActivity";
 import { TEAM_ID } from "@/constants/env";
+import toast from "react-hot-toast";
 
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
 import type { ActivityDetailResponse } from "@/types/activities/activity.types";
@@ -39,7 +40,7 @@ export default function EditExperiencePage() {
         setOriginalData(data);
         setInitialValues(mapActivityToFormValues(data));
       } catch (error) {
-        alert((error as Error).message);
+        toast((error as Error).message);
       } finally {
         setLoading(false);
       }
@@ -57,10 +58,10 @@ export default function EditExperiencePage() {
 
       await updateMyActivity(TEAM_ID, Number(id), body);
 
-      alert("체험이 수정되었습니다!");
+      toast("체험이 수정되었습니다!");
       router.push("/myinfo/experiences");
     } catch (error) {
-      alert((error as Error).message);
+      toast((error as Error).message);
     }
   };
 
