@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-
+import Image from 'next/image';
 import type { ReviewModalProps } from '@/lib/utils/Modal.types';
 
 /**
  * ReviewModal 컴포넌트
  * 
  * 별점과 리뷰 내용을 입력할 수 있는 모달
-
+ * @size 385px × 549px
  */
 export default function ReviewModal({
   isOpen,
@@ -111,7 +111,6 @@ export default function ReviewModal({
             padding: 0,
             lineHeight: 1,
           }}
-
         >
           ×
         </button>
@@ -126,7 +125,6 @@ export default function ReviewModal({
 
         {/* 별점 */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', justifyContent: 'center' }}>
-
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
@@ -140,14 +138,14 @@ export default function ReviewModal({
                 background: 'none',
                 cursor: 'pointer',
                 padding: 0,
-                fontSize: '40px',
-                lineHeight: 1,
-                color: star <= (hoverRating || rating) ? '#FFC700' : '#e0e0e5',
-                transition: 'color 0.2s',
               }}
             >
-              ★
-
+              <Image
+                src={star <= (hoverRating || rating) ? '/icon_star_on.svg' : '/icon_star_off.svg'}
+                alt="별점"
+                width={42}
+                height={42}
+              />
             </button>
           ))}
         </div>
@@ -219,7 +217,6 @@ export default function ReviewModal({
               e.currentTarget.style.backgroundColor = '#3d9ef2';
             }
           }}
-
         >
           {buttonText}
         </button>
@@ -228,5 +225,4 @@ export default function ReviewModal({
   );
 
   return createPortal(modalContent, document.body);
-
 }
