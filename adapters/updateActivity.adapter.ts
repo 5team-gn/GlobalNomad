@@ -5,19 +5,26 @@ import type {
   UpdateScheduleDto,
 } from "@/types/updateActivity.types";
 
+const getScheduleKey = (schedule: {
+  date: string;
+  startTime: string;
+  endTime: string;
+}): string => `${schedule.date}|${schedule.startTime}|${schedule.endTime}`;
+
 export function mapFormToUpdateActivity(
   original: ActivityDetailResponse,
-  current: ExperienceFormValues
+  current: ExperienceFormValues,
 ): UpdateMyActivityBodyDto {
-  const originalSubImages = original.subImages;
+  const originalImageUrlSet = new Set(original.subImages.map((img) => img.imageUrl));
   const currentUrls = current.subImageUrls ?? [];
+  const currentUrlSet = new Set(currentUrls);
 
-  const subImageIdsToRemove = originalSubImages
-    .filter((img) => !currentUrls.includes(img.imageUrl))
+  const subImageIdsToRemove = original.subImages
+    .filter((img) => !currentUrlSet.has(img.imageUrl))
     .map((img) => img.id);
 
   const subImageUrlsToAdd = currentUrls.filter(
-    (url) => !originalSubImages.some((img) => img.imageUrl === url)
+    (url) => !originalImageUrlSet.has(url),
   );
 
   const originalSchedules = original.schedules.flatMap((s) =>
@@ -26,54 +33,35 @@ export function mapFormToUpdateActivity(
       date: s.date,
       startTime: t.startTime,
       endTime: t.endTime,
-    }))
+    })),
   );
 
+  const originalScheduleMap = new Map(
+    originalSchedules.map((s) => [getScheduleKey(s), s.id]),
+  );
+  const currentScheduleSet = new Set(current.schedules.map(getScheduleKey));
+
   const scheduleIdsToRemove = originalSchedules
-    .filter(
-      (os) =>
-        !current.schedules.some(
-          (cs) =>
-            cs.date === os.date &&
-            cs.startTime === os.startTime &&
-            cs.endTime === os.endTime
-        )
-    )
+    .filter((os) => !currentScheduleSet.has(getScheduleKey(os)))
     .map((os) => os.id);
 
   const schedulesToAdd: UpdateScheduleDto[] = current.schedules.filter(
-    (cs) =>
-      !originalSchedules.some(
-        (os) =>
-          os.date === cs.date &&
-          os.startTime === cs.startTime &&
-          os.endTime === cs.endTime
-      )
+    (cs) => !originalScheduleMap.has(getScheduleKey(cs)),
   );
 
-  return {
-    title: current.title !== original.title ? current.title : undefined,
-    category:
-      current.category !== original.category ? current.category : undefined,
-    description:
-      current.description !== original.description
-        ? current.description
-        : undefined,
-    price: current.price !== original.price ? current.price : undefined,
-    address: current.address !== original.address ? current.address : undefined,
-    bannerImageUrl:
-      current.bannerImageUrl !== original.bannerImageUrl
-        ? current.bannerImageUrl
-        : undefined,
+  const diff: Partial<UpdateMyActivityBodyDto> = {};
 
-    subImageIdsToRemove: subImageIdsToRemove.length
-      ? subImageIdsToRemove
-      : undefined,
-    subImageUrlsToAdd: subImageUrlsToAdd.length ? subImageUrlsToAdd : undefined,
+  if (current.title !== original.title) diff.title = current.title;
+  if (current.category !== original.category) diff.category = current.category;
+  if (current.description !== original.description) diff.description = current.description;
+  if (current.price !== original.price) diff.price = current.price;
+  if (current.address !== original.address) diff.address = current.address;
+  if (current.bannerImageUrl !== original.bannerImageUrl) diff.bannerImageUrl = current.bannerImageUrl;
 
-    scheduleIdsToRemove: scheduleIdsToRemove.length
-      ? scheduleIdsToRemove
-      : undefined,
-    schedulesToAdd: schedulesToAdd.length ? schedulesToAdd : undefined,
-  };
+  if (subImageIdsToRemove.length > 0) diff.subImageIdsToRemove = subImageIdsToRemove;
+  if (subImageUrlsToAdd.length > 0) diff.subImageUrlsToAdd = subImageUrlsToAdd;
+  if (scheduleIdsToRemove.length > 0) diff.scheduleIdsToRemove = scheduleIdsToRemove;
+  if (schedulesToAdd.length > 0) diff.schedulesToAdd = schedulesToAdd;
+
+  return diff;
 }
