@@ -1,4 +1,4 @@
-import type { Reservation } from "../types/reservationview.types";
+import type { Reservation } from "../types/reservationview/reservationview.types";
 
 // TODO: API 연동 시 삭제
 export const RESERVATION_MOCK_LIST: Reservation[] = [
