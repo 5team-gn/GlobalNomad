@@ -2,16 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-
 import ExperienceForm from "@/feature/Experience/ExperienceForm";
-
-import { mapActivityToFormValues } from "@/adapters/activityToform.adapter";  
+import { mapActivityToFormValues } from "@/adapters/activityToform.adapter";
 import { mapFormToUpdateActivity } from "@/adapters/updateActivity.adapter";
-
 import { updateMyActivity } from "@/lib/services/updateMyActivity";
+import { TEAM_ID } from "@/constants/env";
 
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
-import type { ActivityDetailResponse } from "@/types/activities/activity.types"; 
+import type { ActivityDetailResponse } from "@/types/activities/activity.types";
 
 export default function EditExperiencePage() {
   const { id } = useParams<{ id: string }>();
@@ -27,7 +25,7 @@ export default function EditExperiencePage() {
   useEffect(() => {
     const fetchActivityDetail = async () => {
       try {
-        const res = await fetch(`/teamId/my-activities/${id}`, {
+        const res = await fetch(`/${TEAM_ID}/my-activities/${id}`, {
           credentials: "include",
         });
 
@@ -57,7 +55,7 @@ export default function EditExperiencePage() {
     try {
       const body = mapFormToUpdateActivity(originalData, values);
 
-      await updateMyActivity("teamId", Number(id), body);
+      await updateMyActivity(TEAM_ID, Number(id), body);
 
       alert("체험이 수정되었습니다!");
       router.push("/myinfo/experiences");
