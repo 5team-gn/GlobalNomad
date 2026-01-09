@@ -24,13 +24,14 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
         aria-label={visible ? "비밀번호 숨기기" : "비밀번호 표시"}
         aria-pressed={visible}
         onClick={() => setVisible((v) => !v)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        className="absolute right-4 top-1/2 -translate-y-1/2 
+             outline-none focus:outline-none"
       >
         <Image
-          src={visible ? "/icon_active_on.svg" : "/icon_active_off.svg"}
+          src={visible ? "/icon_eye_on.svg" : "/icon_eye.svg"}
           alt=""
-          width={20}
-          height={20}
+          width={24}
+          height={24}
         />
       </button>
     </div>

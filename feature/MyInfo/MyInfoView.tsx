@@ -1,83 +1,74 @@
 "use client";
 
+import { Button } from "@/components/button/Button";
+import { InputField } from "@/components/input/inputfield";
+import { PasswordInput } from "@/components/input/passwordinput";
+
+const BASE_INPUT_CLASS =
+  "h-[54px] w-full rounded-[16px] border border-gray-100 px-[20px] text-sm text-gray-950 outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
+
 export default function MyInfoView() {
   return (
-    <div className="flex justify-center bg-[var(--color-gray-25)] font-pretendard">
-      <div className="w-[640px] rounded-xl bg-white pl-[50px]">
+    <div className="flex justify-center  font-pretendard">
+      <div className="w-[640px] rounded-xl bg-white">
         {/* 타이틀 */}
         <div className="mb-[24px]">
-          <h2 className="pt-[10px] text-[var(--text-18-b)] font-[var(--text-18-b--font-weight)] text-[var(--color-gray-950)] tracking-[-0.45px]">
-            내 정보
-          </h2>
-          <p className="mt-[4px] font-[var(--text-14-m--font-weight)] text-[var(--color-gray-500)]">
+          <h2 className="pt-[10px] text-18-b tracking-[-0.45px]">내 정보</h2>
+          <p className="mt-[4px] text-14-m text-gray-500">
             닉네임과 비밀번호를 수정하실 수 있습니다.
           </p>
         </div>
 
         {/* Input 영역 */}
         <div className="space-y-[24px]">
-          {/* TODO: 공통 Input 컴포넌트 적용 예정 */}
-          <InputField label="닉네임" placeholder="닉네임을 입력해주세요" />
+          {/* 닉네임 */}
+          <InputField label="닉네임">
+            <input
+              type="text"
+              placeholder="닉네임을 입력해주세요"
+              className={BASE_INPUT_CLASS}
+            />
+          </InputField>
 
-          {/* TODO: 공통 Input 컴포넌트 적용 예정 */}
-          <InputField label="이메일" placeholder="codeit@codeit.com" />
+          {/* 이메일 (수정 불가) */}
+          <InputField label="이메일" helperText="이메일은 수정할 수 없습니다.">
+            <input
+              type="email"
+              value="codeit@codeit.com"
+              disabled
+              className={`${BASE_INPUT_CLASS} bg-gray-50 text-gray-400 cursor-not-allowed`}
+            />
+          </InputField>
 
-          {/* TODO: 공통 Input + PasswordInput 적용 예정 */}
-          <InputField
-            label="비밀번호"
-            type="password"
-            placeholder="8자 이상 입력해 주세요"
-          />
+          {/* 비밀번호 */}
+          <InputField label="비밀번호">
+            <PasswordInput
+              placeholder="8자 이상 입력해 주세요"
+              className={BASE_INPUT_CLASS}
+            />
+          </InputField>
 
-          {/* TODO: 공통 Input + PasswordInput 적용 예정 */}
-          <InputField
-            label="비밀번호"
-            type="password"
-            placeholder="비밀번호를 한 번 더 입력해 주세요"
-          />
+          {/* 비밀번호 확인 */}
+          <InputField label="비밀번호">
+            <PasswordInput
+              placeholder="비밀번호를 한 번 더 입력해 주세요"
+              className={BASE_INPUT_CLASS}
+            />
+          </InputField>
 
-          <div className="mt-[32px] flex justify-center">
-            {/* TODO: 공통 Button 컴포넌트로 교체 예정 */}
-            <button
+          {/* 저장 버튼 */}
+          <div className="mt-[24px] flex justify-center ">
+            <Button
               type="button"
-              className="rounded-[12px] bg-[var(--color-primary-500)] px-10 py-3 text-[var(--text-14-m)] font-[var(--text-14-m--font-weight)] text-white hover:opacity-90"
+              variant="primary"
+              size="lg"
+              className="h-[41px] rounded-[12px] px-10 py-3 w-[120px]"
             >
-              저장하기
-            </button>
+              <span className="text-14-b whitespace-nowrap">저장하기</span>
+            </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* -------------------- */
-/* Input Field Component */
-/* -------------------- */
-
-/**
- * TODO:
- * - 공통 Input 컴포넌트 병합 시 제거 예정
- * - 현재는 UI 확인을 위한 임시 구현
- */
-type InputFieldProps = {
-  label: string;
-  type?: string;
-  placeholder?: string;
-};
-
-function InputField({ label, type = "text", placeholder }: InputFieldProps) {
-  return (
-    <div className="flex flex-col gap-[10px]">
-      <label className="text-[var(--text-16-m)] font-[var(--text-16-m--font-weight)] text-[var(--color-gray-950)] tracking-[-0.4px]">
-        {label}
-      </label>
-
-      <input
-        type={type}
-        placeholder={placeholder}
-        className="h-[54px] w-[640px] rounded-[16px] border border-[var(--color-gray-200)] px-[20px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary-500)]"
-      />
     </div>
   );
 }
