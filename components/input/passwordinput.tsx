@@ -30,8 +30,8 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
         <Image
           src={visible ? "/icon_eye_on.svg" : "/icon_eye.svg"}
           alt=""
-          width={20}
-          height={20}
+          width={24}
+          height={24}
         />
       </button>
     </div>
