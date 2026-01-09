@@ -5,7 +5,7 @@ import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
 
 const BASE_INPUT_CLASS =
-  "h-[54px] w-full rounded-[16px] border border-[var(--color-gray-200)] px-[20px] text-sm text-[var(--color-gray-950)] outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
+  "h-[54px] w-full rounded-[16px] border border-gray-200 px-[20px] text-sm text-gray-950 outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
 
 export default function MyInfoView() {
   return (
@@ -13,10 +13,8 @@ export default function MyInfoView() {
       <div className="w-[640px] rounded-xl bg-white">
         {/* 타이틀 */}
         <div className="mb-[24px]">
-          <h2 className="pt-[10px] text-[var(--text-18-b)] font-[var(--text-18-b--font-weight)] text-[var(--color-gray-950)] tracking-[-0.45px]">
-            내 정보
-          </h2>
-          <p className="mt-[4px] font-[var(--text-14-m--font-weight)] text-[var(--color-gray-500)]">
+          <h2 className="pt-[10px] text-18-b tracking-[-0.45px]">내 정보</h2>
+          <p className="mt-[4px] text-14-m text-gray-500">
             닉네임과 비밀번호를 수정하실 수 있습니다.
           </p>
         </div>
