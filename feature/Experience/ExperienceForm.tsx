@@ -19,7 +19,14 @@ interface Props {
   submitLabel?: string;
 }
 
-const CATEGORY_OPTIONS = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
+const CATEGORY_OPTIONS = [
+  "문화 · 예술",
+  "식음료",
+  "스포츠",
+  "투어",
+  "관광",
+  "웰빙",
+];
 
 export default function ExperienceForm({
   initialValues,
@@ -92,13 +99,18 @@ export default function ExperienceForm({
 
       {/* 제목 */}
       <div className="flex flex-col gap-2">
-        <label className="text-16-b">제목</label>
+        <label htmlFor="title" className="text-16-b">
+          제목
+        </label>
         <Input
+          id="title"
           {...register("title", { required: "제목을 입력해 주세요" })}
           placeholder="제목을 입력해 주세요"
-          className={errors.title ? "border-red-500" : ""}
+          className="border p-4 rounded-xl"
         />
-        {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
+        {errors.title && (
+          <p className="text-red-500 text-sm">{errors.title.message}</p>
+        )}
       </div>
 
       {/* 카테고리 */}
@@ -120,7 +132,9 @@ export default function ExperienceForm({
             />
           )}
         />
-        {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
+        {errors.category && (
+          <p className="text-red-500 text-sm">{errors.category.message}</p>
+        )}
       </div>
 
       {/* 설명 */}
@@ -133,7 +147,9 @@ export default function ExperienceForm({
             errors.description ? "border-red-500" : ""
           }`}
         />
-        {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+        {errors.description && (
+          <p className="text-red-500 text-sm">{errors.description.message}</p>
+        )}
       </div>
 
       {/* 가격 */}
@@ -148,7 +164,9 @@ export default function ExperienceForm({
           })}
           placeholder="체험 금액을 입력해 주세요"
         />
-        {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
+        {errors.price && (
+          <p className="text-red-500 text-sm">{errors.price.message}</p>
+        )}
       </div>
 
       {/* 주소 */}
@@ -159,7 +177,10 @@ export default function ExperienceForm({
           onChange={(val) => setValue("address", val, { shouldValidate: true })}
           error={errors.address?.message}
         />
-        <input type="hidden" {...register("address", { required: "주소를 검색해 주세요" })} />
+        <input
+          type="hidden"
+          {...register("address", { required: "주소를 검색해 주세요" })}
+        />
       </div>
 
       <hr className="border-gray-100 my-4" />
@@ -170,10 +191,14 @@ export default function ExperienceForm({
         <input
           type="hidden"
           {...register("schedules", {
-            validate: (value) => (value && value.length > 0) || "시간대를 최소 1개 이상 추가해 주세요.",
+            validate: (value) =>
+              (value && value.length > 0) ||
+              "시간대를 최소 1개 이상 추가해 주세요.",
           })}
         />
-        {errors.schedules && <p className="text-red-500 text-sm">{errors.schedules.message}</p>}
+        {errors.schedules && (
+          <p className="text-red-500 text-sm">{errors.schedules.message}</p>
+        )}
       </div>
 
       <hr className="border-gray-100 my-4" />
@@ -189,9 +214,15 @@ export default function ExperienceForm({
         />
         <input
           type="hidden"
-          {...register("bannerImageUrl", { required: "배너 이미지는 필수입니다." })}
+          {...register("bannerImageUrl", {
+            required: "배너 이미지는 필수입니다.",
+          })}
         />
-        {errors.bannerImageUrl && <p className="text-red-500 text-sm">{errors.bannerImageUrl.message}</p>}
+        {errors.bannerImageUrl && (
+          <p className="text-red-500 text-sm">
+            {errors.bannerImageUrl.message}
+          </p>
+        )}
       </div>
 
       {/* 소개 이미지 */}
