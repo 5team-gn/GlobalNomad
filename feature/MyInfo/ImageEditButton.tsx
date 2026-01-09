@@ -1,9 +1,14 @@
 import EditButton from "@/public/edit_button.svg";
 
-const ImageEditButton = () => {
+interface  Props {
+  onClick: () => void
+}
+
+const ImageEditButton = ({onClick}:Props) => {
   return (
     <button
       type="button"
+      onClick={onClick}
       className="
         absolute
         bottom-0
@@ -16,6 +21,7 @@ const ImageEditButton = () => {
         justify-center
         hover:bg-gray-50
         z-10
+        cursor-pointer
       "
     >
       <EditButton />
