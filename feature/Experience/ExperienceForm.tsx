@@ -10,14 +10,14 @@ import { useImageManager } from "@/hooks/useImageManager";
 import { Input } from "@/components/input/Input";
 import CategorySelect from "@/components/dropdown/CategorySelect";
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
+import toast from "react-hot-toast";
 
 interface Props {
   initialValues?: Partial<ExperienceFormValues>;
-  onSubmit: (values: ExperienceFormValues) => void;
+  onSubmit: (values: ExperienceFormValues) => Promise<void>;
   submitLabel?: string;
 }
 
-// 1. 카테고리 옵션 수정 (스포츠 추가)
 const CATEGORY_OPTIONS = ["문화 · 예술", "식음료", "스포츠", "투어", "관광", "웰빙"];
 
 export default function ExperienceForm({
@@ -31,7 +31,7 @@ export default function ExperienceForm({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting }, 
   } = useForm<ExperienceFormValues>({
     defaultValues: {
       title: initialValues?.title ?? "",
@@ -47,13 +47,13 @@ export default function ExperienceForm({
   const bannerImages = useImageManager();
   const detailImages = useImageManager();
 
-  const onValidSubmit = (data: ExperienceFormValues) => {
+  const onValidSubmit = async (data: ExperienceFormValues) => {
     if (scheduleManager.schedules.length === 0) {
-      alert("예약 가능한 시간대를 최소 1개 이상 추가해 주세요.");
+      toast("예약 가능한 시간대를 최소 1개 이상 추가해 주세요.");
       return;
     }
     if (bannerImages.images.length === 0) {
-      alert("배너 이미지는 필수입니다.");
+      toast("배너 이미지는 필수입니다.");
       return;
     }
 
@@ -64,8 +64,13 @@ export default function ExperienceForm({
       subImageUrls: detailImages.images.map((img) => img.preview),
     };
 
-    onSubmit(finalData);
-    alert("등록이 완료되었습니다."); 
+    try {
+      await onSubmit(finalData);
+      toast("등록이 완료되었습니다."); 
+    } catch (error) {
+      console.error("등록 실패:", error);
+      toast("등록에 실패했습니다. 다시 시도해 주세요.");
+    }
   };
 
   return (
@@ -79,12 +84,13 @@ export default function ExperienceForm({
           type="submit"
           variant="primary"
           className="px-10 py-3 rounded-2xl"
+          disabled={isSubmitting} 
         >
-          {submitLabel}
+          {isSubmitting ? "등록 중..." : submitLabel}
         </Button>
       </div>
 
-      {/* 제목 (필수) */}
+      {/* 제목 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">제목</label>
         <Input
@@ -95,7 +101,7 @@ export default function ExperienceForm({
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
 
-      {/* 카테고리 (필수) */}
+      {/* 카테고리 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">카테고리</label>
         <Controller
@@ -114,7 +120,7 @@ export default function ExperienceForm({
         {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
       </div>
 
-      {/* 설명 (필수) */}
+      {/* 설명 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">설명</label>
         <textarea
@@ -125,7 +131,7 @@ export default function ExperienceForm({
         {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
       </div>
 
-      {/* 가격 (필수) */}
+      {/* 가격 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">가격</label>
         <Input
@@ -141,7 +147,7 @@ export default function ExperienceForm({
         {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
       </div>
 
-      {/* 주소 (필수 - Daum API 연동) */}
+      {/* 주소 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">주소</label>
         <AddressInput 
@@ -149,18 +155,17 @@ export default function ExperienceForm({
           onChange={(val) => setValue("address", val, { shouldValidate: true })}
           error={errors.address?.message}
         />
-        {/* hidden input for react-hook-form validation */}
         <input type="hidden" {...register("address", { required: "주소를 검색해 주세요" })} />
       </div>
 
       <hr className="border-gray-100 my-4" />
 
-      {/* 예약 가능한 시간대 (+/- 버튼 로직 포함) */}
+      {/* 예약 가능한 시간대 */}
       <ScheduleSection manager={scheduleManager} />
 
       <hr className="border-gray-100 my-4" />
 
-      {/* 배너 이미지 (최대 1개, 필수) */}
+      {/* 배너 이미지 */}
       <ImageSection
         title="배너 이미지 (필수)"
         images={bannerImages.images}
@@ -169,7 +174,7 @@ export default function ExperienceForm({
         onRemove={bannerImages.removeImage}
       />
 
-      {/* 소개 이미지 (최대 4개) */}
+      {/* 소개 이미지 */}
       <ImageSection
         title="소개 이미지 (최대 4개)"
         images={detailImages.images}
