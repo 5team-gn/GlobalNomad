@@ -1,5 +1,7 @@
 import axios from "axios";
-import type { Reservation } from "@/types/reservationview.types";
+import type { Reservation } from "@/types/reservationview/reservationview.types";
+import type { ReservationListApiResponse } from "@/types/reservationview/api/reservation.api.types";
+import { mapReservationApiToView } from "@/lib/mappers/reservation.mapper";
 import { RESERVATION_MOCK_LIST } from "@/Mocks/ReservationView.mock";
 
 /**
@@ -68,6 +70,7 @@ export const fetchMyReservations = async (params?: {
   cursorId?: number;
   status?: string;
 }): Promise<Reservation[]> => {
+  // MOCK
   if (USE_MOCK) {
     if (MOCK_ERROR) throw new Error("🧪 MOCK 예약 목록 조회 실패");
 
@@ -78,13 +81,15 @@ export const fetchMyReservations = async (params?: {
     return data;
   }
 
-  const response = await apiClient.get("/my-reservations", { params });
+  // REAL API
+  const response = await apiClient.get<ReservationListApiResponse>(
+    "/my-reservations",
+    { params }
+  );
 
-  if (Array.isArray(response.data)) return response.data;
-  if (response.data?.reservations) return response.data.reservations;
-  if (response.data?.data) return response.data.data;
+  const reservations = response.data.reservations ?? [];
 
-  return [];
+  return reservations.map(mapReservationApiToView);
 };
 
 /**
