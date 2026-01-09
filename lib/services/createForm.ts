@@ -1,7 +1,7 @@
 // services/activity.service.ts
 import type { CreateActivityBodyDto } from "@/types/activities/activity.types"; 
 
-export async function createFrom(
+export async function postcreateFrom(
   teamId: string,
   body: CreateActivityBodyDto
 ) {

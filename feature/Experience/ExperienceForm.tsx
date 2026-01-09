@@ -1,33 +1,46 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/button/Button";
 import { ImageSection } from "./ImageSection";
 import { ScheduleSection } from "./ScheduleSection";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
 import { useImageManager } from "@/hooks/useImageManager";
-import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
 import { Input } from "@/components/input/Input";
 import CategorySelect from "@/components/dropdown/CategorySelect";
+import toast from "react-hot-toast";
+
+import { TEAM_ID } from "@/constants/env";
+import { postcreateFrom } from "@/lib/services/createForm";
+import { patchupdateMyActivity } from "@/lib/services/updateMyActivity";
+import { mapFormToCreateActivity } from "@/adapters/form.adapter";
+import { mapFormToUpdateActivity } from "@/adapters/updateActivity.adapter";
+
+import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
+import type { ActivityDetailResponse } from "@/types/activities/activity.types";
 
 interface Props {
+  mode: "create" | "edit";
   initialValues?: Partial<ExperienceFormValues>;
-  onSubmit: (values: ExperienceFormValues) => void;
-  submitLabel?: string;
+  originalData?: ActivityDetailResponse;
 }
 
 const CATEGORY_OPTIONS = ["문화 · 예술", "식음료", "투어", "관광", "웰빙"];
 
 export default function ExperienceForm({
+  mode,
   initialValues,
-  onSubmit,
-  submitLabel = "등록하기",
+  originalData,
 }: Props) {
+  const router = useRouter();
+  const params = useParams();
+  const activityId = params?.id as string;
   const {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ExperienceFormValues>({
     defaultValues: {
       title: initialValues?.title ?? "",
@@ -42,13 +55,31 @@ export default function ExperienceForm({
   const bannerImages = useImageManager();
   const detailImages = useImageManager();
 
-  const onValidSubmit = (data: ExperienceFormValues) => {
-    onSubmit({
-      ...data,
-      schedules: scheduleManager.schedules,
-      bannerImageUrl: bannerImages.images[0]?.preview ?? "",
-      subImageUrls: detailImages.images.map((img) => img.preview),
-    });
+  const onValidSubmit = async (data: ExperienceFormValues) => {
+    try {
+      const formData = {
+        ...data,
+        schedules: scheduleManager.schedules,
+        bannerImageUrl: bannerImages.images[0]?.preview ?? "",
+        subImageUrls: detailImages.images.map((img) => img.preview),
+      };
+
+      if (mode === "create") {
+        const body = mapFormToCreateActivity(formData);
+        await postcreateFrom(TEAM_ID, body);
+        toast.success("체험이 등록되었습니다!");
+      } else {
+        if (!originalData || !activityId) return;
+        const body = mapFormToUpdateActivity(originalData, formData);
+        await patchupdateMyActivity(TEAM_ID, Number(activityId), body);
+        toast.success("체험이 수정되었습니다!");
+      }
+
+      router.push("/myinfo/experiences");
+      router.refresh();
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
   };
 
   return (
@@ -144,7 +175,11 @@ export default function ExperienceForm({
           size="sm"
           className="px-10 py-3 rounded-2xl"
         >
-          {submitLabel}
+          {isSubmitting
+            ? "처리중"
+            : mode === "create"
+            ? "등록하기"
+            : "수정하기"}
         </Button>
       </div>
     </form>

@@ -1,81 +1,34 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import ExperienceForm from "@/feature/Experience/ExperienceForm";
 import { mapActivityToFormValues } from "@/adapters/activityToform.adapter";
-import { mapFormToUpdateActivity } from "@/adapters/updateActivity.adapter";
-import { updateMyActivity } from "@/lib/services/updateMyActivity";
-import { TEAM_ID } from "@/constants/env";
-import toast from "react-hot-toast";
+import { notFound } from "next/navigation";
+import { ApiError } from "@/lib/api/apiFetch";
+import { getActivityDetail } from "@/feature/activities-detail/api/getActivityDetail";
 
-import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
-import type { ActivityDetailResponse } from "@/types/activities/activity.types";
+export default async function EditExperiencePage({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const activityId = Number(id);
 
-export default function EditExperiencePage() {
-  const { id } = useParams<{ id: string }>();
-  const router = useRouter();
+  if (isNaN(activityId)) notFound();
 
-  const [originalData, setOriginalData] =
-    useState<ActivityDetailResponse | null>(null);
-  const [initialValues, setInitialValues] =
-    useState<ExperienceFormValues | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  //  기존 체험 상세 조회
-  useEffect(() => {
-    const fetchActivityDetail = async () => {
-      try {
-        const res = await fetch(`/${TEAM_ID}/my-activities/${id}`, {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          const error = await res.json();
-          throw new Error(error.message ?? "체험 정보를 불러오지 못했습니다.");
-        }
-
-        const data: ActivityDetailResponse = await res.json();
-
-        setOriginalData(data);
-        setInitialValues(mapActivityToFormValues(data));
-      } catch (error) {
-        toast((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActivityDetail();
-  }, [id]);
-
-  //  수정 제출
-  const handleSubmit = async (values: ExperienceFormValues) => {
-    if (!originalData) return;
-
-    try {
-      const body = mapFormToUpdateActivity(originalData, values);
-
-      await updateMyActivity(TEAM_ID, Number(id), body);
-
-      toast("체험이 수정되었습니다!");
-      router.push("/myinfo/experiences");
-    } catch (error) {
-      toast((error as Error).message);
+  let originalData;
+  try {
+    originalData = await getActivityDetail(activityId);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      notFound(); 
     }
-  };
-
-  //  로딩 처리
-  if (loading || !initialValues) {
-    return <div className="py-10 text-center">로딩중...</div>;
+    throw error; 
   }
 
-  //  Form 재사용
+  const initialValues = mapActivityToFormValues(originalData);
+
   return (
-    <ExperienceForm
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      submitLabel="수정하기"
-    />
+    <div className="py-10">
+      <ExperienceForm
+        mode="edit"
+        initialValues={initialValues}
+        originalData={originalData}
+      />
+    </div>
   );
 }

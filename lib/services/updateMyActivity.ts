@@ -1,6 +1,6 @@
 import type { UpdateMyActivityBodyDto } from "@/types/updateActivity.types";
 
-export async function updateMyActivity(
+export async function patchupdateMyActivity(
   teamId: string,
   activityId: number,
   body: UpdateMyActivityBodyDto
