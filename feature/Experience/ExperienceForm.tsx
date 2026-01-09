@@ -74,7 +74,7 @@ export default function ExperienceForm({
   useEffect(() => {
     setValue("bannerImageUrl", bannerImages.images[0]?.preview ?? "");
     setValue("schedules", scheduleManager.schedules);
-  }, [bannerImages.images, scheduleManager.schedules, setValue]);
+  }, [bannerImages.images, scheduleManager.schedules]);
 
   const onValidSubmit = async (data: ExperienceFormValues) => {
     try {
