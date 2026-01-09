@@ -26,27 +26,32 @@ export default function useReservationDetail(
     setDisplayLimit(PAGE_SIZE);
   };
 
-  const allFilteredReservations = useMemo(() => {
-    return localReservations
-      .filter((r) => {
-        if (r.status !== activeTab) return false;
-        if (selectedTime === "전체") return true;
-        return r.time === selectedTime;
-      })
-      .sort((a, b) => {
-        const getTimestamp = (r: Reservation) => {
-          const dateStr = r.createdAt || `${r.date} ${r.time || "00:00"}`;
-          const time = new Date(dateStr).getTime();
-          return isNaN(time) ? 0 : time;
-        };
+ const allFilteredReservations = useMemo(() => {
+  return [...localReservations] 
+    .filter((r) => {
+      if (r.status !== activeTab) return false;
+      if (selectedTime === "전체") return true;
+      return r.time === selectedTime; 
+    })
+    .sort((a, b) => {
+      const getTime = (r: Reservation) => {
+        const dateTimeStr = r.createdAt || `${r.date}T${r.time}:00`; 
+        const parsed = Date.parse(dateTimeStr);
+        return isNaN(parsed) ? 0 : parsed;
+      };
 
-        const timeA = getTimestamp(a);
-        const timeB = getTimestamp(b);
+      const timeA = getTime(a);
+      const timeB = getTime(b);
 
-        if (timeB !== timeA) return timeB - timeA;
-        return String(b.id).localeCompare(String(a.id));
-      });
-  }, [localReservations, activeTab, selectedTime]);
+      if (timeB !== timeA) {
+        return timeB - timeA;
+      }
+
+      const idA = String(a.id);
+      const idB = String(b.id);
+      return idB.localeCompare(idA, undefined, { numeric: true });
+    });
+}, [localReservations, activeTab, selectedTime]);
 
   const pagedReservations = allFilteredReservations.slice(0, displayLimit);
 
