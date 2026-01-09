@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-
+import Image from 'next/image';
 import type { ReviewModalProps } from '@/lib/utils/Modal.types';
 
 /**
  * ReviewModal 컴포넌트
  * 
  * 별점과 리뷰 내용을 입력할 수 있는 모달
-
+ * @size Desktop: 385px × 549px, Mobile: 321px × 493px (반응형)
  */
 export default function ReviewModal({
   isOpen,
@@ -21,9 +21,19 @@ export default function ReviewModal({
   maxLength = 100,
   onSubmit,
 }: ReviewModalProps) {
+  const [isMobile, setIsMobile] = useState(false);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [content, setContent] = useState('');
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -85,10 +95,10 @@ export default function ReviewModal({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '510px',
+          width: isMobile ? '321px' : '385px',
           backgroundColor: 'white',
           borderRadius: '16px',
-          padding: '28px 24px 24px 24px',
+          padding: isMobile ? '24px 20px 20px 20px' : '28px 24px 24px 24px',
           zIndex: 10000,
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
         }}
@@ -99,8 +109,8 @@ export default function ReviewModal({
           onClick={onClose}
           style={{
             position: 'absolute',
-            top: '20px',
-            right: '20px',
+            top: isMobile ? '16px' : '20px',
+            right: isMobile ? '16px' : '20px',
             width: '24px',
             height: '24px',
             border: 'none',
@@ -111,22 +121,22 @@ export default function ReviewModal({
             padding: 0,
             lineHeight: 1,
           }}
-
         >
           ×
         </button>
 
         {/* 제목 */}
-        <h3 className="text-18-b" style={{ color: '#323236', marginBottom: '8px' }}>{title}</h3>
+        <h3 className={isMobile ? 'text-16-b' : 'text-18-b'} style={{ color: '#323236', marginBottom: '8px' }}>
+          {title}
+        </h3>
         {subtitle && (
-          <p className="text-14-m" style={{ color: '#84858c', marginBottom: '20px' }}>
+          <p className={isMobile ? 'text-12-m' : 'text-14-m'} style={{ color: '#84858c', marginBottom: isMobile ? '16px' : '20px' }}>
             {subtitle}
           </p>
         )}
 
         {/* 별점 */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', justifyContent: 'center' }}>
-
+        <div style={{ display: 'flex', gap: isMobile ? '6px' : '8px', marginBottom: isMobile ? '20px' : '24px', justifyContent: 'center' }}>
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
@@ -134,26 +144,26 @@ export default function ReviewModal({
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
               style={{
-                width: '48px',
-                height: '48px',
+                width: isMobile ? '40px' : '48px',
+                height: isMobile ? '40px' : '48px',
                 border: 'none',
                 background: 'none',
                 cursor: 'pointer',
                 padding: 0,
-                fontSize: '40px',
-                lineHeight: 1,
-                color: star <= (hoverRating || rating) ? '#FFC700' : '#e0e0e5',
-                transition: 'color 0.2s',
               }}
             >
-              ★
-
+              <Image
+                src={star <= (hoverRating || rating) ? '/icon_star_on.svg' : '/icon_star_off.svg'}
+                alt="별점"
+                width={isMobile ? 36 : 42}
+                height={isMobile ? 36 : 42}
+              />
             </button>
           ))}
         </div>
 
         {/* 텍스트 */}
-        <p className="text-16-m" style={{ color: '#323236', marginBottom: '12px' }}>
+        <p className={isMobile ? 'text-14-m' : 'text-16-m'} style={{ color: '#323236', marginBottom: '12px' }}>
           소중한 경험을 들려주세요
         </p>
 
@@ -168,12 +178,12 @@ export default function ReviewModal({
           placeholder={placeholder}
           style={{
             width: '100%',
-            height: '160px',
-            padding: '16px',
+            height: isMobile ? '140px' : '160px',
+            padding: isMobile ? '12px' : '16px',
             border: '1px solid #c6c8cf',
             borderRadius: '8px',
             resize: 'none',
-            fontSize: '14px',
+            fontSize: isMobile ? '13px' : '14px',
             fontWeight: '500',
             color: '#323236',
             marginBottom: '8px',
@@ -189,7 +199,7 @@ export default function ReviewModal({
         />
         
         {/* 글자 수 */}
-        <div className="text-12-m" style={{ color: '#84858c', textAlign: 'right', marginBottom: '20px' }}>
+        <div className="text-12-m" style={{ color: '#84858c', textAlign: 'right', marginBottom: isMobile ? '16px' : '20px' }}>
           {content.length}/{maxLength}
         </div>
 
@@ -199,12 +209,12 @@ export default function ReviewModal({
           disabled={rating === 0}
           style={{
             width: '100%',
-            height: '48px',
+            height: isMobile ? '42px' : '48px',
             backgroundColor: rating === 0 ? '#e0e0e5' : '#3d9ef2',
             color: 'white',
             border: 'none',
             borderRadius: '8px',
-            fontSize: '16px',
+            fontSize: isMobile ? '14px' : '16px',
             fontWeight: '500',
             cursor: rating === 0 ? 'not-allowed' : 'pointer',
             transition: 'background-color 0.2s',
@@ -219,7 +229,6 @@ export default function ReviewModal({
               e.currentTarget.style.backgroundColor = '#3d9ef2';
             }
           }}
-
         >
           {buttonText}
         </button>
@@ -228,5 +237,4 @@ export default function ReviewModal({
   );
 
   return createPortal(modalContent, document.body);
-
 }

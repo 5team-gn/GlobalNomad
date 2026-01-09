@@ -1,4 +1,4 @@
-import type { ReservationStatus } from "@/types/reservationview.types";
+import type { ReservationStatus } from "@/types/reservationview/reservationview.types";
 
 export type StatusStyle = {
   badge: string;

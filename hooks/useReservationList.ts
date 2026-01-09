@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   Reservation,
   ReservationStatus,
-} from "@/types/reservationview.types";
-
+} from "@/types/reservationview/reservationview.types";
 import { fetchMyReservations } from "@/lib/api/reservationApi";
 import axios from "axios";
 
@@ -21,7 +20,7 @@ export function useReservationList() {
         setLoading(true);
         setError(null);
 
-        const data = await fetchMyReservations({ status: filter });
+        const data = await fetchMyReservations();
         setReservations(data);
       } catch (err: unknown) {
         console.error(err);
@@ -38,10 +37,14 @@ export function useReservationList() {
     };
 
     loadReservations();
-  }, [filter]);
+  }, []);
+
+  const filteredReservations = useMemo(() => {
+    return reservations.filter((r) => r.status === filter);
+  }, [reservations, filter]);
 
   return {
-    reservations,
+    reservations: filteredReservations,
     setReservations,
     filter,
     setFilter,
