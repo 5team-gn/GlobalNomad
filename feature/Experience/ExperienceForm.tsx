@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/button/Button";
 import { ImageSection } from "./ImageSection";
@@ -31,7 +32,8 @@ export default function ExperienceForm({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting }, 
+    trigger, // 실시간 검증을 위해 추가
+    formState: { errors, isSubmitting },
   } = useForm<ExperienceFormValues>({
     defaultValues: {
       title: initialValues?.title ?? "",
@@ -47,35 +49,33 @@ export default function ExperienceForm({
   const bannerImages = useImageManager();
   const detailImages = useImageManager();
 
-  const onValidSubmit = async (data: ExperienceFormValues) => {
-    if (scheduleManager.schedules.length === 0) {
-      toast("예약 가능한 시간대를 최소 1개 이상 추가해 주세요.");
-      return;
-    }
-    if (bannerImages.images.length === 0) {
-      toast("배너 이미지는 필수입니다.");
-      return;
-    }
+  // 커스텀 매니저들의 상태가 변할 때마다 react-hook-form의 숨겨진 필드 값을 업데이트
+  useEffect(() => {
+    setValue("schedules", scheduleManager.schedules);
+  }, [scheduleManager.schedules, setValue]);
 
+  useEffect(() => {
+    setValue("bannerImageUrl", bannerImages.images[0]?.preview ?? "");
+  }, [bannerImages.images, setValue]);
+
+  const onValidSubmit = async (data: ExperienceFormValues) => {
     const finalData = {
       ...data,
-      schedules: scheduleManager.schedules,
-      bannerImageUrl: bannerImages.images[0]?.preview ?? "",
       subImageUrls: detailImages.images.map((img) => img.preview),
     };
 
     try {
       await onSubmit(finalData);
-      toast("등록이 완료되었습니다."); 
+      toast.success("등록이 완료되었습니다.");
     } catch (error) {
       console.error("등록 실패:", error);
-      toast("등록에 실패했습니다. 다시 시도해 주세요.");
+      toast.error("등록에 실패했습니다. 다시 시도해 주세요.");
     }
   };
 
   return (
     <form
-      className="flex lg:w-175 flex-col gap-6"
+      className="flex lg:w-175 flex-col gap-6 pb-20"
       onSubmit={handleSubmit(onValidSubmit)}
     >
       <div className="flex justify-between items-center">
@@ -84,7 +84,7 @@ export default function ExperienceForm({
           type="submit"
           variant="primary"
           className="px-10 py-3 rounded-2xl"
-          disabled={isSubmitting} 
+          disabled={isSubmitting}
         >
           {isSubmitting ? "등록 중..." : submitLabel}
         </Button>
@@ -96,7 +96,7 @@ export default function ExperienceForm({
         <Input
           {...register("title", { required: "제목을 입력해 주세요" })}
           placeholder="제목을 입력해 주세요"
-          className="border p-4 rounded-xl"
+          className={errors.title ? "border-red-500" : ""}
         />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
@@ -113,7 +113,10 @@ export default function ExperienceForm({
               options={CATEGORY_OPTIONS}
               value={value}
               placeholder="카테고리를 선택해 주세요"
-              onChange={onChange}
+              onChange={(val) => {
+                onChange(val);
+                trigger("category"); // 선택 시 즉시 검증
+              }}
             />
           )}
         />
@@ -126,7 +129,9 @@ export default function ExperienceForm({
         <textarea
           {...register("description", { required: "설명을 입력해 주세요" })}
           placeholder="체험에 대한 설명을 입력해 주세요"
-          className="border p-4 rounded-xl h-40 resize-none focus:outline-primary-500"
+          className={`border p-4 rounded-xl h-40 resize-none focus:outline-primary-500 ${
+            errors.description ? "border-red-500" : ""
+          }`}
         />
         {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
       </div>
@@ -136,13 +141,12 @@ export default function ExperienceForm({
         <label className="text-16-b">가격</label>
         <Input
           type="number"
-          {...register("price", { 
+          {...register("price", {
             required: "가격을 입력해 주세요",
-            valueAsNumber: true, 
-            min: { value: 0, message: "0원 이상 입력 가능합니다" } 
+            valueAsNumber: true,
+            min: { value: 0, message: "0원 이상 입력 가능합니다" },
           })}
           placeholder="체험 금액을 입력해 주세요"
-          className="border p-4 rounded-xl"
         />
         {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
       </div>
@@ -150,7 +154,7 @@ export default function ExperienceForm({
       {/* 주소 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">주소</label>
-        <AddressInput 
+        <AddressInput
           value={addressValue}
           onChange={(val) => setValue("address", val, { shouldValidate: true })}
           error={errors.address?.message}
@@ -160,19 +164,35 @@ export default function ExperienceForm({
 
       <hr className="border-gray-100 my-4" />
 
-      {/* 예약 가능한 시간대 */}
-      <ScheduleSection manager={scheduleManager} />
+      {/* 스케줄 - Validation 통합 */}
+      <div className="flex flex-col gap-2">
+        <ScheduleSection manager={scheduleManager} />
+        <input
+          type="hidden"
+          {...register("schedules", {
+            validate: (value) => (value && value.length > 0) || "시간대를 최소 1개 이상 추가해 주세요.",
+          })}
+        />
+        {errors.schedules && <p className="text-red-500 text-sm">{errors.schedules.message}</p>}
+      </div>
 
       <hr className="border-gray-100 my-4" />
 
-      {/* 배너 이미지 */}
-      <ImageSection
-        title="배너 이미지 (필수)"
-        images={bannerImages.images}
-        maxCount={1}
-        onUpload={bannerImages.addImages}
-        onRemove={bannerImages.removeImage}
-      />
+      {/* 배너 이미지 - Validation 통합 */}
+      <div className="flex flex-col gap-2">
+        <ImageSection
+          title="배너 이미지 (필수)"
+          images={bannerImages.images}
+          maxCount={1}
+          onUpload={bannerImages.addImages}
+          onRemove={bannerImages.removeImage}
+        />
+        <input
+          type="hidden"
+          {...register("bannerImageUrl", { required: "배너 이미지는 필수입니다." })}
+        />
+        {errors.bannerImageUrl && <p className="text-red-500 text-sm">{errors.bannerImageUrl.message}</p>}
+      </div>
 
       {/* 소개 이미지 */}
       <ImageSection
