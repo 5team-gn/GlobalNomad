@@ -59,12 +59,14 @@ export default function MyInfoView() {
           </InputField>
 
           {/* 저장 버튼 */}
-          <div className="mt-[32px] flex justify-center">
+          <div className="mt-[32px] flex justify-center ">
             <Button
               type="button"
-              className="rounded-[12px] bg-[var(--color-primary-500)] px-10 py-3 text-[var(--text-14-m)] font-[var(--text-14-m--font-weight)] text-white hover:opacity-90"
+              variant="primary"
+              size="lg"
+              className="h-[41px] rounded-[12px] px-10 py-3 w-[120px]"
             >
-              저장하기
+              <span className="text-14-b whitespace-nowrap">저장하기</span>
             </Button>
           </div>
         </div>
