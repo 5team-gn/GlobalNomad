@@ -57,7 +57,7 @@ export default function MyInfoView() {
           </InputField>
 
           {/* 저장 버튼 */}
-          <div className="mt-[32px] flex justify-center ">
+          <div className="mt-[24px] flex justify-center ">
             <Button
               type="button"
               variant="primary"
