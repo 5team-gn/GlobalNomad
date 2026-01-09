@@ -5,7 +5,7 @@ import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
 
 const BASE_INPUT_CLASS =
-  "h-[54px] w-full rounded-[16px] border border-gray-200 px-[20px] text-sm text-gray-950 outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
+  "h-[54px] w-full rounded-[16px] border border-gray-100 px-[20px] text-sm text-gray-950 outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
 
 export default function MyInfoView() {
   return (
