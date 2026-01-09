@@ -1,17 +1,20 @@
 "use client";
 
-import type { Reservation } from "@/types/reservationview.types";
+import type { Reservation } from "@/types/reservationview/reservationview.types";
 import { cancelReservation, createReview } from "@/lib/api/reservationApi";
+import { toast } from "react-hot-toast";
 
 type Params = {
   selectedReservation: Reservation | null;
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>;
+  pushCanceledReservation: (reservation: Reservation) => void;
   closeModal: () => void;
 };
 
 export function useReservationActions({
   selectedReservation,
   setReservations,
+  pushCanceledReservation,
   closeModal,
 }: Params) {
   const handleCancelConfirm = async () => {
@@ -20,16 +23,18 @@ export function useReservationActions({
     try {
       await cancelReservation(selectedReservation.id);
 
-      // 낙관적 UI 업데이트
       setReservations((prev) =>
-        prev.map((r) =>
-          r.id === selectedReservation.id ? { ...r, status: "canceled" } : r
-        )
+        prev.filter((r) => r.id !== selectedReservation.id)
       );
+
+      pushCanceledReservation({
+        ...selectedReservation,
+        status: "canceled",
+      });
 
       closeModal();
     } catch (err) {
-      console.error("예약 취소 실패:", err);
+      toast.error("예약 취소에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
@@ -47,7 +52,7 @@ export function useReservationActions({
 
       closeModal();
     } catch (err) {
-      console.error("후기 작성 실패:", err);
+      toast.error("후기 작성에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
