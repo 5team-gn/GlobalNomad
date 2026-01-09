@@ -7,6 +7,7 @@ export type SidebarMenu =
 export type UserProfile = {
   nickname: string;
   profileImageUrl?: string | null;
+  teamId: string
 };
 
 export type SidebarProps = {
