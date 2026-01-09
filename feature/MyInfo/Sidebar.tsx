@@ -32,14 +32,11 @@ export default function Sidebar({ active, onChange, user, onProfileUpdate }: Sid
     }
 
     try {
-      // API 응답에서 새로운 이미지 URL을 받아옵니다.
       const data = await uploadProfileImage(file);
       
-      // 서버 응답 구조가 { profileImageUrl: "..." } 라고 가정할 때:
       const newImageUrl = data.profileImageUrl;
 
       if (newImageUrl) {
-        // 부모 컴포넌트의 상태를 업데이트하여 즉시 화면에 반영 (새로고침 X)
         onProfileUpdate(newImageUrl);
         toast.success("프로필 이미지가 성공적으로 변경되었습니다.");
       }
@@ -96,7 +93,7 @@ export default function Sidebar({ active, onChange, user, onProfileUpdate }: Sid
                     alt="profile" 
                     fill 
                     className="object-cover" 
-                    unoptimized // 만약 외부 URL 로딩 에러가 난다면 추가 검토 필요
+                    unoptimized 
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
