@@ -75,8 +75,6 @@ export default function ActivityCalendarClient({ activityId, price }: Props) {
 
   // 예약하기
   const reserve = () => {
-    console.log("예약 정보:", flow.selection.timeSlot?.id);
-    console.log("예약 정보:", flow.selection.people);
     const slot = flow.selection.timeSlot;
     const headCount = flow.selection.people;
 
