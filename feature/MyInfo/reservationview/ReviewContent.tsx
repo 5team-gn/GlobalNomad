@@ -57,26 +57,26 @@ export function ReviewContent({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-start justify-start pt-[72px] ml-[-4px] md:ml-0 md:pt-0 md:items-center md:justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
 
-      <div className="relative z-10 w-[385px] h-[549px] rounded-[24px] bg-white flex flex-col">
-        <div className="h-[56px] flex items-center justify-end px-[24px]">
+      <div className="relative z-10 w-full max-w-[350px] max-h-[90vh] overflow-y-auto rounded-[20px] bg-white">
+        <div className="h-[60px] flex items-center justify-end px-[24px]">
           <button onClick={handleClose}>
             <Image src="/icon_delete.svg" alt="닫기" width={24} height={24} />
           </button>
         </div>
 
-        <div className="flex-1 px-[30px] pb-[30px] flex flex-col">
+        <div className="px-[32px] pb-[32px]">
           <h3 className="text-[20px] font-bold text-center mb-[8px]">
             {reservation.title}
           </h3>
 
-          <p className="text-[14px] text-center text-gray-500 mb-[14px]">
-            {reservation.date.replace("·", "/")} ({reservation.people}명)
+          <p className="text-[14px] text-center text-gray-500 mb-[24px]">
+            {reservation.date} ({reservation.people}명)
           </p>
 
-          <div className="flex gap-[8px] justify-center mb-[30px]">
+          <div className="flex gap-[8px] justify-center mb-[32px]">
             {[1, 2, 3, 4, 5].map((star) => (
               <button key={star} onClick={() => setRating(star)}>
                 <Image
@@ -90,17 +90,20 @@ export function ReviewContent({
               </button>
             ))}
           </div>
-          <div className="text-18-b mb-[16px]">소중한 경험을 들려주세요</div>
+
+          <div className="text-[18px] font-bold mb-[16px]">
+            소중한 경험을 들려주세요
+          </div>
 
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             maxLength={100}
             placeholder="체험에서 느낀 경험을 자유롭게 남겨주세요"
-            className="flex-1 p-[16px] border rounded-[12px] resize-none"
+            className="w-full h-[120px] md:h-[179px] p-[16px] border border-gray-300 rounded-[12px] resize-none text-[14px]"
           />
 
-          <div className="text-right text-gray-500 mt-[8px] mb-[30px] text-14-m">
+          <div className="text-right text-gray-500 mt-[8px] mb-[24px] text-[14px]">
             {content.length}/100
           </div>
 
@@ -109,6 +112,7 @@ export function ReviewContent({
             size="md"
             disabled={isSubmitting}
             onClick={handleSubmit}
+            className="w-full h-[52px] rounded-[12px]"
           >
             {isSubmitting ? "등록 중..." : "작성하기"}
           </Button>
