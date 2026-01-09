@@ -13,4 +13,5 @@ export type SidebarProps = {
   active: SidebarMenu;
   onChange: (menu: SidebarMenu) => void;
   user?: UserProfile;
+  onProfileUpdate: (newImageUrl:string) =>void
 };
