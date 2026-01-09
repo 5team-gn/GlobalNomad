@@ -118,11 +118,7 @@ export default function ExperienceForm({
           className="px-10 py-3 rounded-2xl"
           disabled={isSubmitting}
         >
-          {isSubmitting
-            ? "처리 중..."
-            : mode === "create"
-            ? "등록하기"
-            : "수정하기"}
+          {isSubmitting ? "처리 중..." : `${mode === "create" ? "등록" : "수정"}하기`}
         </Button>
       </div>
 
