@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/button/Button";
 import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
 
@@ -8,7 +9,7 @@ const BASE_INPUT_CLASS =
 
 export default function MyInfoView() {
   return (
-    <div className="flex justify-center bg-[var(--color-gray-25)] font-pretendard">
+    <div className="flex justify-center  font-pretendard">
       <div className="w-[640px] rounded-xl bg-white">
         {/* 타이틀 */}
         <div className="mb-[24px]">
@@ -59,12 +60,12 @@ export default function MyInfoView() {
 
           {/* 저장 버튼 */}
           <div className="mt-[32px] flex justify-center">
-            <button
+            <Button
               type="button"
               className="rounded-[12px] bg-[var(--color-primary-500)] px-10 py-3 text-[var(--text-14-m)] font-[var(--text-14-m--font-weight)] text-white hover:opacity-90"
             >
               저장하기
-            </button>
+            </Button>
           </div>
         </div>
       </div>
