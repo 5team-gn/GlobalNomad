@@ -23,7 +23,7 @@ export default function MyInfoClient() {
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto max-w-245 px-6 pt-10">
+      <div className="mx-auto max-w-245 md:px-6 pt-10">
         <div className="flex gap-12.5">
           <Sidebar active={activeMenu} onChange={handleMenuChange} />
 

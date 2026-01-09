@@ -60,24 +60,28 @@ export default function ReservationView() {
   }
 
   return (
-    <div className="flex justify-center font-pretendard min-h-screen pt-[10px] pb-8">
-      <div className="w-[640px]">
-        <div className="mb-6">
-          <h2 className="text-[18px] font-bold mb-2.5">예약내역</h2>
-          <p className="text-[14px] text-gray-500">
+    <div className="flex justify-center font-pretendard min-h-screen pt-[10px] pb-8 max-md:px-[16px]">
+      <div className="w-[640px] max-md:w-full">
+        <div className="mb-6 max-md:mb-5">
+          <h2 className="text-[18px] font-bold mb-2.5 max-md:text-[16px] max-md:mb-2">
+            예약내역
+          </h2>
+          <p className="text-[14px] text-gray-500 max-md:text-[13px]">
             예약내역 변경 및 취소할 수 있습니다.
           </p>
         </div>
 
-        <ReservationFilter value={filter} onChange={setFilter} />
+        {reservations.length > 0 && (
+          <ReservationFilter value={filter} onChange={setFilter} />
+        )}
 
-        {isFilterChanging && (
+        {isFilterChanging && reservations.length > 0 && (
           <p className="text-center text-gray-400 mt-6">불러오는 중...</p>
         )}
 
-        {!isFilterChanging && reservations.length === 0 && (
-          <ReservationEmpty type="filtered" filter={filter} />
-        )}
+        {!isFilterChanging &&
+          reservations.length === 0 &&
+          filter === "pending" && <ReservationEmpty />}
 
         {reservations.length > 0 && (
           <ReservationList

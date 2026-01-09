@@ -22,11 +22,10 @@ export function CancelContent({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-start justify-start pt-[200px] md:items-center md:justify-center md:pt-0 md:pl-0 p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      <div className="relative z-10 w-[400px] rounded-[24px] bg-white p-[32px] flex flex-col items-center">
-        {/* 아이콘 */}
+      <div className="relative z-10 w-full max-w-[340px] rounded-[20px] bg-white p-[32px] flex flex-col items-center">
         <Image
           src="/icon_warning.svg"
           alt="경고 아이콘"
@@ -34,7 +33,7 @@ export function CancelContent({
           height={88}
         />
 
-        <h3 className="text-[20px] font-bold text-gray-950 mb-[24px] text-center mt-[16px]">
+        <h3 className="text-[20px] font-bold text-gray-900 mt-[20px] mb-[32px] text-center">
           예약을 취소하시겠어요?
         </h3>
 
@@ -43,7 +42,7 @@ export function CancelContent({
             variant="secondary"
             size="md"
             onClick={onClose}
-            className="flex-1 h-[48px] rounded-[12px] transition-all hover:bg-gray-100 active:!bg-gray-100"
+            className="flex-1 h-[52px] rounded-[12px] transition-all hover:bg-gray-100 active:!bg-gray-100"
           >
             <span className="text-[16px] font-medium text-gray-700">
               아니오
@@ -54,7 +53,7 @@ export function CancelContent({
             variant="primary"
             size="md"
             onClick={onConfirm}
-            className="flex-1 h-[48px] rounded-[12px] transition-all hover:brightness-110 active:!brightness-100"
+            className="flex-1 h-[52px] rounded-[12px] transition-all hover:brightness-110 active:!brightness-100"
           >
             <span className="text-[16px] font-medium text-white">취소하기</span>
           </Button>

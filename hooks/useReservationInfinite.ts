@@ -44,7 +44,15 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
           cursorId: isFirstPage ? undefined : cursorId,
         });
 
-        setReservations((prev) => (isFirstPage ? data : [...prev, ...data]));
+        setReservations((prev) => {
+          if (isFirstPage) return data;
+
+          const newData = data.filter(
+            (newItem) =>
+              !prev.some((existingItem) => existingItem.id === newItem.id)
+          );
+          return [...prev, ...newData];
+        });
 
         if (data.length < size) {
           setHasNext(false);
@@ -63,6 +71,7 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
 
   useEffect(() => {
     setIsFilterChanging(true);
+    setReservations([]);
     setCursorId(undefined);
     setHasNext(true);
     fetchMore(true);
@@ -89,6 +98,7 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
           ).values()
         )
       : reservations;
+
   return {
     reservations: mergedReservations,
     setReservations,

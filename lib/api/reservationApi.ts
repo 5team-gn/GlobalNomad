@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Reservation } from "@/types/reservationview/reservationview.types";
-import type { ReservationListApiResponse } from "@/types/reservationview/api/reservation.api.types";
+import type { ReservationListApiResponse } from "@/types/reservationview/reservationview.types";
 import { mapReservationApiToView } from "@/lib/mappers/reservation.mapper";
 import { RESERVATION_MOCK_LIST } from "@/Mocks/ReservationView.mock";
 
