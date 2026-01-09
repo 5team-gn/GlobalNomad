@@ -6,11 +6,14 @@ import {
 
 const PAGE_SIZE = 10;
 
-export default function useReservationDetail(initialReservations: Reservation[]) {
-  const [localReservations, setLocalReservations] = useState<Reservation[]>(initialReservations);
+export default function useReservationDetail(
+  initialReservations: Reservation[]
+) {
+  const [localReservations, setLocalReservations] =
+    useState<Reservation[]>(initialReservations);
   const [activeTab, setActiveTab] = useState<ReservationStatusCode>("pending");
   const [selectedTime, setSelectedTime] = useState("전체");
-  
+
   const [displayLimit, setDisplayLimit] = useState(PAGE_SIZE);
 
   const handleTabChange = (status: ReservationStatusCode) => {
@@ -28,10 +31,20 @@ export default function useReservationDetail(initialReservations: Reservation[])
       .filter((r) => {
         if (r.status !== activeTab) return false;
         if (selectedTime === "전체") return true;
-        return r.time === selectedTime; 
+        return r.time === selectedTime;
       })
       .sort((a, b) => {
-        return new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime();
+        const getTimestamp = (r: Reservation) => {
+          const dateStr = r.createdAt || `${r.date} ${r.time || "00:00"}`;
+          const time = new Date(dateStr).getTime();
+          return isNaN(time) ? 0 : time;
+        };
+
+        const timeA = getTimestamp(a);
+        const timeB = getTimestamp(b);
+
+        if (timeB !== timeA) return timeB - timeA;
+        return String(b.id).localeCompare(String(a.id));
       });
   }, [localReservations, activeTab, selectedTime]);
 
@@ -43,7 +56,10 @@ export default function useReservationDetail(initialReservations: Reservation[])
     if (hasMore) setDisplayLimit((prev) => prev + PAGE_SIZE);
   };
 
-  const handleStatusChange = (id: string | number, status: ReservationStatusCode) => {
+  const handleStatusChange = (
+    id: string | number,
+    status: ReservationStatusCode
+  ) => {
     if (status === "confirmed") {
       const target = localReservations.find((r) => r.id === id);
       if (!target) return;
@@ -72,10 +88,10 @@ export default function useReservationDetail(initialReservations: Reservation[])
     selectedTime,
     setActiveTab: handleTabChange,
     setSelectedTime: handleTimeChange,
-    filteredReservations: pagedReservations, 
+    filteredReservations: pagedReservations,
     getCount,
     handleStatusChange,
-    loadMore, 
-    hasMore,  
+    loadMore,
+    hasMore,
   };
 }
