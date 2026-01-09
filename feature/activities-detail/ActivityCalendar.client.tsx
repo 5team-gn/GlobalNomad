@@ -20,9 +20,14 @@ import toast from "react-hot-toast";
 type Props = {
   activityId: number;
   price: number;
+  activityUserId: number;
 };
 
-export default function ActivityCalendarClient({ activityId, price }: Props) {
+export default function ActivityCalendarClient({
+  activityId,
+  price,
+  activityUserId,
+}: Props) {
   const [viewMonth, setViewMonth] = useState(() => {
     const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), 1); // 이번 달 1일
@@ -41,6 +46,15 @@ export default function ActivityCalendarClient({ activityId, price }: Props) {
     staleTime: 30_000,
     placeholderData: keepPreviousData, // 이전 데이터 유지
   });
+
+  // 현재 로그인한 유저 아이디
+  const userId =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user") ?? "null")?.id ?? null
+      : null;
+
+  // 현재 유저가 작성자와 동일한지 여부
+  const isOwner = userId === activityUserId;
 
   // 예약 플로우 훅
   const flow = useReservationFlow(schedule ?? []);
@@ -116,6 +130,8 @@ export default function ActivityCalendarClient({ activityId, price }: Props) {
     onMonthNavigate: handleMonthNavigate,
     isReserving: reservationMutation.isPending,
   };
+
+  if (isOwner) return null;
 
   return <ReservationUI {...props} />;
 }

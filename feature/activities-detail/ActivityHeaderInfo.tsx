@@ -48,6 +48,15 @@ export default function ActivityHeaderInfo({
     };
   }, [openMenu]);
 
+  // 현재 로그인한 유저 아이디
+  const userId =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user") ?? "null")?.id ?? null
+      : null;
+
+  // 현재 유저가 작성자와 동일한지 여부
+  const isOwner = userId === activity.userId;
+
   // 수정하기
   const onEdit = (item: typeof activity) => {
     setOpenMenu(false);
@@ -146,12 +155,14 @@ export default function ActivityHeaderInfo({
             </button>
           </div>
         )}
-        <button
-          className="cursor-pointer p-2 mr-[-18px]"
-          onClick={() => setOpenMenu((prev) => !prev)}
-        >
-          <Image src="/icons/icon_more.svg" width={28} height={28} alt="" />
-        </button>
+        {isOwner && (
+          <button
+            className="cursor-pointer p-2 mr-[-18px]"
+            onClick={() => setOpenMenu((prev) => !prev)}
+          >
+            <Image src="/icons/icon_more.svg" width={28} height={28} alt="" />
+          </button>
+        )}
       </div>
 
       <h1 className="text-24-b font-bold text-gray-950">{activity.title}</h1>

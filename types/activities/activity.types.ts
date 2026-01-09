@@ -12,6 +12,7 @@ export type Activity = {
 
 export type ActivityHeaderInfoType = {
   id: number;
+  userId: number;
   category: string;
   title: string;
   rating: number;
