@@ -3,18 +3,14 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ButtonLabel } from "@/components/button/Button";
-import type { ReservationStatus } from "@/types/reservationview/reservationview.types";
-import { STATUS_LABEL } from "./ReservationView.constants";
 
-type Props = { type: "all" } | { type: "filtered"; filter: ReservationStatus };
-
-export function ReservationEmpty(props: Props) {
+/**
+ * ReservationEmpty
+ *
+ * 전체 예약 내역이 하나도 없을 때 보여주는 Empty UI
+ */
+export function ReservationEmpty() {
   const router = useRouter();
-
-  const message =
-    props.type === "all"
-      ? "아직 예약한 체험이 없어요"
-      : `아직 ${STATUS_LABEL[props.filter]} 내역이 없어요`;
 
   return (
     <div className="flex flex-col items-center justify-center py-20">
@@ -25,18 +21,18 @@ export function ReservationEmpty(props: Props) {
         height={182}
         className="p-[30px]"
       />
-      <p className="text-[18px] text-gray-400)] text-center mb-[30px]">
-        {message}
+
+      <p className="mb-[30px] text-center text-[18px] text-gray-400">
+        아직 예약한 체험이 없어요
       </p>
-      {props.type === "all" && (
-        <ButtonLabel
-          label="둘러보기"
-          variant="primary"
-          size="md"
-          className="px-[40px] py-[14px] rounded-[16px]"
-          onClick={() => router.push("/")}
-        />
-      )}
+
+      <ButtonLabel
+        label="둘러보기"
+        variant="primary"
+        size="md"
+        className="rounded-[16px] px-[40px] py-[14px]"
+        onClick={() => router.push("/")}
+      />
     </div>
   );
 }
