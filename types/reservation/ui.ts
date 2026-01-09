@@ -36,6 +36,8 @@ export type ReservationFlowProps = {
   canReserve: boolean;
   canConfirm: boolean;
   onReserve: () => void;
+  onMonthNavigate?: (nextMonth: Date) => void;
+  isReserving?: boolean;
 };
 
 // 예약 UI 컴포넌트 prop 타입
@@ -44,7 +46,12 @@ export type ReservationUIProps = ReservationCoreProps & ReservationFlowProps;
 // 공통으로 사용하는 속성만 Pick으로 뽑아냄
 type SheetSharedFromFlow = Pick<
   ReservationFlowProps,
-  "open" | "step" | "slots" | "enabledDateSet" | "resetSelection"
+  | "open"
+  | "step"
+  | "slots"
+  | "enabledDateSet"
+  | "resetSelection"
+  | "onMonthNavigate"
 >;
 
 // 예약 시트 컴포넌트 prop 타입
@@ -92,6 +99,8 @@ type DesktopSharedFromFlow = Pick<
   | "onReserve"
   | "enabledDateSet"
   | "resetSelection"
+  | "onMonthNavigate"
+  | "isReserving"
 >;
 
 // 데스크탑 예약 prop 타입

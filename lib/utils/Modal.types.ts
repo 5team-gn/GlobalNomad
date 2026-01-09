@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 /**
  * 모달 베이스 Props
@@ -38,18 +38,6 @@ export interface AlertModalProps extends BaseModalProps {
 }
 
 /**
- * 작은 경고 모달 Props (320×185)
- */
-export interface SmallAlertModalProps extends BaseModalProps {
-
-  text: string;
-  cancelText?: string;
-  confirmText?: string;
-  onCancel?: () => void;
-  onConfirm?: () => void;
-}
-
-/**
  * 리뷰 모달 Props (321×493)
  */
 export interface ReviewModalProps extends BaseModalProps {
@@ -70,7 +58,7 @@ export interface NotificationItem {
   activityTitle: string;
   date: string;
   time: string;
-  status: '승인' | '거절';
+  status: "승인" | "거절";
   isRead?: boolean;
 }
 

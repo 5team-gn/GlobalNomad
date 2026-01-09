@@ -26,6 +26,8 @@ export default function ReservationPanelDesktop({
   onReserve,
   enabledDateSet,
   resetSelection,
+  onMonthNavigate,
+  isReserving,
 }: ReservationPanelDesktopProps) {
   const totalPrice = price * people;
   const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
@@ -43,7 +45,7 @@ export default function ReservationPanelDesktop({
         value={selectedDate}
         onChange={setDate}
         enabledDateSet={enabledDateSet}
-        onMonthNavigate={resetSelection}
+        onMonthNavigate={onMonthNavigate}
       />
 
       <div
@@ -86,7 +88,7 @@ export default function ReservationPanelDesktop({
 
           <button
             onClick={onReserve}
-            disabled={!canReserve}
+            disabled={!canReserve || !!isReserving}
             className={[
               "rounded-xl py-[15px] px-10 text-16-b h-[50px]",
               canReserve
@@ -94,7 +96,7 @@ export default function ReservationPanelDesktop({
                 : "bg-gray-100 text-gray-400",
             ].join(" ")}
           >
-            예약하기
+            {isReserving ? "예약 중..." : "예약하기"}
           </button>
         </div>
       </div>

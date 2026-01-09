@@ -44,7 +44,7 @@ export function useReservationFlow(schedule: AvailableScheduleItem[]) {
     const found = schedule.find((s) => s.date === ymd);
     if (!found) return [];
     return found.times.map((t) => ({
-      id: String(t.id),
+      id: t.id,
       label: `${t.startTime}~${t.endTime}`,
     }));
   }, [schedule, selection.date]);

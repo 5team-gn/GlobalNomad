@@ -4,7 +4,7 @@
  * @description 액티비티 상세 - 예약 가능 일정 API 함수
  */
 
-import axiosInstance from "@/lib/api/axios";
+import { publicAxios } from "@/lib/api/axios";
 
 export type AvailableTimeSlot = {
   id: number;
@@ -18,11 +18,19 @@ export type AvailableScheduleDay = {
 };
 
 export async function getAvailableSchedule(
-  activityId: number
+  activityId: number,
+  year: number,
+  month: number
 ): Promise<AvailableScheduleDay[]> {
   try {
-    const res = await axiosInstance.get<AvailableScheduleDay[]>(
-      `/activities/${activityId}/available-schedule`
+    const res = await publicAxios.get<AvailableScheduleDay[]>(
+      `/activities/${activityId}/available-schedule`,
+      {
+        params: {
+          year,
+          month: String(month).padStart(2, "0"),
+        },
+      }
     );
     return res.data;
   } catch (error) {

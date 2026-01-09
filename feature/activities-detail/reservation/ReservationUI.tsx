@@ -17,6 +17,7 @@ export default function ReservationUI(props: ReservationUIProps) {
     !props.selection.date ||
     !props.selection.timeSlot ||
     props.selection.people < 1;
+
   // 모바일 예약 시트용 확인 버튼 활성화 여부
   const mobileConfirmDisabled = !props.canConfirm;
 
@@ -41,6 +42,8 @@ export default function ReservationUI(props: ReservationUIProps) {
           onReserve={props.onReserve}
           enabledDateSet={props.enabledDateSet}
           resetSelection={props.resetSelection}
+          onMonthNavigate={props.onMonthNavigate}
+          isReserving={props.isReserving}
         />
       </div>
 
@@ -76,6 +79,7 @@ export default function ReservationUI(props: ReservationUIProps) {
           onGoBackMobile={props.goBackMobile}
           enabledDateSet={props.enabledDateSet}
           resetSelection={props.resetSelection}
+          onMonthNavigate={props.onMonthNavigate}
         />
       </div>
     </div>

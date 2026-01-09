@@ -1,11 +1,20 @@
 import axios from "axios";
 
+const base = process.env.NEXT_PUBLIC_API_BASE_URL;
+const teamId = process.env.NEXT_PUBLIC_TEAM_ID;
+
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: `${base}/${teamId}`,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
+});
+
+// 공개 API용 Axios 인스턴스 (상세-캘린더용)
+export const publicAxios = axios.create({
+  baseURL: `${base}/${teamId}`,
+  headers: { "Content-Type": "application/json" },
 });
 
 // 요청 인터셉터 (선택)

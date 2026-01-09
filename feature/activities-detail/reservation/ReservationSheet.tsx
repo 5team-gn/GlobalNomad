@@ -33,6 +33,7 @@ export default function ReservationSheet({
   onGoBackMobile,
   enabledDateSet,
   resetSelection,
+  onMonthNavigate,
 }: ReservationSheetProps) {
   const mobileTitle =
     step === "date" ? "날짜" : step === "time" ? "예약 가능한 시간" : "인원";
@@ -93,7 +94,7 @@ export default function ReservationSheet({
                   value={selectedDate}
                   onChange={onSelectDate}
                   enabledDateSet={enabledDateSet}
-                  onMonthNavigate={resetSelection}
+                  onMonthNavigate={onMonthNavigate}
                 />
               </section>
 
@@ -156,7 +157,7 @@ export default function ReservationSheet({
                     value={selectedDate}
                     onChange={onSelectDate}
                     enabledDateSet={enabledDateSet}
-                    onMonthNavigate={resetSelection}
+                    onMonthNavigate={onMonthNavigate}
                   />
 
                   <div className="mt-8">
