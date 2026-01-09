@@ -19,7 +19,7 @@ export type SimpleCalendarProps = {
   value: Date | null;
   onChange: (d: Date) => void;
   enabledDateSet: Set<string>;
-  onMonthNavigate?: () => void;
+  onMonthNavigate?: (nextMonth: Date) => void;
 };
 
 export default function SimpleCalendar({
@@ -55,7 +55,7 @@ export default function SimpleCalendar({
         month={month}
         onMonthChange={(nextMonth) => {
           setMonth(nextMonth);
-          onMonthNavigate?.();
+          onMonthNavigate?.(nextMonth);
         }}
         selected={value ?? undefined}
         onSelect={(d) => {

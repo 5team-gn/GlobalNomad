@@ -1,7 +1,7 @@
 export type ReservationStep = "idle" | "date" | "time" | "people" | "done";
 
 export type TimeSlot = {
-  id: string;
+  id: number;
   label: string; // "14:00~15:00"
 };
 

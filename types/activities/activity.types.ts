@@ -12,6 +12,7 @@ export type Activity = {
 
 export type ActivityHeaderInfoType = {
   id: number;
+  userId: number;
   category: string;
   title: string;
   rating: number;
@@ -36,3 +37,39 @@ export type ActivityDetail = Activity &
     updatedAt: string;
     subImages: ActivitySubImage[];
   };
+
+export interface CreateActivityScheduleDto {
+  date: string; 
+  startTime: string; 
+  endTime: string; 
+}
+
+export interface CreateActivityBodyDto {
+  title: string;
+  category: string;
+  description: string;
+  price: number;
+  address: string;
+  schedules: CreateActivityScheduleDto[];
+  bannerImageUrl: string;
+  subImageUrls?: string[];
+}
+
+export interface ActivityDetailResponse {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  address: string;
+  bannerImageUrl: string;
+  subImages: { imageUrl: string; id: number }[];
+  schedules: {
+    date: string;
+    times: {
+      startTime: string;
+      endTime: string;
+      id: number;
+    }[];
+  }[];
+}

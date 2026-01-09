@@ -43,6 +43,7 @@ export default async function Page({
               <ActivityCalendarClient
                 activityId={activityId}
                 price={activity.price}
+                activityUserId={activity.userId}
               />
             </div>
           </aside>
