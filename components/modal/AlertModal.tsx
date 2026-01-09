@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
-import Image from 'next/image';
-import type { AlertModalProps } from '@/lib/utils/Modal.types';
+import Image from "next/image";
+import type { AlertModalProps } from "@/lib/utils/Modal.types";
 
 /**
  * AlertModal 컴포넌트
- * 
+ *
  * 경고 아이콘과 예/아니오 버튼이 있는 모달
  * @size Desktop: 400px × 242px, Mobile: 320px × 185px (반응형)
  */
@@ -16,8 +16,8 @@ export default function AlertModal({
   isOpen,
   onClose,
   text,
-  cancelText = '아니오',
-  confirmText = '취소하기',
+  cancelText = "아니오",
+  confirmText = "취소하기",
   onCancel,
   onConfirm,
 }: AlertModalProps) {
@@ -28,28 +28,28 @@ export default function AlertModal({
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, [isOpen, onClose]);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -69,68 +69,82 @@ export default function AlertModal({
     <>
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
           zIndex: 9999,
         }}
         onClick={onClose}
       />
-      
+
       <div
         style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: isMobile ? '320px' : '400px',
-          backgroundColor: 'white',
-          borderRadius: '16px',
-          padding: isMobile ? '28px 20px 20px 20px' : '32px 24px 24px 24px',
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: isMobile ? "320px" : "400px",
+          backgroundColor: "white",
+          borderRadius: "16px",
+          padding: isMobile ? "28px 20px 20px 20px" : "32px 24px 24px 24px",
           zIndex: 10000,
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 경고 아이콘 + 텍스트 */}
-        <div style={{ marginBottom: isMobile ? '28px' : '32px', textAlign: 'center' }}>
-          <div style={{ marginBottom: isMobile ? '12px' : '16px', display: 'flex', justifyContent: 'center' }}>
-            <Image 
-              src="/modalimage.png" 
-              alt="경고" 
-              width={isMobile ? 40 : 48} 
-              height={isMobile ? 40 : 48} 
+        <div
+          style={{
+            marginBottom: isMobile ? "28px" : "32px",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: isMobile ? "12px" : "16px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Image
+              src="/modalimage.png"
+              alt="경고"
+              width={isMobile ? 40 : 48}
+              height={isMobile ? 40 : 48}
             />
           </div>
-          <p className={isMobile ? 'text-14-m' : 'text-16-m'} style={{ color: '#323236' }}>
+          <p
+            className={isMobile ? "text-14-m" : "text-16-m"}
+            style={{ color: "#323236" }}
+          >
             {text}
           </p>
         </div>
 
         {/* 버튼 2개 */}
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+        <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
           <button
             onClick={handleCancel}
             style={{
-              width: isMobile ? '113px' : '141px',
-              height: isMobile ? '41px' : '47px',
-              backgroundColor: 'white',
-              color: '#707177',
-              border: '1px solid #c6c8cf',
-              borderRadius: '8px',
-              fontSize: isMobile ? '14px' : '16px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
+              width: isMobile ? "113px" : "141px",
+              height: isMobile ? "41px" : "47px",
+              backgroundColor: "white",
+              color: "#707177",
+              border: "1px solid #c6c8cf",
+              borderRadius: "8px",
+              fontSize: isMobile ? "14px" : "16px",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.2s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f8f8f8';
+              e.currentTarget.style.backgroundColor = "#f8f8f8";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.backgroundColor = "white";
             }}
           >
             {cancelText}
@@ -138,22 +152,22 @@ export default function AlertModal({
           <button
             onClick={handleConfirm}
             style={{
-              width: isMobile ? '113px' : '141px',
-              height: isMobile ? '41px' : '47px',
-              backgroundColor: '#3d9ef2',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: isMobile ? '14px' : '16px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s',
+              width: isMobile ? "113px" : "141px",
+              height: isMobile ? "41px" : "47px",
+              backgroundColor: "#3d9ef2",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: isMobile ? "14px" : "16px",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "background-color 0.2s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#2b8ed9';
+              e.currentTarget.style.backgroundColor = "#2b8ed9";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#3d9ef2';
+              e.currentTarget.style.backgroundColor = "#3d9ef2";
             }}
           >
             {confirmText}
