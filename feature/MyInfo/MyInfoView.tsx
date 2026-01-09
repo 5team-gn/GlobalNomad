@@ -49,7 +49,7 @@ export default function MyInfoView() {
           </InputField>
 
           {/* 비밀번호 확인 */}
-          <InputField label="비밀번호 확인">
+          <InputField label="비밀번호">
             <PasswordInput
               placeholder="비밀번호를 한 번 더 입력해 주세요"
               className={BASE_INPUT_CLASS}
