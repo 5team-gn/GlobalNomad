@@ -6,6 +6,10 @@ import type {
 
 const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID;
 
+if (!TEAM_ID) {
+  throw new Error("환경변수 NEXT_PUBLIC_TEAM_ID가 설정되지 않았습니다.");
+}
+
 /**
  * 내 정보 조회
  */
