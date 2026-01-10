@@ -40,7 +40,11 @@ export default async function Page({
           <aside className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start">
             <ActivityHeaderInfo activity={activity} />
             <div className="mt-6 lg:sticky lg:top-10">
-              <ActivityCalendarClient />
+              <ActivityCalendarClient
+                activityId={activityId}
+                price={activity.price}
+                activityUserId={activity.userId}
+              />
             </div>
           </aside>
 

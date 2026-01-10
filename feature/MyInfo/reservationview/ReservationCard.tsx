@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { ButtonLabel } from "@/components/button/Button";
-import type { Reservation } from "@/types/reservationview.types";
+import type { Reservation } from "@/types/reservationview/reservationview.types";
 import { STATUS_LABEL, STATUS_STYLE } from "./ReservationView.constants";
+import toast from "react-hot-toast";
 
 type Props = {
   reservation: Reservation;
@@ -51,19 +52,53 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
           <div className="absolute right-0 top-[-3px] flex gap-2">
             {status === "pending" && (
               <>
-                <ButtonLabel
-                  label="예약 변경"
-                  variant="secondary"
-                  size="sm"
-                  className="w-[71px] h-[29px] text-14-m font-normal rounded-[8px] [&>span]:!text-gray-600 hover:[&>span]:!text-green-500 active:bg-transparent
-                active:border-gray-200"
-                />
+                <div
+                  onClick={() =>
+                    toast(
+                      "현재 예약 변경은 지원하지 않습니다.\n예약 취소 후 다시 예약해주세요."
+                    )
+                  }
+                  className="inline-block"
+                >
+                  <ButtonLabel
+                    label="예약 변경"
+                    variant="secondary"
+                    size="sm"
+                    disabled
+                    className="
+                      w-[71px] h-[29px]
+                      rounded-[8px]
+                      border border-gray-200
+                      bg-transparent
+                      opacity-40
+                      cursor-not-allowed
+
+                      disabled:!bg-transparent
+                      disabled:!shadow-none
+                      disabled:!ring-0
+
+                      [&>span]:text-gray-400
+                      [&>span]:pointer-events-none
+                    "
+                  />
+                </div>
+
                 <ButtonLabel
                   onClick={() => onCancel(reservation)}
                   label="예약 취소"
                   variant="ghost"
                   size="sm"
-                  className="w-[71px] h-[29px] bg-gray-50 text-14-m font-normal rounded-[8px] [&>span]:!text-gray-600 [&>span]:select-none [&>span]:pointer-events-none hover:[&>span]:!text-green-500 active:!bg-gray-50"
+                  className="
+                    w-[71px] h-[29px]
+                    bg-gray-50
+                    text-14-m font-normal
+                    rounded-[8px]
+                    [&>span]:text-gray-600
+                    hover:[&>span]:text-green-500
+                    hover:bg-gray-100
+                    active:bg-gray-50
+                    transition-colors
+                  "
                   style={{
                     userSelect: "none",
                     WebkitUserSelect: "none",
@@ -80,7 +115,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
                 label="후기 작성"
                 variant="primary"
                 size="sm"
-                className="w-[71px] h-[29px] text-white rounded-[8px] [&>span]:!text-[14px] [&>span]:!font-normal [&>span]:!tracking-[-0.35px] [&>span]:!leading-normal [&>span]:select-none [&>span]:pointer-events-none hover:!bg-primary-600 active:!bg-primary-700 hover:!brightness-90 active:!brightness-75 transition-all"
+                className="w-[71px] h-[29px] text-white rounded-[8px]"
                 style={{
                   userSelect: "none",
                   WebkitUserSelect: "none",

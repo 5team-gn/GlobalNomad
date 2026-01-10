@@ -43,7 +43,7 @@ export default function MyExperinenceView() {
             체험을 등록하거나 수정및 삭제가 가능합니다.
           </span>
         </div>
-        <Link href="myinfo/experiences/new">
+        <Link href="/myinfo/experiences/new">
           <Button
             variant="primary"
             size="md"

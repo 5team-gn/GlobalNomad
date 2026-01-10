@@ -23,7 +23,7 @@ export default function ActivityHeaderGallery({ activity }: Props) {
         <div className="relative w-full md:flex-1 min-w-0 h-[260px] md:h-[400px]">
           <Image
             src={activity.bannerImageUrl}
-            // src={activity.bannerImageUrl}
+            // src="https://sprint-fe-project.s3.ap-northeast-2.amazonaws.com/globalnomad/activity_registration_image/19-5_2918_1767921778281.png"
             alt={activity.title}
             fill
             className="object-cover"

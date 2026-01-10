@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Category from "./Category";
+import ReservationCategoryFilter from "../../components/dropdown/ReservationCategoryFilter";
 import ReservationStatusView from "./ReservaionStatusView";
 import { mockReservations } from "@/Mocks/reservationStatus.mock";
 
@@ -20,7 +20,7 @@ export default function ReservationStatusPage() {
 
       {/* 카테고리 */}
       <div className="mb-7.5">
-        <Category
+        <ReservationCategoryFilter
           reservations={mockReservations}
           selectedTitle={selectedTitle}
           onChange={setSelectedTitle}
