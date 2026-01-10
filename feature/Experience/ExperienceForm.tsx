@@ -112,14 +112,7 @@ export default function ExperienceForm({
         <h1 className="text-18-b">
           {mode === "create" ? "내 체험 등록" : "내 체험 수정"}
         </h1>
-        <Button
-          type="submit"
-          variant="primary"
-          className="px-10 py-3 rounded-2xl"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "처리 중..." : `${mode === "create" ? "등록" : "수정"}하기`}
-        </Button>
+        
       </div>
 
       <div className="flex flex-col gap-2">
@@ -252,6 +245,14 @@ export default function ExperienceForm({
         onUpload={detailImages.addImages}
         onRemove={detailImages.removeImage}
       />
+      <Button
+          type="submit"
+          variant="primary"
+          className="max-w-[640px] px-10 py-3 rounded-2xl"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "처리 중..." : `${mode === "create" ? "등록" : "수정"}하기`}
+        </Button>
     </form>
   );
 }

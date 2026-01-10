@@ -3,5 +3,9 @@
 import ExperienceForm from "@/feature/Experience/ExperienceForm";
 
 export default function NewExperiencePage() {
-  return <ExperienceForm mode="create" />;
+  return (
+    <div className="flex justify-center">
+      <ExperienceForm mode="create" />
+    </div>
+  );
 }
