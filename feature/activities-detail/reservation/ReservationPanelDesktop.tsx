@@ -1,34 +1,32 @@
-/**
- *
- *
- * @description 액티비티 상세 - 데스크탑 예약 패널
- */
 "use client";
 
-import type { TimeSlot } from "@/types/reservation/types";
 import clsx from "clsx";
 import CalendarSection from "./sections/CalendarSection";
 import TimeSlotsSection from "./sections/TimeSlotsSection";
 import PeopleSection from "./sections/PeopleSection";
-import type { ReservationPanelDesktopProps } from "@/types/reservation/ui";
+import { useReservation } from "./reservation-context";
 
-export default function ReservationPanelDesktop({
-  price,
-  selectedDate,
-  setDate,
-  slots,
-  selectedSlot,
-  setTimeSlot,
-  people,
-  incPeople,
-  decPeople,
-  canReserve,
-  onReserve,
-  enabledDateSet,
-  resetSelection,
-  onMonthNavigate,
-  isReserving,
-}: ReservationPanelDesktopProps) {
+export default function ReservationPanelDesktop() {
+  const {
+    price,
+    selection,
+    setDate,
+    slots,
+    setTimeSlot,
+    incPeople,
+    decPeople,
+    canReserve,
+    onReserve,
+    enabledDateSet,
+    resetSelection,
+    onMonthNavigate,
+    isReserving,
+  } = useReservation();
+
+  const selectedDate = selection.date;
+  const selectedSlot = selection.timeSlot;
+  const people = selection.people;
+
   const totalPrice = price * people;
   const formatKRW = (n: number) => `₩ ${n.toLocaleString("ko-KR")}`;
 
@@ -78,7 +76,7 @@ export default function ReservationPanelDesktop({
           onSelectSlot={setTimeSlot}
         />
 
-        <div className="flex items-center justify-between pt-5  border-t border-gray-100 ">
+        <div className="flex items-center justify-between pt-5 border-t border-gray-100 ">
           <div className="flex items-center">
             <p className="text-20-m text-gray-79747E">총 합계</p>
             <p className="text-20-b text-gray-950 ml-[6px]">

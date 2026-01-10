@@ -7,15 +7,12 @@
 "use client";
 
 import { formatDateKR } from "@/lib/utils/time";
-import { ReservationBarMobileProps } from "@/types/reservation/ui";
+import { useReservation } from "./reservation-context";
 
-export default function ReservationBarMobile({
-  price,
-  selection,
-  canReserve,
-  openPicker,
-  onReserve,
-}: ReservationBarMobileProps) {
+export default function ReservationBarMobile() {
+  const { price, selection, canReserve, openPicker, onReserve } =
+    useReservation();
+
   const people = selection.people;
 
   const rightText =
