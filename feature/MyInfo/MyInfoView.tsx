@@ -20,7 +20,8 @@ export default function MyInfoView() {
         const data = await getMyInfo();
         setNickname(data.nickname);
         setEmail(data.email);
-      } catch {
+      } catch (error) {
+        console.error("내 정보 조회에 실패했습니다:", error);
         toast.error("내 정보를 불러오지 못했습니다.");
       }
     };
@@ -32,7 +33,8 @@ export default function MyInfoView() {
     try {
       await updateMyInfo({ nickname });
       toast.success("내 정보가 수정되었습니다.");
-    } catch {
+    } catch (error) {
+      console.error("정보 수정에 실패했습니다:", error);
       toast.error("정보 수정에 실패했습니다.");
     }
   };
