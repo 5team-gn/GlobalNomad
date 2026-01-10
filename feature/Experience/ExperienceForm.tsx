@@ -45,10 +45,14 @@ export default function ExperienceForm({
   const router = useRouter();
   const params = useParams();
   const activityId = params?.id as string;
+
   const {
     control,
     register,
     handleSubmit,
+    watch,
+    setValue,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<ExperienceFormValues>({
     defaultValues: {
@@ -62,8 +66,15 @@ export default function ExperienceForm({
 
   const addressValue = watch("address");
   const scheduleManager = useScheduleManager(initialValues?.schedules ?? []);
-  const bannerImages = useImageManager();
-  const detailImages = useImageManager();
+  const bannerImages = useImageManager(
+    initialValues?.bannerImageUrl ? [initialValues.bannerImageUrl] : []
+  );
+  const detailImages = useImageManager(initialValues?.subImageUrls ?? []);
+
+  useEffect(() => {
+    setValue("bannerImageUrl", bannerImages.images[0]?.preview ?? "");
+    setValue("schedules", scheduleManager.schedules);
+  }, [bannerImages.images, scheduleManager.schedules]);
 
   const onValidSubmit = async (data: ExperienceFormValues) => {
     try {
@@ -98,18 +109,19 @@ export default function ExperienceForm({
       onSubmit={handleSubmit(onValidSubmit)}
     >
       <div className="flex justify-between items-center">
-        <h1 className="text-18-b">내 체험 등록</h1>
+        <h1 className="text-18-b">
+          {mode === "create" ? "내 체험 등록" : "내 체험 수정"}
+        </h1>
         <Button
           type="submit"
           variant="primary"
           className="px-10 py-3 rounded-2xl"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "등록 중..." : submitLabel}
+          {isSubmitting ? "처리 중..." : `${mode === "create" ? "등록" : "수정"}하기`}
         </Button>
       </div>
 
-      {/* 제목 */}
       <div className="flex flex-col gap-2">
         <label htmlFor="title" className="text-16-b">
           제목
@@ -125,7 +137,6 @@ export default function ExperienceForm({
         )}
       </div>
 
-      {/* 카테고리 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">카테고리</label>
         <Controller
@@ -139,7 +150,7 @@ export default function ExperienceForm({
               placeholder="카테고리를 선택해 주세요"
               onChange={(val) => {
                 onChange(val);
-                trigger("category"); // 선택 시 즉시 검증
+                trigger("category");
               }}
             />
           )}
@@ -149,7 +160,6 @@ export default function ExperienceForm({
         )}
       </div>
 
-      {/* 설명 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">설명</label>
         <textarea
@@ -164,7 +174,6 @@ export default function ExperienceForm({
         )}
       </div>
 
-      {/* 가격 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">가격</label>
         <Input
@@ -181,23 +190,23 @@ export default function ExperienceForm({
         )}
       </div>
 
-      {/* 주소 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">주소</label>
         <AddressInput
           value={addressValue}
           onChange={(val) => setValue("address", val, { shouldValidate: true })}
-          error={errors.address?.message}
         />
         <input
           type="hidden"
           {...register("address", { required: "주소를 검색해 주세요" })}
         />
+        {errors.address && (
+          <p className="text-red-500 text-sm">{errors.address.message}</p>
+        )}
       </div>
 
       <hr className="border-gray-100 my-4" />
 
-      {/* 스케줄 - Validation 통합 */}
       <div className="flex flex-col gap-2">
         <ScheduleSection manager={scheduleManager} />
         <input
@@ -215,7 +224,6 @@ export default function ExperienceForm({
 
       <hr className="border-gray-100 my-4" />
 
-      {/* 배너 이미지 - Validation 통합 */}
       <div className="flex flex-col gap-2">
         <ImageSection
           title="배너 이미지 (필수)"
@@ -237,7 +245,6 @@ export default function ExperienceForm({
         )}
       </div>
 
-      {/* 소개 이미지 */}
       <ImageSection
         title="소개 이미지 (최대 4개)"
         images={detailImages.images}
@@ -245,22 +252,6 @@ export default function ExperienceForm({
         onUpload={detailImages.addImages}
         onRemove={detailImages.removeImage}
       />
-
-      {/* 제출 버튼 */}
-      <div className="flex w-full justify-center">
-        <Button
-          type="submit"
-          variant="primary"
-          size="sm"
-          className="px-10 py-3 rounded-2xl"
-        >
-          {isSubmitting
-            ? "처리중"
-            : mode === "create"
-            ? "등록하기"
-            : "수정하기"}
-        </Button>
-      </div>
     </form>
   );
 }
