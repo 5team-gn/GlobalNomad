@@ -7,34 +7,39 @@
 "use client";
 
 import Image from "next/image";
-import type { ReservationSheetProps } from "@/types/reservation/ui";
 import CalendarSection from "./sections/CalendarSection";
 import TimeSlotsSection from "./sections/TimeSlotsSection";
 import PeopleSection from "./sections/PeopleSection";
+import { useReservation } from "./reservation-context";
 
-export default function ReservationSheet({
-  open,
-  onClose,
-  step,
-  onBack,
-  onNext,
-  selectedDate,
-  onSelectDate,
-  slots,
-  selectedSlot,
-  onSelectSlot,
-  people,
-  onInc,
-  onDec,
-  tabletConfirmDisabled,
-  onTabletConfirm,
-  mobileConfirmDisabled,
-  onGoPeople,
-  onGoBackMobile,
-  enabledDateSet,
-  resetSelection,
-  onMonthNavigate,
-}: ReservationSheetProps) {
+export default function ReservationSheet() {
+  const {
+    open,
+    close, // onClose
+    step,
+    goBack, // onBack
+    goNext, // onNext
+    selection,
+    slots,
+    setDate, // onSelectDate
+    setTimeSlot, // onSelectSlot
+    incPeople, // onInc
+    decPeople, // onDec
+    canConfirm,
+    goPeople, // onGoPeople
+    goBackMobile, // onGoBackMobile
+    enabledDateSet,
+    resetSelection, // 현재 파일에서는 쓰지 않지만 props에 있었음
+    onMonthNavigate,
+  } = useReservation();
+
+  const selectedDate = selection.date;
+  const selectedSlot = selection.timeSlot;
+  const people = selection.people;
+
+  const tabletConfirmDisabled = !selectedDate || !selectedSlot || people < 1;
+  const mobileConfirmDisabled = !canConfirm;
+
   const mobileTitle =
     step === "date" ? "날짜" : step === "time" ? "예약 가능한 시간" : "인원";
 
@@ -50,7 +55,7 @@ export default function ReservationSheet({
           "absolute inset-0 bg-black/40 transition-opacity duration-300",
           open ? "opacity-100" : "opacity-0",
         ].join(" ")}
-        onClick={onClose}
+        onClick={close}
       />
 
       <div
@@ -65,7 +70,7 @@ export default function ReservationSheet({
             <div className="flex items-center">
               {step === "people" && (
                 <button
-                  onClick={onGoBackMobile}
+                  onClick={goBackMobile}
                   className="md:hidden rounded-md text-16-body-b text-gray-950"
                   aria-label="뒤로가기"
                 >
@@ -92,7 +97,7 @@ export default function ReservationSheet({
               <section>
                 <CalendarSection
                   value={selectedDate}
-                  onChange={onSelectDate}
+                  onChange={setDate}
                   enabledDateSet={enabledDateSet}
                   onMonthNavigate={onMonthNavigate}
                 />
@@ -104,7 +109,7 @@ export default function ReservationSheet({
                     selectedDate={selectedDate}
                     slots={slots}
                     selectedSlot={selectedSlot}
-                    onSelectSlot={onSelectSlot}
+                    onSelectSlot={setTimeSlot}
                     labelText="예약 가능한 시간"
                     emptyText="날짜를 선택해주세요."
                     labelClassName="text-16-b text-gray-950"
@@ -121,8 +126,8 @@ export default function ReservationSheet({
                     >
                       <PeopleSection
                         people={people}
-                        onInc={onInc}
-                        onDec={onDec}
+                        onInc={incPeople}
+                        onDec={decPeople}
                         disabled={!selectedSlot}
                         labelText="참여 인원 수"
                         labelClassName="text-14-b text-gray-950"
@@ -135,7 +140,7 @@ export default function ReservationSheet({
             </div>
 
             <button
-              onClick={onTabletConfirm}
+              onClick={close}
               disabled={tabletConfirmDisabled}
               className={[
                 "mt-6 mb-6 w-full rounded-xl py-4 text-16-body-b",
@@ -155,7 +160,7 @@ export default function ReservationSheet({
                 <>
                   <CalendarSection
                     value={selectedDate}
-                    onChange={onSelectDate}
+                    onChange={setDate}
                     enabledDateSet={enabledDateSet}
                     onMonthNavigate={onMonthNavigate}
                   />
@@ -165,7 +170,7 @@ export default function ReservationSheet({
                       selectedDate={selectedDate}
                       slots={slots}
                       selectedSlot={selectedSlot}
-                      onSelectSlot={onSelectSlot}
+                      onSelectSlot={setTimeSlot}
                       labelText="예약 가능한 시간"
                       emptyText="날짜를 선택해주세요."
                       labelClassName="text-14-b text-gray-950"
@@ -184,8 +189,8 @@ export default function ReservationSheet({
                     <p className="text-16-b text-gray-950">참여 인원 수</p>
                     <PeopleSection
                       people={people}
-                      onInc={onInc}
-                      onDec={onDec}
+                      onInc={incPeople}
+                      onDec={decPeople}
                       wrapperClassName="flex items-center justify-between w-38 h-12 rounded-xl bg-white px-4 py-3 border border-gray-200"
                     />
                   </div>
@@ -196,10 +201,10 @@ export default function ReservationSheet({
             <button
               onClick={() => {
                 if (step === "date") {
-                  onGoPeople();
+                  goPeople();
                   return;
                 }
-                if (step === "people") onNext();
+                if (step === "people") goNext();
               }}
               disabled={
                 step === "date"
