@@ -73,7 +73,8 @@ export function ReviewContent({
           </h3>
 
           <p className="text-[14px] text-center text-gray-500 mb-[24px]">
-            {reservation.date} ({reservation.people}명)
+            {reservation.date} / {reservation.startTime} - {reservation.endTime}{" "}
+            ({reservation.people}명)
           </p>
 
           <div className="flex gap-[8px] justify-center mb-[32px]">
@@ -100,7 +101,23 @@ export function ReviewContent({
             onChange={(e) => setContent(e.target.value)}
             maxLength={100}
             placeholder="체험에서 느낀 경험을 자유롭게 남겨주세요"
-            className="w-full h-[120px] md:h-[179px] p-[16px] border border-gray-300 rounded-[12px] resize-none text-[14px]"
+            className="
+    w-full
+    h-[120px] md:h-[179px]
+    p-[16px]
+    rounded-[12px]
+    resize-none
+    text-[14px]
+    bg-white
+
+    border border-transparent
+    shadow-[0_4px_24px_rgba(156,180,202,0.20)]
+
+    placeholder:text-gray-400
+    focus:outline-none
+    focus:border-gray-200
+    focus:shadow-[0_6px_28px_rgba(156,180,202,0.25)]
+  "
           />
 
           <div className="text-right text-gray-500 mt-[8px] mb-[24px] text-[14px]">
