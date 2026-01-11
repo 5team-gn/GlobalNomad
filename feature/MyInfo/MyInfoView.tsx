@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/button/Button";
 import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
@@ -11,6 +12,9 @@ const BASE_INPUT_CLASS =
   "h-[54px] w-full rounded-[16px] border border-gray-100 px-[20px] text-sm text-gray-950 outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
 
 export default function MyInfoView() {
+  const router = useRouter();
+  const hasFetchedRef = useRef(false);
+
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
 
@@ -19,6 +23,9 @@ export default function MyInfoView() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
     const fetchMyInfo = async () => {
       try {
         const data = await getMyInfo();
@@ -33,7 +40,6 @@ export default function MyInfoView() {
     fetchMyInfo();
   }, []);
 
-  /** 비밀번호 확인 blur 시 검증 */
   const handlePasswordConfirmBlur = () => {
     if (!password || !passwordConfirm) {
       setPasswordError(null);
@@ -54,7 +60,6 @@ export default function MyInfoView() {
   };
 
   const handleSave = async () => {
-    // 비밀번호 입력된 경우에만 검증
     if (password || passwordConfirm) {
       if (password.length < 8) {
         toast.error("비밀번호는 8자 이상이어야 합니다.");
@@ -80,9 +85,8 @@ export default function MyInfoView() {
   };
 
   return (
-    <div className="flex justify-center font-pretendard">
-      <div className="w-[640px] rounded-xl bg-white">
-        {/* 타이틀 */}
+    <div className="flex justify-center font-pretendard px-4">
+      <div className="w-full max-w-[640px] rounded-xl bg-white">
         <div className="mb-[24px]">
           <h2 className="pt-[10px] text-18-b tracking-[-0.45px]">내 정보</h2>
           <p className="mt-[4px] text-14-m text-gray-500">
@@ -90,9 +94,7 @@ export default function MyInfoView() {
           </p>
         </div>
 
-        {/* Input 영역 */}
         <div className="space-y-[24px]">
-          {/* 닉네임 */}
           <InputField label="닉네임">
             <input
               type="text"
@@ -103,7 +105,6 @@ export default function MyInfoView() {
             />
           </InputField>
 
-          {/* 이메일 (수정 불가) */}
           <InputField label="이메일" helperText="이메일은 수정할 수 없습니다.">
             <input
               type="email"
@@ -113,7 +114,6 @@ export default function MyInfoView() {
             />
           </InputField>
 
-          {/* 비밀번호 */}
           <InputField label="비밀번호">
             <PasswordInput
               value={password}
@@ -123,7 +123,6 @@ export default function MyInfoView() {
             />
           </InputField>
 
-          {/* 비밀번호 확인 (에러는 여기만 표시) */}
           <InputField label="비밀번호 확인" error={passwordError ?? undefined}>
             <PasswordInput
               value={passwordConfirm}
@@ -134,8 +133,18 @@ export default function MyInfoView() {
             />
           </InputField>
 
-          {/* 저장 버튼 */}
-          <div className="mt-[24px] flex justify-center">
+          <div className="mt-[24px] flex justify-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              className="md:hidden h-[41px] w-[120px] rounded-[12px] border border-gray-200 bg-white px-10 py-3 active:bg-gray-50"
+              onClick={() => router.back()}
+            >
+              <span className="text-14-b whitespace-nowrap text-gray-700">
+                취소
+              </span>
+            </Button>
+
             <Button
               type="button"
               variant="primary"
