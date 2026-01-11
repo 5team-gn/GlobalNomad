@@ -39,6 +39,8 @@ export interface Reservation {
   id: number;
   title: string;
   date: string;
+  startTime: string;
+  endTime: string;
   price: number;
   people: number;
   status: ReservationStatus;

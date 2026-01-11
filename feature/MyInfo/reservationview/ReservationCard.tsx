@@ -17,20 +17,24 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
 
   return (
     <div className="max-md:mb-[44px]">
+      <p className="hidden max-md:block mb-[8px] text-[12px] text-gray-400">
+        {reservation.date}
+      </p>
+
       <div className="relative h-[181px] max-md:h-[140px]">
         <div
           className="
-    absolute right-[-10px] top-0 
-    h-full w-[181px]
-    bg-primary-100 rounded-r-[32px] 
-    overflow-hidden
+            absolute right-[-10px] top-0 
+            h-full w-[181px]
+            bg-primary-100 rounded-r-[32px] 
+            overflow-hidden
 
-    max-lg:right-0 max-lg:w-[35%]
-    max-lg:rounded-r-[24px]
+            max-lg:right-0 max-lg:w-[35%]
+            max-lg:rounded-r-[24px]
 
-    max-md:w-[35%]
-    max-md:rounded-r-[20px]
-  "
+            max-md:w-[35%]
+            max-md:rounded-r-[20px]
+          "
         >
           <Image
             src="/Image/thumbnail.svg"
@@ -43,49 +47,48 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
 
         <div
           className="
-          absolute left-0 top-0 
-          h-[181px] w-[485px] 
-          bg-white rounded-[32px] 
-          shadow-[0_-8px_20px_rgba(0,0,0,0.1)] 
-          px-[40px] py-[30px]
-          
-          max-md:w-[72%]
-          max-md:h-[140px]
-          max-md:rounded-[20px]
-          max-md:px-[16px] max-md:py-[14px]
-          max-md:shadow-[0_2px_8px_rgba(0,0,0,0.08)]
-        "
+            absolute left-0 top-0 
+            h-[181px] w-[485px] 
+            bg-white rounded-[32px] 
+            shadow-[0_-8px_20px_rgba(0,0,0,0.1)] 
+            px-[40px] py-[30px]
+            
+            max-md:w-[72%]
+            max-md:h-[140px]
+            max-md:rounded-[20px]
+            max-md:px-[16px] max-md:py-[14px]
+            max-md:shadow-[0_2px_8px_rgba(0,0,0,0.08)]
+          "
         >
           <span
             className={`
-            inline-block px-3 py-2 
-            rounded-full text-13-b 
-            ${STATUS_STYLE[status].badge}
-            
-            max-md:px-[8px] max-md:py-[2px]
-            max-md:text-[10px] max-md:leading-[14px]
-          `}
+              inline-block px-3 py-2 
+              rounded-full text-13-b 
+              ${STATUS_STYLE[status].badge}
+              
+              max-md:px-[8px] max-md:py-[2px]
+              max-md:text-[10px] max-md:leading-[14px]
+            `}
           >
             {STATUS_LABEL[status]}
           </span>
 
           <h3
             className="
-            mt-[12px] text-18-b text-gray-950
-            line-clamp-1
-            max-md:mt-[6px] max-md:text-[13px] max-md:font-semibold max-md:leading-[18px]
-          "
+              mt-[12px] text-18-b text-gray-950
+              line-clamp-1
+              max-md:mt-[6px] max-md:text-[13px] max-md:font-semibold max-md:leading-[18px]
+            "
           >
             {reservation.title}
           </h3>
 
-          <p
-            className="
-            mt-[10px] text-16-m text-gray-500
-            max-md:mt-[4px] max-md:text-[10px] max-md:leading-[14px]
-          "
-          >
-            {reservation.date}
+          <p className="hidden max-md:block mt-[4px] text-[10px] text-gray-500">
+            {reservation.startTime} - {reservation.endTime}
+          </p>
+
+          <p className="mt-[10px] text-16-m text-gray-500 max-md:hidden">
+            {reservation.date} · {reservation.startTime} - {reservation.endTime}
           </p>
 
           <div className="mt-[10px] relative max-md:mt-[6px]">
@@ -100,10 +103,10 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
 
             <div
               className="
-              absolute right-0 top-[-3px] 
-              flex gap-2
-              max-md:hidden
-            "
+                absolute right-0 top-[-3px] 
+                flex gap-2
+                max-md:hidden
+              "
             >
               {status === "pending" && (
                 <>
@@ -152,12 +155,6 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
                       active:bg-gray-50
                       transition-colors
                     "
-                    style={{
-                      userSelect: "none",
-                      WebkitUserSelect: "none",
-                    }}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onDragStart={(e) => e.preventDefault()}
                   />
                 </>
               )}
@@ -169,12 +166,6 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
                   variant="primary"
                   size="sm"
                   className="w-[71px] h-[29px] text-white rounded-[8px]"
-                  style={{
-                    userSelect: "none",
-                    WebkitUserSelect: "none",
-                  }}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
                 />
               )}
             </div>
@@ -205,11 +196,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
                   bg-gray-50
                   opacity-40
                   cursor-not-allowed
-                  disabled:!bg-gray-50
-                  disabled:!shadow-none
-                  disabled:!ring-0
                   [&>span]:text-gray-400
-                  [&>span]:pointer-events-none
                   [&>span]:text-[13px]
                 "
               />
@@ -227,17 +214,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
                 text-[13px] font-normal
                 rounded-[8px]
                 [&>span]:text-gray-600
-                hover:[&>span]:text-green-500
-                hover:bg-gray-100
-                active:bg-gray-50
-                transition-colors
               "
-              style={{
-                userSelect: "none",
-                WebkitUserSelect: "none",
-              }}
-              onMouseDown={(e) => e.preventDefault()}
-              onDragStart={(e) => e.preventDefault()}
             />
           </>
         )}
@@ -248,17 +225,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
             label="후기 작성"
             variant="primary"
             size="sm"
-            className="
-              w-full h-[36px]
-              text-white rounded-[8px]
-              [&>span]:text-[13px]
-            "
-            style={{
-              userSelect: "none",
-              WebkitUserSelect: "none",
-            }}
-            onMouseDown={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
+            className="w-full h-[36px] text-white rounded-[8px]"
           />
         )}
       </div>
