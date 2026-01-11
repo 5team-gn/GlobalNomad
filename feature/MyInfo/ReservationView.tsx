@@ -13,6 +13,7 @@ import type { ReservationStatus } from "@/types/reservationview/reservationview.
 import { useReservationModal } from "@/hooks/useReservationModal";
 import { useReservationInfinite } from "@/hooks/useReservationInfinite";
 import { useReservationActions } from "@/hooks/useReservationActions";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 import { ReservationFilter } from "./reservationview/ReservationFilter";
 import { ReservationList } from "./reservationview/ReservationList";
@@ -50,6 +51,8 @@ export default function ReservationView() {
     pushCanceledReservation,
     closeModal,
   });
+
+  useBodyScrollLock(modalType !== null);
 
   if (error) {
     return (
