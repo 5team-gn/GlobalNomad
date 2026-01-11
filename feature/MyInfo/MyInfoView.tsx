@@ -124,7 +124,7 @@ export default function MyInfoView() {
           </InputField>
 
           {/* 비밀번호 확인 (에러는 여기만 표시) */}
-          <InputField label="비밀번호" error={passwordError ?? undefined}>
+          <InputField label="비밀번호 확인" error={passwordError ?? undefined}>
             <PasswordInput
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
