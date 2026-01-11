@@ -7,7 +7,7 @@ import type {
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'https://sp-globalnomad-api.vercel.app';
-const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID || '19-6';
+const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID || '19-5';
 
 // CORS 에러 방지를 위해 withCredentials 제거
 const axiosInstance = axios.create({
