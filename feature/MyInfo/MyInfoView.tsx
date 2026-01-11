@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/button/Button";
 import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
@@ -11,6 +11,8 @@ const BASE_INPUT_CLASS =
   "h-[54px] w-full rounded-[16px] border border-gray-100 px-[20px] text-sm text-gray-950 outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
 
 export default function MyInfoView() {
+  const hasFetchedRef = useRef(false);
+
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
 
@@ -19,6 +21,9 @@ export default function MyInfoView() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
     const fetchMyInfo = async () => {
       try {
         const data = await getMyInfo();
@@ -80,8 +85,8 @@ export default function MyInfoView() {
   };
 
   return (
-    <div className="flex justify-center font-pretendard">
-      <div className="w-[640px] rounded-xl bg-white">
+    <div className="flex justify-center font-pretendard px-4">
+      <div className="w-full max-w-[640px] rounded-xl bg-white">
         {/* 타이틀 */}
         <div className="mb-[24px]">
           <h2 className="pt-[10px] text-18-b tracking-[-0.45px]">내 정보</h2>
