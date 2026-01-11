@@ -25,7 +25,7 @@ export function CancelContent({
     <div className="fixed inset-0 z-50 flex items-start justify-start pt-[200px] md:items-center md:justify-center md:pt-0 md:pl-0 p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      <div className="relative z-10 w-full max-w-[340px] rounded-[20px] bg-white p-[32px] flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-[340px] rounded-[30px] bg-white p-[32px] flex flex-col items-center">
         <Image
           src="/icon_warning.svg"
           alt="경고 아이콘"
