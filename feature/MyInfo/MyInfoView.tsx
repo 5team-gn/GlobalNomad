@@ -137,7 +137,7 @@ export default function MyInfoView() {
             <Button
               type="button"
               variant="ghost"
-              className="md:hidden h-[41px] w-[120px] rounded-[12px] border border-gray-200 bg-white px-10 py-3"
+              className="md:hidden h-[41px] w-[120px] rounded-[12px] border border-gray-200 bg-white px-10 py-3 active:bg-gray-50"
               onClick={() => router.back()}
             >
               <span className="text-14-b whitespace-nowrap text-gray-700">
