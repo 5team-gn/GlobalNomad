@@ -14,6 +14,10 @@ export default function MyInfoView() {
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
 
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchMyInfo = async () => {
       try {
@@ -29,9 +33,45 @@ export default function MyInfoView() {
     fetchMyInfo();
   }, []);
 
+  /** 비밀번호 확인 blur 시 검증 */
+  const handlePasswordConfirmBlur = () => {
+    if (!password || !passwordConfirm) {
+      setPasswordError(null);
+      return;
+    }
+
+    if (password.length < 8) {
+      setPasswordError("비밀번호는 8자 이상이어야 합니다.");
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      setPasswordError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    setPasswordError(null);
+  };
+
   const handleSave = async () => {
+    // 비밀번호 입력된 경우에만 검증
+    if (password || passwordConfirm) {
+      if (password.length < 8) {
+        toast.error("비밀번호는 8자 이상이어야 합니다.");
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        toast.error("비밀번호가 일치하지 않습니다.");
+        return;
+      }
+    }
+
     try {
-      await updateMyInfo({ nickname });
+      await updateMyInfo({
+        nickname,
+      });
+
       toast.success("내 정보가 수정되었습니다.");
     } catch (error) {
       console.error("정보 수정에 실패했습니다:", error);
@@ -76,14 +116,19 @@ export default function MyInfoView() {
           {/* 비밀번호 */}
           <InputField label="비밀번호">
             <PasswordInput
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="8자 이상 입력해 주세요"
               className={BASE_INPUT_CLASS}
             />
           </InputField>
 
-          {/* 비밀번호 확인 */}
-          <InputField label="비밀번호">
+          {/* 비밀번호 확인 (에러는 여기만 표시) */}
+          <InputField label="비밀번호 확인" error={passwordError ?? undefined}>
             <PasswordInput
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              onBlur={handlePasswordConfirmBlur}
               placeholder="비밀번호를 한 번 더 입력해 주세요"
               className={BASE_INPUT_CLASS}
             />
@@ -95,7 +140,7 @@ export default function MyInfoView() {
               type="button"
               variant="primary"
               size="lg"
-              className="h-[41px] rounded-[12px] px-10 py-3 w-[120px]"
+              className="h-[41px] w-[120px] rounded-[12px] px-10 py-3"
               onClick={handleSave}
             >
               <span className="text-14-b whitespace-nowrap">저장하기</span>
