@@ -10,14 +10,16 @@ export default async function EditExperiencePage({
   params: { id: string };
 }) {
   const { id } = params;
+  console.log("id", id, typeof id);
   const activityId = Number(id);
 
-  if (isNaN(activityId)) notFound();
+  if (Number.isNaN(activityId)) notFound();
 
   let originalData;
   try {
     originalData = await getActivityDetail(activityId);
   } catch (error) {
+    console.error("getActivityDetail error:", error);
     if (error instanceof ApiError && error.status === 404) {
       notFound();
     }

@@ -2,20 +2,25 @@
 
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+
 import { Button } from "@/components/button/Button";
+import { Input } from "@/components/input/Input";
+import CategorySelect from "@/components/dropdown/CategorySelect";
+
 import { ImageSection } from "./ImageSection";
 import { ScheduleSection } from "./ScheduleSection";
 import { AddressInput } from "./AddressInput";
+
 import { useScheduleManager } from "@/hooks/useScheduleManager";
 import { useImageManager } from "@/hooks/useImageManager";
-import { Input } from "@/components/input/Input";
-import CategorySelect from "@/components/dropdown/CategorySelect";
-import toast from "react-hot-toast";
 
 import { TEAM_ID } from "@/constants/env";
 import { postcreateFrom } from "@/lib/services/createForm";
 import { patchupdateMyActivity } from "@/lib/services/updateMyActivity";
+import { ApiError } from "@/lib/api/apiFetch";
+
 import { mapFormToCreateActivity } from "@/adapters/form.adapter";
 import { mapFormToUpdateActivity } from "@/adapters/updateActivity.adapter";
 
@@ -43,8 +48,6 @@ export default function ExperienceForm({
   originalData,
 }: Props) {
   const router = useRouter();
-  const params = useParams();
-  const activityId = params?.id as string;
 
   const {
     control,
@@ -52,30 +55,57 @@ export default function ExperienceForm({
     handleSubmit,
     watch,
     setValue,
+    reset,
     trigger,
     formState: { errors, isSubmitting },
   } = useForm<ExperienceFormValues>({
     defaultValues: {
-      title: initialValues?.title ?? "",
-      category: initialValues?.category ?? "",
-      description: initialValues?.description ?? "",
-      price: initialValues?.price ?? 0,
-      address: initialValues?.address ?? "",
+      title: "",
+      category: "",
+      description: "",
+      price: 0,
+      address: "",
+      bannerImageUrl: "",
+      schedules: [],
     },
   });
 
+  /** ------------------------------
+   * edit 모드: 서버 데이터 들어오면 form reset
+   -------------------------------- */
+  useEffect(() => {
+    if (mode === "edit" && initialValues) {
+      reset({
+        title: initialValues.title ?? "",
+        category: initialValues.category ?? "",
+        description: initialValues.description ?? "",
+        price: initialValues.price ?? 0,
+        address: initialValues.address ?? "",
+        bannerImageUrl: initialValues.bannerImageUrl ?? "",
+        schedules: initialValues.schedules ?? [],
+      });
+    }
+  }, [mode, initialValues, reset]);
+
   const addressValue = watch("address");
+
   const scheduleManager = useScheduleManager(initialValues?.schedules ?? []);
   const bannerImages = useImageManager(
     initialValues?.bannerImageUrl ? [initialValues.bannerImageUrl] : []
   );
   const detailImages = useImageManager(initialValues?.subImageUrls ?? []);
 
+  /** ------------------------------
+   * 이미지 / 스케줄 변경 시 hidden field 동기화
+   -------------------------------- */
   useEffect(() => {
     setValue("bannerImageUrl", bannerImages.images[0]?.preview ?? "");
     setValue("schedules", scheduleManager.schedules);
-  }, [bannerImages.images, scheduleManager.schedules]);
+  }, [bannerImages.images, scheduleManager.schedules, setValue]);
 
+  /** ------------------------------
+   * submit handler
+   -------------------------------- */
   const onValidSubmit = async (data: ExperienceFormValues) => {
     try {
       const formData = {
@@ -89,60 +119,90 @@ export default function ExperienceForm({
         const body = mapFormToCreateActivity(formData);
         await postcreateFrom(TEAM_ID, body);
         toast.success("체험이 등록되었습니다!");
-      } else {
-        if (!originalData || !activityId) return;
-        const body = mapFormToUpdateActivity(originalData, formData);
-        await patchupdateMyActivity(TEAM_ID, Number(activityId), body);
-        toast.success("체험이 수정되었습니다!");
+        router.push("/myinfo?menu=MY_EXPERIENCE");
       }
 
-      router.push("/myinfo/experiences");
+      if (mode === "edit") {
+        if (!originalData) {
+          toast.error("체험 정보를 불러오지 못했습니다.");
+          return;
+        }
+
+        const body = mapFormToUpdateActivity(originalData, formData);
+        await patchupdateMyActivity(originalData.id, body);
+        toast.success("체험이 수정되었습니다!");
+        router.push(`/activities/${originalData.id}`);
+      }
+
       router.refresh();
     } catch (error) {
-      toast.error((error as Error).message);
+      if (error instanceof ApiError) {
+        switch (error.status) {
+          case 400:
+            toast.error(error.message);
+            break;
+          case 403:
+            toast.error("본인의 체험만 수정할 수 있습니다.");
+            break;
+          case 409:
+            toast.error("겹치는 예약 가능 시간대가 존재합니다.");
+            break;
+          default:
+            toast.error("체험 처리 중 오류가 발생했습니다.");
+        }
+      } else {
+        toast.error("알 수 없는 오류가 발생했습니다.");
+      }
     }
   };
+
+  const hasChanges =
+    mode === "edit" &&
+    originalData &&
+    Object.keys(
+      mapFormToUpdateActivity(originalData, {
+        ...watch(),
+        schedules: scheduleManager.schedules,
+        bannerImageUrl: bannerImages.images[0]?.preview ?? "",
+        subImageUrls: detailImages.images.map((img) => img.preview),
+      })
+    ).length > 0;
 
   return (
     <form
       className="flex lg:w-175 flex-col gap-6 pb-20"
       onSubmit={handleSubmit(onValidSubmit)}
     >
-      <div className="flex justify-between items-center">
-        <h1 className="text-18-b">
-          {mode === "create" ? "내 체험 등록" : "내 체험 수정"}
-        </h1>
-        
-      </div>
+      <h1 className="text-18-b">
+        {mode === "create" ? "내 체험 등록" : "내 체험 수정"}
+      </h1>
 
+      {/* 제목 */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="title" className="text-16-b">
-          제목
-        </label>
+        <label className="text-16-b">제목</label>
         <Input
-          id="title"
           {...register("title", { required: "제목을 입력해 주세요" })}
           placeholder="제목을 입력해 주세요"
-          className="border p-4 rounded-xl"
         />
         {errors.title && (
           <p className="text-red-500 text-sm">{errors.title.message}</p>
         )}
       </div>
 
+      {/* 카테고리 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">카테고리</label>
         <Controller
           name="category"
           control={control}
           rules={{ required: "카테고리를 선택해 주세요" }}
-          render={({ field: { value, onChange } }) => (
+          render={({ field }) => (
             <CategorySelect
               options={CATEGORY_OPTIONS}
-              value={value}
+              value={field.value}
               placeholder="카테고리를 선택해 주세요"
               onChange={(val) => {
-                onChange(val);
+                field.onChange(val);
                 trigger("category");
               }}
             />
@@ -153,20 +213,19 @@ export default function ExperienceForm({
         )}
       </div>
 
+      {/* 설명 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">설명</label>
         <textarea
           {...register("description", { required: "설명을 입력해 주세요" })}
-          placeholder="체험에 대한 설명을 입력해 주세요"
-          className={`border p-4 rounded-xl h-40 resize-none focus:outline-primary-500 ${
-            errors.description ? "border-red-500" : ""
-          }`}
+          className="border p-4 rounded-xl h-40 resize-none"
         />
         {errors.description && (
           <p className="text-red-500 text-sm">{errors.description.message}</p>
         )}
       </div>
 
+      {/* 가격 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">가격</label>
         <Input
@@ -176,13 +235,13 @@ export default function ExperienceForm({
             valueAsNumber: true,
             min: { value: 0, message: "0원 이상 입력 가능합니다" },
           })}
-          placeholder="체험 금액을 입력해 주세요"
         />
         {errors.price && (
           <p className="text-red-500 text-sm">{errors.price.message}</p>
         )}
       </div>
 
+      {/* 주소 */}
       <div className="flex flex-col gap-2">
         <label className="text-16-b">주소</label>
         <AddressInput
@@ -198,45 +257,15 @@ export default function ExperienceForm({
         )}
       </div>
 
-      <hr className="border-gray-100 my-4" />
+      <ScheduleSection manager={scheduleManager} />
 
-      <div className="flex flex-col gap-2">
-        <ScheduleSection manager={scheduleManager} />
-        <input
-          type="hidden"
-          {...register("schedules", {
-            validate: (value) =>
-              (value && value.length > 0) ||
-              "시간대를 최소 1개 이상 추가해 주세요.",
-          })}
-        />
-        {errors.schedules && (
-          <p className="text-red-500 text-sm">{errors.schedules.message}</p>
-        )}
-      </div>
-
-      <hr className="border-gray-100 my-4" />
-
-      <div className="flex flex-col gap-2">
-        <ImageSection
-          title="배너 이미지 (필수)"
-          images={bannerImages.images}
-          maxCount={1}
-          onUpload={bannerImages.addImages}
-          onRemove={bannerImages.removeImage}
-        />
-        <input
-          type="hidden"
-          {...register("bannerImageUrl", {
-            required: "배너 이미지는 필수입니다.",
-          })}
-        />
-        {errors.bannerImageUrl && (
-          <p className="text-red-500 text-sm">
-            {errors.bannerImageUrl.message}
-          </p>
-        )}
-      </div>
+      <ImageSection
+        title="배너 이미지 (필수)"
+        images={bannerImages.images}
+        maxCount={1}
+        onUpload={bannerImages.addImages}
+        onRemove={bannerImages.removeImage}
+      />
 
       <ImageSection
         title="소개 이미지 (최대 4개)"
@@ -245,14 +274,18 @@ export default function ExperienceForm({
         onUpload={detailImages.addImages}
         onRemove={detailImages.removeImage}
       />
+
       <Button
-          type="submit"
-          variant="primary"
-          className="max-w-[640px] px-10 py-3 rounded-2xl"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "처리 중..." : `${mode === "create" ? "등록" : "수정"}하기`}
-        </Button>
+        type="submit"
+        variant="primary"
+        disabled={isSubmitting || (mode === "edit" && !hasChanges)}
+      >
+        {isSubmitting
+          ? "처리 중..."
+          : mode === "create"
+          ? "등록하기"
+          : "수정하기"}
+      </Button>
     </form>
   );
 }

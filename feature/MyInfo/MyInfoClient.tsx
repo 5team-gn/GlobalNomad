@@ -25,7 +25,7 @@ export default function MyInfoClient() {
     <div className="min-h-screen">
       <div className="mx-auto max-w-245 md:px-6 pt-10">
         <div className="flex gap-12.5">
-          <Sidebar active={activeMenu} onChange={handleMenuChange} />
+          <Sidebar active={activeMenu} onChange={handleMenuChange}/>
 
           <main className="flex-1 min-w-0">
             {activeMenu === "MY_INFO" && <MyInfoView />}

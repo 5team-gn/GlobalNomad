@@ -39,15 +39,22 @@ export function mapFormToUpdateActivity(
   const originalScheduleMap = new Map(
     originalSchedules.map((s) => [getScheduleKey(s), s.id]),
   );
-  const currentScheduleSet = new Set(current.schedules.map(getScheduleKey));
+
+  const currentScheduleSet = new Set(
+    current.schedules.map(getScheduleKey),
+  );
 
   const scheduleIdsToRemove = originalSchedules
     .filter((os) => !currentScheduleSet.has(getScheduleKey(os)))
     .map((os) => os.id);
 
-  const schedulesToAdd: UpdateScheduleDto[] = current.schedules.filter(
-    (cs) => !originalScheduleMap.has(getScheduleKey(cs)),
-  );
+  const schedulesToAdd: UpdateScheduleDto[] = current.schedules
+    .filter((cs) => !originalScheduleMap.has(getScheduleKey(cs)))
+    .map(({ date, startTime, endTime }) => ({
+      date,
+      startTime,
+      endTime,
+    }));
 
   const diff: Partial<UpdateMyActivityBodyDto> = {};
 
