@@ -38,7 +38,7 @@ export default function CalendarGrid({
       {/* 요일 */}
       <div className="grid grid-cols-7 mb-4">
         {DAYS.map((day) => (
-          <div key={day.id} className="p-3 text-16-b items-center">
+          <div key={day.id} className="p-3 text-16-b items-center text-center">
             {day.label}
           </div>
         ))}
