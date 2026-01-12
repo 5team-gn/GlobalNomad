@@ -12,4 +12,5 @@ export interface UserResponseDto {
 export interface UpdateUserBodyDto {
   nickname?: string;
   profileImageUrl?: string | null;
+  newPassword?: string;
 }

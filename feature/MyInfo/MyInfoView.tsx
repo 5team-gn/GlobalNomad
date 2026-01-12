@@ -6,6 +6,7 @@ import { Button } from "@/components/button/Button";
 import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
 import { getMyInfo, updateMyInfo } from "@/lib/api/user";
+import type { UpdateUserBodyDto } from "@/types/users/user.api.types";
 import toast from "react-hot-toast";
 
 const BASE_INPUT_CLASS =
@@ -73,9 +74,15 @@ export default function MyInfoView() {
     }
 
     try {
-      await updateMyInfo({
+      const payload: UpdateUserBodyDto = {
         nickname,
-      });
+      };
+
+      if (password) {
+        payload.newPassword = password;
+      }
+
+      await updateMyInfo(payload);
 
       toast.success("내 정보가 수정되었습니다.");
     } catch (error) {
