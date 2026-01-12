@@ -80,7 +80,7 @@ export default function MyInfoView() {
         nickname,
       };
 
-      if (password.trim() !== "") {
+      if (password) {
         payload.newPassword = password;
       }
 
