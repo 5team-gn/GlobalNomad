@@ -24,7 +24,7 @@ const categories = [
 export default function MainPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [sortOrder, setSortOrder] = useState<'latest' | 'price_asc' | 'price_desc'>('latest');
   const [popularActivities, setPopularActivities] = useState<ActivityListItem[]>([]);
   const [allActivities, setAllActivities] = useState<ActivityListItem[]>([]);
@@ -130,11 +130,11 @@ export default function MainPage() {
   }, [selectedCategory, sortOrder, loadAllActivities]);
 
   // 카테고리 선택
-  const handleCategoryClick = (categoryId: string) => {
+  const handleCategoryClick = (categoryName: string) => {
     // 검색어 초기화
     setSearchQuery('');
     // 카테고리 토글 (한글 name 사용)
-    setSelectedCategory(categoryId === selectedCategory ? undefined : categoryId);
+    setSelectedCategory(categoryName === selectedCategory ? '' : categoryName);
   };
 
   // 정렬 변경
@@ -387,7 +387,14 @@ export default function MainPage() {
                               fontSize: '18px',
                               fontWeight: 700,
                               lineHeight: '26px',
-                              letterSpacing: '-0.025em'
+                              letterSpacing: '-0.025em',
+                              minHeight: '52px',
+                              maxHeight: '52px',
+                              overflow: 'hidden',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              wordBreak: 'break-word'
                             }}
                           >
                             {activity.title}
@@ -462,7 +469,7 @@ export default function MainPage() {
                 {categories.map((category) => (
                   <button
                     key={category.id}
-                    onClick={() => handleCategoryClick(category.id)}
+                    onClick={() => handleCategoryClick(category.name)}
                     className={`
                       flex items-center gap-2 px-4 py-2 rounded-[15px] whitespace-nowrap
                       transition-all duration-200 text-16-m
@@ -549,7 +556,14 @@ export default function MainPage() {
                           fontSize: '18px',
                           fontWeight: 700,
                           lineHeight: '26px',
-                          letterSpacing: '-0.025em'
+                          letterSpacing: '-0.025em',
+                          minHeight: '52px',
+                          maxHeight: '52px',
+                          overflow: 'hidden',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          wordBreak: 'break-word'
                         }}
                       >
                         {activity.title}
