@@ -19,7 +19,7 @@ export default function ReservationTimeFilter({
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full h-13.5 appearance-none rounded-xl border border-gray-200 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full min-h-13.5 appearance-none rounded-xl border border-gray-200 px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {TIME_SLOTS.map((slot) => (
             <option key={slot} value={slot}>
