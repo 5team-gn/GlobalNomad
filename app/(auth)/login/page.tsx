@@ -36,6 +36,7 @@ export default function LoginPage() {
       // 토큰 저장 (localStorage)
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
+      localStorage.setItem("user", String(response.user.id));
       
       toast.success("로그인에 성공했습니다.");
       // 메인 페이지로 이동
