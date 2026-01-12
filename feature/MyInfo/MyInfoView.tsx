@@ -73,9 +73,18 @@ export default function MyInfoView() {
     }
 
     try {
-      await updateMyInfo({
+      const payload: {
+        nickname: string;
+        newPassword?: string;
+      } = {
         nickname,
-      });
+      };
+
+      if (password.trim() !== "") {
+        payload.newPassword = password;
+      }
+
+      await updateMyInfo(payload);
 
       toast.success("내 정보가 수정되었습니다.");
     } catch (error) {
