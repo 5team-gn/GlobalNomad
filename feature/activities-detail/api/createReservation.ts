@@ -4,7 +4,7 @@
  * @description 액티비티 상세 - 예약 생성
  */
 
-import axiosInstance from "@/lib/api/axios";
+import { authAxios } from "@/lib/api/axios";
 
 export type CreateReservationRequest = {
   scheduleId: number;
@@ -20,7 +20,7 @@ export async function createReservation(
   activityId: number,
   payload: CreateReservationRequest
 ): Promise<CreateReservationResponse> {
-  const res = await axiosInstance.post<CreateReservationResponse>(
+  const res = await authAxios.post<CreateReservationResponse>(
     `/activities/${activityId}/reservations`,
     payload
   );
