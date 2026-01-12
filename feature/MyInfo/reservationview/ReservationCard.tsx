@@ -17,7 +17,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
 
   return (
     <div className="max-md:mb-[44px]">
-      <p className="hidden max-md:block mb-[8px] text-[12px] text-gray-400">
+      <p className="hidden max-md:block mb-[12px] text-16-b text-gray-800">
         {reservation.date}
       </p>
 
@@ -66,8 +66,8 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
               rounded-full text-13-b 
               ${STATUS_STYLE[status].badge}
               
-              max-md:px-[8px] max-md:py-[2px]
-              max-md:text-[10px] max-md:leading-[14px]
+              max-md:px-[8px] max-md:py-[4px]
+              max-md:text-13-b max-md:leading-[14px]
             `}
           >
             {STATUS_LABEL[status]}
@@ -77,13 +77,13 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
             className="
               mt-[12px] text-18-b text-gray-950
               line-clamp-1
-              max-md:mt-[6px] max-md:text-[13px] max-md:font-semibold max-md:leading-[18px]
+              max-md:mt-[6px] max-md:text-14-b max-md:font-semibold max-md:leading-[18px]
             "
           >
             {reservation.title}
           </h3>
 
-          <p className="hidden max-md:block mt-[4px] text-[10px] text-gray-500">
+          <p className="hidden max-md:block mt-[4px] text-13-m text-gray-500">
             {reservation.startTime} - {reservation.endTime}
           </p>
 
@@ -93,10 +93,10 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
 
           <div className="mt-[10px] relative max-md:mt-[6px]">
             <div className="flex items-center gap-1">
-              <span className="text-18-b text-gray-950 max-md:text-[13px] max-md:font-semibold max-md:leading-[18px]">
+              <span className="text-18-b text-gray-950 max-md:text-16-b max-md:font-semibold max-md:leading-[18px]">
                 ₩{reservation.price.toLocaleString()}
               </span>
-              <span className="text-16-m text-gray-400 max-md:text-[10px] max-md:leading-[14px]">
+              <span className="text-16-m text-gray-400 max-md:text-14-m max-md:leading-[14px]">
                 {reservation.people}명
               </span>
             </div>
