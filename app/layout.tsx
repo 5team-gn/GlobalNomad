@@ -3,6 +3,8 @@ import Script from "next/script";
 import "../style/global.css";
 import Providers from "./providers";
 import ToastProvider from "./ToastProvider";
+import Header from "@/components/header/header";
+import Footer from "@/components/footer/footer";
 
 export const metadata: Metadata = {
   title: "GlobalNomad",
@@ -21,7 +23,9 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Providers>
+          <Header />
           {children}
+          <Footer />
           <ToastProvider />
         </Providers>
 
