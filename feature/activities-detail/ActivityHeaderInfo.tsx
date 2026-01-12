@@ -70,6 +70,7 @@ export default function ActivityHeaderInfo({
       toast.success("삭제되었습니다.");
       // 내 체험 목록 갱신
       queryClient.invalidateQueries({ queryKey: ["myActivities"] });
+      router.push("/");
     },
     onError: (e) => {
       if (axios.isAxiosError(e)) {
