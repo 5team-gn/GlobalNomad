@@ -55,6 +55,7 @@ export function useAuth() {
   const logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
     setIsLoggedIn(false);
     setUser(null);
     window.location.href = "/"; // 메인 페이지로 이동 및 새로고침
