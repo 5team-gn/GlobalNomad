@@ -6,6 +6,7 @@ import { Button } from "@/components/button/Button";
 import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
 import { getMyInfo, updateMyInfo } from "@/lib/api/user";
+import type { UpdateUserBodyDto } from "@/types/users/user.api.types";
 import toast from "react-hot-toast";
 
 const BASE_INPUT_CLASS =
@@ -73,10 +74,7 @@ export default function MyInfoView() {
     }
 
     try {
-      const payload: {
-        nickname: string;
-        newPassword?: string;
-      } = {
+      const payload: UpdateUserBodyDto = {
         nickname,
       };
 
