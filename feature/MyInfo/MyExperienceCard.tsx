@@ -26,7 +26,7 @@ export default function MyExperienceCard({ experience }: Props) {
         </div>
 
         <div className="flex gap-2">
-          <Link href={`/myinfo/experiences/${experience.id}/edit`}>
+          <Link href={`/myactivities/${experience.id}/edit`}>
             <button type="submit" className="border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600 cursor-pointer">
               수정하기
             </button>

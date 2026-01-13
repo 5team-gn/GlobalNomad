@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import Sidebar from "@/feature/MyInfo/Sidebar";
 import MyInfoView from "@/feature/MyInfo/MyInfoView";
 import ReservationView from "@/feature/MyInfo/ReservationView";
-import MyExperinenceView from "@/feature/MyInfo/MyExperinenceView";
+import MyExperinenceView from "@/feature/MyInfo/MyExperienceView";
 import ReservationStatusPage from "@/feature/reservationStatus/ReservationStatusPage";
 import { getMyInfo } from "@/lib/api/user";
 

@@ -4,8 +4,12 @@ import { notFound } from "next/navigation";
 import { ApiError } from "@/lib/api/apiFetch";
 import { getActivityDetail } from "@/feature/activities-detail/api/getActivityDetail";
 
-export default async function EditExperiencePage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function EditExperiencePage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  const { id } = await params;
   const activityId = Number(id);
 
   if (isNaN(activityId)) notFound();
@@ -23,7 +27,7 @@ export default async function EditExperiencePage({ params }: { params: { id: str
   const initialValues = mapActivityToFormValues(originalData);
 
   return (
-    <div className="py-10">
+    <div className="flex justify-center py-10">
       <ExperienceForm
         mode="edit"
         initialValues={initialValues}
