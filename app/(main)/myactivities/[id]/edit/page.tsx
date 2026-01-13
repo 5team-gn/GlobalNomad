@@ -17,6 +17,9 @@ export default async function EditExperiencePage({
   let originalData;
   try {
     originalData = await getActivityDetail(activityId);
+    console.log("--- 서버에서 받은 날것의 데이터 ---");
+    console.log(Object.keys(originalData));
+    console.log("schedules 데이터 샘플:", originalData.schedules);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       notFound();

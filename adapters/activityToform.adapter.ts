@@ -14,12 +14,11 @@ export function mapActivityToFormValues(
     bannerImageUrl: api.bannerImageUrl,
     subImageUrls: api.subImages?.map((img) => img.imageUrl) || [],
 
-    schedules: (api.schedules || []).flatMap((schedule) =>
-      (schedule.times || []).map((time) => ({
-        date: schedule.date,
-        startTime: time.startTime,
-        endTime: time.endTime,
-      }))
-    ),
+    // 🔴 수정된 로직: api.schedules가 이미 {date, startTime, endTime}을 가지고 있습니다.
+    schedules: (api.schedules || []).map((s) => ({
+      date: s.date,
+      startTime: s.startTime,
+      endTime: s.endTime,
+    })),
   };
 }
