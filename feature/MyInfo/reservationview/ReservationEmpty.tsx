@@ -3,13 +3,27 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ButtonLabel } from "@/components/button/Button";
+import type { ReservationStatus } from "@/types/reservationview/reservationview.types";
 
 /**
  * ReservationEmpty
  *
- * 전체 예약 내역이 하나도 없을 때 보여주는 Empty UI
+ * 필터별 예약 내역이 없을 때 보여주는 Empty UI
  */
-export function ReservationEmpty() {
+
+const EMPTY_MESSAGE: Record<ReservationStatus, string> = {
+  pending: "예약 신청 내역이 없어요",
+  confirmed: "승인된 예약이 없어요",
+  declined: "거절된 예약이 없어요",
+  canceled: "취소된 예약이 없어요",
+  completed: "완료된 체험이 없어요",
+};
+
+interface Props {
+  status: ReservationStatus;
+}
+
+export function ReservationEmpty({ status }: Props) {
   const router = useRouter();
 
   return (
@@ -23,7 +37,7 @@ export function ReservationEmpty() {
       />
 
       <p className="mb-[30px] text-center text-[18px] text-gray-400">
-        아직 예약한 체험이 없어요
+        {EMPTY_MESSAGE[status]}
       </p>
 
       <ButtonLabel
