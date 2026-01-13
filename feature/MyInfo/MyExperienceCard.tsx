@@ -1,6 +1,7 @@
 import type { MyActivity } from "@/types/MyExperienceTypes";
 import Star from "@/public/icon_star.svg";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
   experience: MyActivity;
@@ -25,10 +26,12 @@ export default function MyExperienceCard({ experience }: Props) {
         </div>
 
         <div className="flex gap-2">
-          <button className="border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600">
-            수정하기
-          </button>
-          <button className="bg-gray-50 border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600">
+          <Link href={`/myactivities/${experience.id}/edit`}>
+            <button type="submit" className="border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600 cursor-pointer">
+              수정하기
+            </button>
+          </Link>
+          <button className="bg-gray-50 border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600 cursor-pointer">
             삭제하기
           </button>
         </div>

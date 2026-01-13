@@ -30,8 +30,16 @@ export default function ActivityHeaderInfo({
 
   //삭제 확인 모달
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const userNum = localStorage.getItem("user");
+    setUserId(userNum ? Number(userNum) : null);
+  }, []);
+
+  const isOwner = userId === activity.userId;
 
   useEffect(() => {
     // 케밥 메뉴 외부 클릭 시 닫기
@@ -48,15 +56,6 @@ export default function ActivityHeaderInfo({
     };
   }, [openMenu]);
 
-  // 현재 로그인한 유저 아이디
-  const userId =
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("user") ?? "null")?.id ?? null
-      : null;
-
-  // 현재 유저가 작성자와 동일한지 여부
-  const isOwner = userId === activity.userId;
-
   // 수정하기
   const onEdit = (item: typeof activity) => {
     setOpenMenu(false);
@@ -71,6 +70,7 @@ export default function ActivityHeaderInfo({
       toast.success("삭제되었습니다.");
       // 내 체험 목록 갱신
       queryClient.invalidateQueries({ queryKey: ["myActivities"] });
+      router.push("/");
     },
     onError: (e) => {
       if (axios.isAxiosError(e)) {

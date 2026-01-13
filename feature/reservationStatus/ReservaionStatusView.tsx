@@ -7,6 +7,7 @@ import ReservationSideModal from "./ReservationSidemodal";
 import { Reservation } from "./types/reservation";
 import { useIsCompact } from "@/hooks/useIsCompact";
 import ReservationBottomSheet from "./MobileBottomSheet";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export default function ReservationStatusView({
   reservations,
@@ -46,6 +47,8 @@ export default function ReservationStatusView({
   };
 
   const isCompact = useIsCompact();
+  
+  useBodyScrollLock(!!selectedDateKey);
 
   return (
     <div className="relative w-full ">

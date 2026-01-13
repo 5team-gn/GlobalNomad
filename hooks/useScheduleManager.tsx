@@ -67,6 +67,7 @@ export function useScheduleManager(initialSchedules: ScheduleItem[] = []) {
     setDate,
     setStartTime,
     setEndTime,
+    setSchedules,
 
     isAddDisabled,
 

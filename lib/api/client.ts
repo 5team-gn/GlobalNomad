@@ -1,8 +1,10 @@
 import axios from "axios";
 
 const client = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://sp-globalnomad-api.vercel.app",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 /**

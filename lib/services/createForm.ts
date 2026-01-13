@@ -1,17 +1,19 @@
 // services/activity.service.ts
-import type { CreateActivityBodyDto } from "@/types/activities/activity.types"; 
+import type { CreateActivityBodyDto } from "@/types/activities/activity.types";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function postcreateFrom(
   teamId: string,
   body: CreateActivityBodyDto
 ) {
-  const res = await fetch(`/${teamId}/activities`, {
+  const res = await fetch(`${BASE_URL}/${teamId}/activities`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
     body: JSON.stringify(body),
-    credentials: "include", // 인증 필요 시
   });
 
   if (!res.ok) {

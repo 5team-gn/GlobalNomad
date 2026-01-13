@@ -1,4 +1,4 @@
-import instance from "./client";
+import axiosInstance from "./axios";
 import type {
   UserResponseDto,
   UpdateUserBodyDto,
@@ -14,7 +14,7 @@ if (!TEAM_ID) {
  * 내 정보 조회
  */
 export const getMyInfo = async (): Promise<UserResponseDto> => {
-  const response = await instance.get<UserResponseDto>(`${TEAM_ID}/users/me`);
+  const response = await axiosInstance.get<UserResponseDto>(`/users/me`);
   return response.data;
 };
 
@@ -24,8 +24,8 @@ export const getMyInfo = async (): Promise<UserResponseDto> => {
 export const updateMyInfo = async (
   body: UpdateUserBodyDto
 ): Promise<UserResponseDto> => {
-  const response = await instance.patch<UserResponseDto>(
-    `${TEAM_ID}/users/me`,
+  const response = await axiosInstance.patch<UserResponseDto>(
+    `/users/me`,
     body
   );
   return response.data;
@@ -40,7 +40,7 @@ export const uploadProfileImage = async (
   const formData = new FormData();
   formData.append("image", file);
 
-  const response = await instance.post(`${TEAM_ID}/users/me/image`, formData, {
+  const response = await axiosInstance.post(`/users/me/image`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
