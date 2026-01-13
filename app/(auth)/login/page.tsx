@@ -10,13 +10,15 @@ import { PasswordInput } from "@/components/input/passwordinput";
 import { Button } from "@/components/button/Button";
 import { login } from "@/lib/api/auth";
 import type { LoginRequest } from "@/types/auth/auth.types";
+import { useContext } from "react";
+import { AuthContext } from "@/app/AuthProvider";
 
 /**
  * 로그인 페이지 컴포넌트
  */
 export default function LoginPage() {
   const router = useRouter();
-  
+  const auth = useContext(AuthContext);
   // react-hook-form 설정
   const {
     register,
@@ -37,10 +39,12 @@ export default function LoginPage() {
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
       localStorage.setItem("user", String(response.user.id));
-      
+
       toast.success("로그인에 성공했습니다.");
+      await auth?.refreshUser();
       // 메인 페이지로 이동
-      router.push("/");
+      router.replace("/");
+      // router.push("/");
     } catch (error: any) {
       console.error(error);
       // 서버 에러 메시지가 있으면 표시, 없으면 기본 에러 메시지
@@ -156,7 +160,10 @@ export default function LoginPage() {
         {/* 회원가입 페이지 링크 */}
         <div className="flex justify-center gap-[8px] mt-[4px]">
           <span className="text-gray-800 text-[15px]">회원이 아니신가요?</span>
-          <Link href="/signup" className="text-primary-500 underline text-[15px]">
+          <Link
+            href="/signup"
+            className="text-primary-500 underline text-[15px]"
+          >
             회원가입 하기
           </Link>
         </div>
