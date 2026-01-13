@@ -45,4 +45,5 @@ export interface Reservation {
   people: number;
   status: ReservationStatus;
   reviewWritten?: boolean;
+  bannerImageUrl?: string;
 }
