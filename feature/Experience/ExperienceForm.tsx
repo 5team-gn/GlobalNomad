@@ -27,6 +27,8 @@ import { mapFormToUpdateActivity } from "@/adapters/updateActivity.adapter";
 import type { ExperienceFormValues } from "@/types/ExperienceForm.types";
 import type { ActivityDetailResponse } from "@/types/activities/activity.types";
 
+import { uploadActivityImage } from "@/lib/services/uploadActivityImage";
+
 interface Props {
   mode: "create" | "edit";
   initialValues?: Partial<ExperienceFormValues>;
@@ -108,11 +110,47 @@ export default function ExperienceForm({
    -------------------------------- */
   const onValidSubmit = async (data: ExperienceFormValues) => {
     try {
+      // --- 1) 배너 URL 결정 ---
+      // edit: 새 파일 없으면 기존 URL 유지
+      // create: 반드시 업로드 필요
+      const bannerItem = bannerImages.images[0];
+
+      const bannerImageUrl = bannerItem?.file
+        ? await uploadActivityImage(bannerItem.file)
+        : mode === "edit"
+        ? initialValues?.bannerImageUrl ?? ""
+        : "";
+
+      if (!bannerImageUrl) {
+        toast.error("배너 이미지를 등록해 주세요.");
+        return;
+      }
+
+      // --- 2) 서브 이미지 URL 결정 ---
+      // edit: 기존 URL + 새로 추가된 파일 업로드 URL을 합침
+      const existingSubUrls =
+        mode === "edit" ? initialValues?.subImageUrls ?? [] : [];
+
+      const newDetailFiles = detailImages.images
+        .map((img) => img.file)
+        .filter((f): f is File => Boolean(f));
+
+      const uploadedSubUrls =
+        newDetailFiles.length > 0
+          ? await Promise.all(newDetailFiles.map((f) => uploadActivityImage(f)))
+          : [];
+
+      const subImageUrls =
+        mode === "edit"
+          ? [...existingSubUrls, ...uploadedSubUrls]
+          : uploadedSubUrls;
+
+      // --- 3) 최종 payload: https URL ---
       const formData = {
         ...data,
         schedules: scheduleManager.schedules,
-        bannerImageUrl: bannerImages.images[0]?.preview ?? "",
-        subImageUrls: detailImages.images.map((img) => img.preview),
+        bannerImageUrl,
+        subImageUrls,
       };
 
       if (mode === "create") {
@@ -151,22 +189,56 @@ export default function ExperienceForm({
             toast.error("체험 처리 중 오류가 발생했습니다.");
         }
       } else {
-        toast.error("알 수 없는 오류가 발생했습니다.");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "알 수 없는 오류가 발생했습니다."
+        );
       }
     }
   };
 
-  const hasChanges =
-    mode === "edit" &&
-    originalData &&
-    Object.keys(
-      mapFormToUpdateActivity(originalData, {
-        ...watch(),
-        schedules: scheduleManager.schedules,
-        bannerImageUrl: bannerImages.images[0]?.preview ?? "",
-        subImageUrls: detailImages.images.map((img) => img.preview),
-      })
-    ).length > 0;
+  const hasChanges = (() => {
+    if (mode !== "edit" || !originalData) return true; // create는 항상 가능
+
+    // 1) 텍스트/기본 필드 변경
+    const w = watch();
+    const basicChanged =
+      (w.title ?? "") !== (initialValues?.title ?? "") ||
+      (w.category ?? "") !== (initialValues?.category ?? "") ||
+      (w.description ?? "") !== (initialValues?.description ?? "") ||
+      Number(w.price ?? 0) !== Number(initialValues?.price ?? 0) ||
+      (w.address ?? "") !== (initialValues?.address ?? "");
+
+    // 2) 스케줄 변경 (간단 비교: 길이/내용 문자열화)
+    const prevSchedules = JSON.stringify(initialValues?.schedules ?? []);
+    const nextSchedules = JSON.stringify(scheduleManager.schedules ?? []);
+    const schedulesChanged = prevSchedules !== nextSchedules;
+
+    // 3) 배너 이미지 변경: 새 파일이 있으면 변경
+    const bannerChanged = Boolean(bannerImages.images[0]?.file);
+
+    // 4) 서브 이미지 변경: 새 파일 추가 or 기존 URL 제거 등
+    // - 새 파일 추가
+    const addedDetailFile = detailImages.images.some((img) =>
+      Boolean(img.file)
+    );
+    // - 기존 URL 제거(초기 값 대비 현재 미리보기(기존 url) 개수 감소)
+    //   useImageManager가 초기 URL을 images에 넣어두는 구조라는 전제입니다.
+    const initialSubCount = (initialValues?.subImageUrls ?? []).length;
+    const currentExistingUrlCount = detailImages.images.filter(
+      (img) =>
+        !img.file &&
+        typeof img.preview === "string" &&
+        img.preview.startsWith("http")
+    ).length;
+    const removedExistingUrl = currentExistingUrlCount < initialSubCount;
+
+    const imagesChanged =
+      bannerChanged || addedDetailFile || removedExistingUrl;
+
+    return basicChanged || schedulesChanged || imagesChanged;
+  })();
 
   return (
     <form

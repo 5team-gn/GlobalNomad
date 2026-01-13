@@ -5,7 +5,7 @@ const teamId = process.env.NEXT_PUBLIC_TEAM_ID;
 
 const axiosInstance = axios.create({
   baseURL: `${base}/${teamId}`,
-  withCredentials: true,
+  // withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -25,8 +25,8 @@ export const authAxios = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // 예: 토큰 자동 첨부
-    // const token = localStorage.getItem("accessToken");
-    // if (token) config.headers.Authorization = `Bearer ${token}`;
+    const token = localStorage.getItem("accessToken");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
