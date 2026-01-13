@@ -3,14 +3,18 @@
 import { useState } from "react";
 import ReservationCategoryFilter from "../../components/dropdown/ReservationCategoryFilter";
 import ReservationStatusView from "./ReservaionStatusView";
-import { mockReservations } from "@/Mocks/reservationStatus.mock";
 
 export default function ReservationStatusPage() {
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
+  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null);
+
+  const handleFilterChange = (title: string | null, id: number | null) => {
+    setSelectedTitle(title);
+    setSelectedActivityId(id);
+  };
 
   return (
     <section>
-      {/* 헤더 */}
       <header className="mb-7.5">
         <h1 className="text-18-b mb-2.5">예약현황</h1>
         <p className="text-14-m text-gray-500">
@@ -18,18 +22,15 @@ export default function ReservationStatusPage() {
         </p>
       </header>
 
-      {/* 카테고리 */}
       <div className="mb-7.5">
         <ReservationCategoryFilter
-          reservations={mockReservations}
           selectedTitle={selectedTitle}
-          onChange={setSelectedTitle}
+          onChange={handleFilterChange}
         />
       </div>
 
-      {/* 달력 */}
       <ReservationStatusView
-        reservations={mockReservations}
+        activityId={selectedActivityId}
         selectedTitle={selectedTitle}
       />
     </section>
