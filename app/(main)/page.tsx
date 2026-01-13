@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/header/header';
-import Footer from '@/components/footer/footer';
 import { SearchInput } from '@/components/input/searchinput';
 import CardLayout from '@/components/card/CardLayout';
 import { Button } from '@/components/button/Button';
@@ -229,7 +227,6 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
 
       <main className="flex-1 bg-white">
         {/* 히어로 섹션 */}
@@ -670,7 +667,6 @@ export default function MainPage() {
         </div>
       </main>
 
-      <Footer />
 
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar {
