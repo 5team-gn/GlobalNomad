@@ -10,6 +10,7 @@ import { PasswordInput } from "@/components/input/passwordinput";
 import { Button } from "@/components/button/Button";
 import { login } from "@/lib/api/auth";
 import type { LoginRequest } from "@/types/auth/auth.types";
+
 import { useContext } from "react";
 import { AuthContext } from "@/app/AuthProvider";
 
@@ -18,7 +19,10 @@ import { AuthContext } from "@/app/AuthProvider";
  */
 export default function LoginPage() {
   const router = useRouter();
+
   const auth = useContext(AuthContext);
+  const refreshUser = auth?.refreshUser;
+
   // react-hook-form 설정
   const {
     register,
@@ -40,11 +44,13 @@ export default function LoginPage() {
       localStorage.setItem("refreshToken", response.refreshToken);
       localStorage.setItem("user", String(response.user.id));
 
+      if (refreshUser) {
+        await refreshUser();
+      }
+
       toast.success("로그인에 성공했습니다.");
-      await auth?.refreshUser();
       // 메인 페이지로 이동
-      router.replace("/");
-      // router.push("/");
+      router.push("/");
     } catch (error: any) {
       console.error(error);
       // 서버 에러 메시지가 있으면 표시, 없으면 기본 에러 메시지
@@ -100,7 +106,7 @@ export default function LoginPage() {
             placeholder="비밀번호를 입력해주세요"
             error={errors.password?.message}
             {...register("password", {
-              required: "비밀번호를 입력해주세요.",
+              required: "비밀번호를 입력해주세요",
               minLength: {
                 value: 8,
                 message: "8자 이상 입력해주세요.",
