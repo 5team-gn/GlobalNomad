@@ -1,37 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toDateKey } from "@/lib/utils/date";
 import ReservationCalendar from "./Calendar/ReservationCalendar";
 import ReservationSideModal from "./ReservationSidemodal";
-import { Reservation } from "./types/reservation";
-import { useIsCompact } from "@/hooks/useIsCompact";
 import ReservationBottomSheet from "./MobileBottomSheet";
+import { useIsCompact } from "@/hooks/useIsCompact";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import {
+  getReservedSchedule,
+  ReservedScheduleResponse,
+} from "@/lib/api/getReservedSchedule";
+
+interface Props {
+  activityId: number | null;
+  selectedTitle: string | null;
+}
 
 export default function ReservationStatusView({
-  reservations,
+  activityId,
   selectedTitle,
-}: {
-  reservations: Reservation[];
-  selectedTitle: string | null;
-}) {
+}: Props) {
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
   const [modalPosition, setModalPosition] = useState<{
     top: number;
     left: number;
   } | null>(null);
+  const [scheduleData, setScheduleData] = useState<ReservedScheduleResponse[]>(
+    []
+  );
+  const [isLoading, setIsLoading] = useState(false);
 
-  const categoryFiltered = selectedTitle
-    ? reservations.filter((r) => r.title === selectedTitle)
-    : reservations;
+  const isCompact = useIsCompact();
+  useBodyScrollLock(!!selectedDateKey);
 
-  const dateFiltered = selectedDateKey
-    ? categoryFiltered.filter((r) => {
-        const key = toDateKey(new Date(r.date));
-        return key === selectedDateKey;
-      })
-    : [];
+  useEffect(() => {
+    if (activityId && selectedDateKey) {
+      const fetchSchedule = async () => {
+        try {
+          setIsLoading(true);
+          const data = await getReservedSchedule(activityId, selectedDateKey);
+          setScheduleData(data);
+        } catch (error) {
+          console.error(error);
+          setScheduleData([]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchSchedule();
+    }
+  }, [activityId, selectedDateKey]);
 
   const handleSelectDate = (
     key: string,
@@ -40,21 +59,18 @@ export default function ReservationStatusView({
     if (selectedDateKey === key) {
       setSelectedDateKey(null);
       setModalPosition(null);
+      setScheduleData([]);
     } else {
       setSelectedDateKey(key);
       setModalPosition(position);
     }
   };
 
-  const isCompact = useIsCompact();
-  
-  useBodyScrollLock(!!selectedDateKey);
-
   return (
-    <div className="relative w-full ">
+    <div className="relative w-full">
       <div className="w-full">
         <ReservationCalendar
-          reservations={categoryFiltered}
+          activityId={activityId}
           selectedDateKey={selectedDateKey}
           onSelectDate={handleSelectDate}
         />
@@ -63,15 +79,14 @@ export default function ReservationStatusView({
       {!isCompact && selectedDateKey && modalPosition && (
         <div
           className="absolute z-50 shadow-2xl animate-in fade-in zoom-in duration-200"
-          style={{
-            top: modalPosition.top,
-            left: modalPosition.left,
-          }}
+          style={{ top: modalPosition.top, left: modalPosition.left }}
         >
           <ReservationSideModal
+            activityId={activityId}
             key={selectedDateKey}
             dateKey={selectedDateKey}
-            reservations={dateFiltered}
+            schedules={scheduleData}
+            isLoading={isLoading}
             onClose={() => {
               setSelectedDateKey(null);
               setModalPosition(null);
@@ -79,13 +94,14 @@ export default function ReservationStatusView({
           />
         </div>
       )}
+
       {isCompact && selectedDateKey && (
         <ReservationBottomSheet
+          activityId={activityId}
           dateKey={selectedDateKey}
-          reservations={dateFiltered}
-          onClose={() => {
-            setSelectedDateKey(null);
-          }}
+          schedules={scheduleData}
+          isLoading={isLoading}
+          onClose={() => setSelectedDateKey(null)}
         />
       )}
     </div>

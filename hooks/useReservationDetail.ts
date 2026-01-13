@@ -1,102 +1,96 @@
-import { useState, useMemo } from "react";
-import {
-  Reservation,
-  ReservationStatusCode,
-} from "@/feature/reservationStatus/types/reservation";
+"use client";
 
-const PAGE_SIZE = 10;
+import { useState, useEffect, useMemo } from "react";
+import { 
+  getActivityReservations, 
+  ActivityReservation, 
+  ReservedScheduleResponse, 
+  updateReservationStatus 
+} from "@/lib/api/getReservedSchedule"; 
+import { ReservationStatusCode } from "@/feature/reservationStatus/types/reservation";
+import toast from "react-hot-toast";
 
 export default function useReservationDetail(
-  initialReservations: Reservation[]
+  activityId: number | null,
+  schedules: ReservedScheduleResponse[]
 ) {
-  const [localReservations, setLocalReservations] =
-    useState<Reservation[]>(initialReservations);
   const [activeTab, setActiveTab] = useState<ReservationStatusCode>("pending");
-  const [selectedTime, setSelectedTime] = useState("전체");
+  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(
+    schedules.length > 0 ? schedules[0].scheduleId : null
+  );
+  const [reservations, setReservations] = useState<ActivityReservation[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [displayLimit, setDisplayLimit] = useState(PAGE_SIZE);
+  const timeOptions = useMemo(() => {
+    return schedules.map((s) => ({
+      label: `${s.startTime} ~ ${s.endTime}`,
+      value: s.scheduleId,
+    }));
+  }, [schedules]);
 
-  const handleTabChange = (status: ReservationStatusCode) => {
-    setActiveTab(status);
-    setDisplayLimit(PAGE_SIZE);
-  };
+  useEffect(() => {
+    if (!activityId || !selectedScheduleId) return;
 
-  const handleTimeChange = (time: string) => {
-    setSelectedTime(time);
-    setDisplayLimit(PAGE_SIZE);
-  };
-
- const allFilteredReservations = useMemo(() => {
-  return [...localReservations] 
-    .filter((r) => {
-      if (r.status !== activeTab) return false;
-      if (selectedTime === "전체") return true;
-      return r.time === selectedTime; 
-    })
-    .sort((a, b) => {
-      const getTime = (r: Reservation) => {
-        const dateTimeStr = r.createdAt || `${r.date}T${r.time}:00`; 
-        const parsed = Date.parse(dateTimeStr);
-        return isNaN(parsed) ? 0 : parsed;
-      };
-
-      const timeA = getTime(a);
-      const timeB = getTime(b);
-
-      if (timeB !== timeA) {
-        return timeB - timeA;
+    const fetchDetail = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getActivityReservations(activityId, selectedScheduleId, activeTab);
+        setReservations(data.reservations);
+        setTotalCount(data.totalCount);
+      } catch (error) {
+        console.error("명단 로드 실패:", error);
+        toast.error("명단을 불러오는데 실패했습니다.");
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      const idA = String(a.id);
-      const idB = String(b.id);
-      return idB.localeCompare(idA, undefined, { numeric: true });
-    });
-}, [localReservations, activeTab, selectedTime]);
+    fetchDetail();
+  }, [activityId, selectedScheduleId, activeTab]);
 
-  const pagedReservations = allFilteredReservations.slice(0, displayLimit);
+  const handleStatusChange = async (reservationId: number, status: "confirmed" | "declined") => {
+    if (!activityId) return;
 
-  const hasMore = displayLimit < allFilteredReservations.length;
-
-  const loadMore = () => {
-    if (hasMore) setDisplayLimit((prev) => prev + PAGE_SIZE);
-  };
-
-  const handleStatusChange = (
-    id: string | number,
-    status: ReservationStatusCode
-  ) => {
-    if (status === "confirmed") {
-      const target = localReservations.find((r) => r.id === id);
-      if (!target) return;
-
-      setLocalReservations((prev) =>
-        prev.map((r) => {
-          if (r.time === target.time && r.id !== id && r.status === "pending") {
-            return { ...r, status: "declined" as ReservationStatusCode };
-          }
-          if (r.id === id) return { ...r, status: "confirmed" };
-          return r;
-        })
-      );
-    } else {
-      setLocalReservations((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, status } : r))
-      );
+    try {
+      await updateReservationStatus(activityId, reservationId, status);
+      toast.success(`${status === "confirmed" ? "승인" : "거절"} 처리가 완료되었습니다.`);
+      
+      if (selectedScheduleId) {
+        const data = await getActivityReservations(activityId, selectedScheduleId, activeTab);
+        setReservations(data.reservations);
+        setTimeout(() => window.location.reload(), 1000); 
+      }
+    } catch (error) {
+      toast.error("처리에 실패했습니다.");
     }
   };
 
-  const getCount = (status: ReservationStatusCode) =>
-    localReservations.filter((r) => r.status === status).length;
+  // --- 5. 수정된 getCount 함수 ---
+  const getCount = (status: ReservationStatusCode) => {
+    const currentSchedule = schedules.find(s => s.scheduleId === selectedScheduleId);
+    if (!currentSchedule) return 0;
+
+    // ReservationStatusCode가 API 응답 객체의 Key인지 확인하는 로직
+    // status가 'pending', 'confirmed', 'declined' 중 하나인지 체크합니다.
+    if (status === "pending" || status === "confirmed" || status === "declined") {
+      return currentSchedule.count[status] ?? 0;
+    }
+
+    // 그 외의 상태(canceled 등)는 0으로 반환하여 에러 방지
+    return 0;
+  };
 
   return {
     activeTab,
-    selectedTime,
-    setActiveTab: handleTabChange,
-    setSelectedTime: handleTimeChange,
-    filteredReservations: pagedReservations,
+    selectedTime: selectedScheduleId,
+    setActiveTab,
+    setSelectedTime: setSelectedScheduleId,
+    filteredReservations: reservations,
     getCount,
     handleStatusChange,
-    loadMore,
-    hasMore,
+    timeOptions,
+    isLoading,
+    totalCount
   };
 }

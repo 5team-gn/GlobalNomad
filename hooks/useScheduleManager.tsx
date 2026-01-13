@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useCallback } from "react";
 
 export interface ScheduleItem {
   date: string;
@@ -10,8 +12,13 @@ export function useScheduleManager(initialSchedules: ScheduleItem[] = []) {
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [schedules, setSchedules] =
-    useState<ScheduleItem[]>(initialSchedules);
+  const [schedules, setSchedules] = useState<ScheduleItem[]>(initialSchedules);
+
+  // 추가: 외부에서 받아온 데이터를 매니저 상태로 강제 주입하는 함수
+  // useCallback을 사용하여 무한 루프를 방지합니다.
+  const initSchedules = useCallback((newSchedules: ScheduleItem[]) => {
+    setSchedules(newSchedules);
+  }, []);
 
   const toMinutes = (time: string) => {
     const [h, m] = time.split(":").map(Number);
@@ -24,10 +31,8 @@ export function useScheduleManager(initialSchedules: ScheduleItem[] = []) {
 
     return schedules.some((item) => {
       if (item.date !== newItem.date) return false;
-
       const existStart = toMinutes(item.startTime);
       const existEnd = toMinutes(item.endTime);
-
       return newStart < existEnd && newEnd > existStart;
     });
   };
@@ -40,7 +45,6 @@ export function useScheduleManager(initialSchedules: ScheduleItem[] = []) {
 
   const addSchedule = () => {
     if (isAddDisabled) return;
-
     const newSchedule = { date, startTime, endTime };
 
     if (isOverlappingSchedule(newSchedule)) {
@@ -63,14 +67,11 @@ export function useScheduleManager(initialSchedules: ScheduleItem[] = []) {
     startTime,
     endTime,
     schedules,
-
     setDate,
     setStartTime,
     setEndTime,
-    setSchedules,
-
+    initSchedules, // setSchedules 대신 이걸 사용하세요
     isAddDisabled,
-
     addSchedule,
     removeSchedule,
   };
