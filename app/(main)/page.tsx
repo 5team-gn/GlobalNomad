@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/header/header';
-import Footer from '@/components/footer/footer';
 import { SearchInput } from '@/components/input/searchinput';
 import CardLayout from '@/components/card/CardLayout';
 import { Button } from '@/components/button/Button';
@@ -14,11 +12,11 @@ import type { ActivityListItem } from '@/types/activities/activity.types';
 
 // 카테고리 - 영어 id로 매칭
 const categories = [
-  { id: 'culture', name: '문화 · 예술', icon: '🎨' },
-  { id: 'food', name: '식음료', icon: '🍽️' },
-  { id: 'tour', name: '투어', icon: '🗺️' },
-  { id: 'sightseeing', name: '관광', icon: '🏛️' },
-  { id: 'wellness', name: '웰빙', icon: '🧘' },
+  { id: 'culture', name: '문화 · 예술'},
+  { id: 'food', name: '식음료'},
+  { id: 'tour', name: '투어'},
+  { id: 'sightseeing', name: '관광'},
+  { id: 'wellness', name: '웰빙'},
 ];
 
 export default function MainPage() {
