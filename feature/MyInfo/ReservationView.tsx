@@ -76,15 +76,11 @@ export default function ReservationView() {
 
         <ReservationFilter value={filter} onChange={setFilter} />
 
-        {isFilterChanging && (
+        {isFilterChanging ? (
           <p className="text-center text-gray-400 mt-6">불러오는 중...</p>
-        )}
-
-        {!isFilterChanging && reservations.length === 0 && (
+        ) : reservations.length === 0 ? (
           <ReservationEmpty status={filter} />
-        )}
-
-        {reservations.length > 0 && (
+        ) : (
           <ReservationList
             reservations={reservations}
             onCancel={openCancelModal}
