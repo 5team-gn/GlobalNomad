@@ -4,6 +4,8 @@ import "../style/global.css";
 import Providers from "./providers";
 import ToastProvider from "./ToastProvider";
 
+import { AuthProvider } from "./AuthProvider";
+
 export const metadata: Metadata = {
   title: "GlobalNomad",
   description:
@@ -21,8 +23,10 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Providers>
-          {children}
-          <ToastProvider />
+          <AuthProvider>
+            {children}
+            <ToastProvider />
+          </AuthProvider>
         </Providers>
 
         {/* 카카오맵 SDK */}

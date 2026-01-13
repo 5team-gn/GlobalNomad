@@ -8,6 +8,7 @@ import { PasswordInput } from "@/components/input/passwordinput";
 import { getMyInfo, updateMyInfo } from "@/lib/api/user";
 import type { UpdateUserBodyDto } from "@/types/users/user.api.types";
 import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const BASE_INPUT_CLASS =
   "h-[54px] w-full rounded-[16px] border border-gray-100 px-[20px] text-sm text-gray-950 outline-none focus:border-[var(--color-primary-500)] focus:outline-none";
@@ -22,6 +23,8 @@ export default function MyInfoView() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  const { refreshUser } = useAuth();
 
   useEffect(() => {
     if (hasFetchedRef.current) return;
@@ -83,6 +86,8 @@ export default function MyInfoView() {
       }
 
       await updateMyInfo(payload);
+
+      await refreshUser();
 
       toast.success("내 정보가 수정되었습니다.");
     } catch (error) {
