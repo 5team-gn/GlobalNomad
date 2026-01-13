@@ -3,7 +3,7 @@ import ProductImageInput from "./ProductImageInput";
 import Delete from "@/public/delete_button.svg";
 
 interface ImageItem {
-  file: File;
+  file?: File;
   preview: string;
 }
 

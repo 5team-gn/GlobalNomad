@@ -1,11 +1,20 @@
 import { useState } from "react";
+
 export interface ImageItem {
-  file: File;
+  file?: File; 
   preview: string;
 }
 
 export function useImageManager(initial?: string[]) {
   const [images, setImages] = useState<ImageItem[]>([]);
+
+  const initImages = (urls: string[]) => {
+    const formatted = urls.map((url) => ({
+      preview: url,
+      
+    }));
+    setImages(formatted);
+  };
 
   const addImages = (files: File[]) => {
     setImages((prev) => [
@@ -19,10 +28,12 @@ export function useImageManager(initial?: string[]) {
 
   const removeImage = (index: number) => {
     setImages((prev) => {
-      URL.revokeObjectURL(prev[index].preview);
+      if (prev[index].preview.startsWith("blob:")) {
+        URL.revokeObjectURL(prev[index].preview);
+      }
       return prev.filter((_, i) => i !== index);
     });
   };
 
-  return { images, addImages, removeImage };
+  return { images, setImages, initImages, addImages, removeImage };
 }
