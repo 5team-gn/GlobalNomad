@@ -90,7 +90,7 @@ export default function CalendarCell({
 
       {/* 상태 배지 */}
       <div className="flex flex-col gap-1">
-        {badges.map((badge) => (
+        {Array.isArray(badges) && badges.map((badge) => (
           <StatusBadge
             key={badge.status}
             status={badge.status}
