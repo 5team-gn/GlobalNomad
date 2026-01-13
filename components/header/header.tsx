@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useAuth } from '@/hooks/useAuth';
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
+import NotificationsBell from "./NotificationsBell";
 
 const Header = () => {
   const { isLoggedIn, user, logout, isLoading } = useAuth();
@@ -21,9 +22,9 @@ const Header = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -35,46 +36,45 @@ const Header = () => {
     <header className="text-black flex items-center justify-between py-[10px] px-[200px] bg-white h-[70px]">
       <div className="flex items-center">
         <Link href="/" className="flex items-center">
-          <Image src="/Logo.jpg" alt="GlobalNomad Logo" width={134} height={16} priority />
+          <Image
+            src="/Logo.jpg"
+            alt="GlobalNomad Logo"
+            width={134}
+            height={16}
+            priority
+          />
         </Link>
       </div>
-      
+
       <div className="flex items-center space-x-4">
         {isLoggedIn ? (
           <div className="flex items-center gap-6 relative">
             {/* 알림 아이콘 */}
-            <button type="button" aria-label="알림">
-              <Image 
-                src="/bell.svg" 
-                alt="알림" 
-                width={20} 
-                height={20} 
-              />
-            </button>
+            <NotificationsBell />
 
             <div className="h-[24px] w-[1px] bg-gray-200"></div>
 
             {/* 프로필 & 닉네임 */}
             <div className="relative" ref={dropdownRef}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="flex items-center gap-2"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <div className="relative w-[32px] h-[32px] rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200">
                   {user?.profileImageUrl ? (
-                    <Image 
-                      src={user.profileImageUrl} 
-                      alt="프로필" 
+                    <Image
+                      src={user.profileImageUrl}
+                      alt="프로필"
                       fill
                       className="object-cover"
                     />
                   ) : (
-                    <Image 
-                      src="/icon_user.svg" 
-                      alt="프로필" 
-                      width={20} 
-                      height={20} 
+                    <Image
+                      src="/icon_user.svg"
+                      alt="프로필"
+                      width={20}
+                      height={20}
                     />
                   )}
                 </div>
