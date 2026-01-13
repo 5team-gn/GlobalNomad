@@ -1,7 +1,7 @@
 // services/activity.service.ts
-import type { CreateActivityBodyDto } from "@/types/activities/activity.types"; 
+import type { CreateActivityBodyDto } from "@/types/activities/activity.types";
 
-const BASE_URL=process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function postcreateFrom(
   teamId: string,
@@ -11,9 +11,9 @@ export async function postcreateFrom(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
     body: JSON.stringify(body),
-    
   });
 
   if (!res.ok) {
