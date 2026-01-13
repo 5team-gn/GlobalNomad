@@ -1,18 +1,15 @@
-import { apiFetch } from "@/lib/api/apiFetch";
-
+// lib/services/updateMyActivity.ts
+import { authAxios } from "@/lib/api/axios";
 import type { ActivityDetailResponse } from "@/types/activities/activity.types";
-import type { UpdateMyActivityBodyDto } from "@/types/updateActivity.types";
+import { UpdateMyActivityBodyDto } from "@/types/updateActivity.types";
 
-const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID
 export async function patchupdateMyActivity(
   activityId: number,
   body: UpdateMyActivityBodyDto
 ) {
-  return apiFetch<ActivityDetailResponse>(
-    `/${TEAM_ID}/my-activities/${activityId}`,
-    {
-      method: "PATCH",
-      body: JSON.stringify(body),
-    }
+  const res = await authAxios.patch<ActivityDetailResponse>(
+    `/my-activities/${activityId}`,
+    body
   );
+  return res.data;
 }

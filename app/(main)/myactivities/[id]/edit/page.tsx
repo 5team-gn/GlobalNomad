@@ -1,8 +1,9 @@
+// app/(main)/myactivities/[id]/edit/page.tsx  (SERVER)
 import ExperienceForm from "@/feature/Experience/form/ExperienceForm";
 import { mapActivityToFormValues } from "@/adapters/activityToform.adapter";
 import { notFound } from "next/navigation";
 import { ApiError } from "@/lib/api/apiFetch";
-import { getActivityDetail } from "@/feature/activities-detail/api/getActivityDetail";
+import { getMyActivityDetail } from "@/feature/MyInfo/api/getMyActivityDetail";
 
 export default async function EditExperiencePage({
   params,
@@ -16,12 +17,10 @@ export default async function EditExperiencePage({
 
   let originalData;
   try {
-    originalData = await getActivityDetail(activityId);
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      notFound();
-    }
-    throw error;
+    originalData = await getMyActivityDetail(activityId);
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) notFound();
+    throw e;
   }
 
   const initialValues = mapActivityToFormValues(originalData);
