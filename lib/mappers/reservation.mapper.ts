@@ -17,5 +17,7 @@ export function mapReservationApiToView(item: ReservationApi): Reservation {
     people: item.headCount,
     status: item.status,
     reviewWritten: item.reviewSubmitted,
+
+    bannerImageUrl: item.activity.bannerImageUrl,
   };
 }

@@ -37,7 +37,7 @@ export function ReservationCard({ reservation, onCancel, onReview }: Props) {
           "
         >
           <Image
-            src="/Image/thumbnail.svg"
+            src={reservation.bannerImageUrl || "/Image/thumbnail.svg"}
             alt={reservation.title}
             fill
             className="object-cover"
