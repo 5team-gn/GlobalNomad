@@ -1,5 +1,5 @@
 import { useScheduleManager } from "@/hooks/useScheduleManager";
-import ScheduleRow from "./schedule/ScheduleRow";
+import ScheduleRow from "../schedule/ScheduleRow";
 
 export function ScheduleSection({
   manager,
