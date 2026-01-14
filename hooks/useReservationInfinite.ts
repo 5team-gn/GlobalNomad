@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   Reservation,
   ReservationStatus,
@@ -19,9 +19,30 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
   const [loading, setLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFilterChanging, setIsFilterChanging] = useState(false);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const stateRef = useRef({
+    loading: false,
+    cursorId: undefined as number | undefined,
+    hasNext: true,
+    status,
+    isFilterChanging: false,
+    size,
+  });
+
+  useEffect(() => {
+    stateRef.current = {
+      loading,
+      cursorId,
+      hasNext,
+      status,
+      isFilterChanging: false,
+      size,
+    };
+  }, [loading, cursorId, hasNext, status, size]);
+
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const pushCanceledReservation = useCallback((reservation: Reservation) => {
     setCanceledBuffer((prev) => {
@@ -31,62 +52,91 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
     });
   }, []);
 
-  const fetchMore = useCallback(
-    async (isFirstPage = false) => {
-      if (loading || (!hasNext && !isFirstPage)) return;
+  const fetchMore = useMemo(
+    () =>
+      async (isFirstPage = false) => {
+        const state = stateRef.current;
 
-      try {
-        setLoading(true);
+        if (state.loading) return;
+        if (!isFirstPage && !state.hasNext) return;
+        if (!isFirstPage && state.isFilterChanging) return;
 
-        const data = await fetchMyReservations({
-          status,
-          size,
-          cursorId: isFirstPage ? undefined : cursorId,
-        });
-
-        setReservations((prev) => {
-          if (isFirstPage) return data;
-
-          const newData = data.filter(
-            (newItem) =>
-              !prev.some((existingItem) => existingItem.id === newItem.id)
-          );
-          return [...prev, ...newData];
-        });
-
-        if (data.length < size) {
-          setHasNext(false);
-        } else {
-          setCursorId(data[data.length - 1]?.id);
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
         }
-      } catch {
-        setError("예약 목록을 불러오는데 실패했습니다.");
-      } finally {
-        setLoading(false);
-        setIsFilterChanging(false);
-      }
-    },
-    [status, size, cursorId, loading, hasNext]
+
+        abortControllerRef.current = new AbortController();
+
+        try {
+          stateRef.current.loading = true;
+          setLoading(true);
+          setError(null);
+
+          const data = await fetchMyReservations({
+            status: state.status,
+            size: state.size,
+            cursorId: isFirstPage ? undefined : state.cursorId,
+          });
+
+          if (abortControllerRef.current.signal.aborted) return;
+
+          setReservations((prev) => {
+            if (isFirstPage) return data;
+
+            const newData = data.filter(
+              (newItem) =>
+                !prev.some((existingItem) => existingItem.id === newItem.id)
+            );
+            return [...prev, ...newData];
+          });
+
+          if (data.length < state.size) {
+            setHasNext(false);
+          } else {
+            setCursorId(data[data.length - 1]?.id);
+          }
+        } catch (err) {
+          if (abortControllerRef.current?.signal.aborted) return;
+          setError("예약 목록을 불러오는데 실패했습니다.");
+        } finally {
+          stateRef.current.loading = false;
+          setLoading(false);
+        }
+      },
+    []
   );
 
   useEffect(() => {
-    setIsFilterChanging(true);
+    stateRef.current.isFilterChanging = true;
+
     setReservations([]);
     setCursorId(undefined);
     setHasNext(true);
+
     fetchMore(true);
-  }, [status]);
+  }, [status, fetchMore]);
 
   useEffect(() => {
-    if (!loadMoreRef.current) return;
+    const target = loadMoreRef.current;
+    if (!target) return;
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
+        const state = stateRef.current;
+        if (state.loading || !state.hasNext || state.isFilterChanging) return;
+
         fetchMore();
+      },
+      {
+        root: null,
+        rootMargin: "200px",
+        threshold: 0,
       }
-    });
+    );
 
-    observer.observe(loadMoreRef.current);
+    observer.observe(target);
     return () => observer.disconnect();
   }, [fetchMore]);
 
@@ -106,6 +156,5 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
     loadMoreRef,
     loading,
     error,
-    isFilterChanging,
   };
 }
