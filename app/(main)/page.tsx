@@ -12,11 +12,11 @@ import type { ActivityListItem } from '@/types/activities/activity.types';
 
 // 카테고리 - 영어 id로 매칭
 const categories = [
-  { id: 'culture', name: '문화 · 예술', icon: '🎨' },
-  { id: 'food', name: '식음료', icon: '🍽️' },
-  { id: 'tour', name: '투어', icon: '🗺️' },
-  { id: 'sightseeing', name: '관광', icon: '🏛️' },
-  { id: 'wellness', name: '웰빙', icon: '🧘' },
+  { id: 'culture', name: '문화 · 예술'},
+  { id: 'food', name: '식음료'},
+  { id: 'tour', name: '투어'},
+  { id: 'sightseeing', name: '관광'},
+  { id: 'wellness', name: '웰빙'},
 ];
 
 export default function MainPage() {
@@ -231,42 +231,39 @@ export default function MainPage() {
       <main className="flex-1 bg-white">
         {/* 히어로 섹션 */}
         <section className="py-[60px]">
-          <div className="max-w-[1200px] mx-auto px-6">
-            <div className="relative w-full max-w-[1120px] mx-auto mb-[60px]">
-              <div className="relative w-full h-[500px] rounded-[24px] overflow-hidden">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+            <div className="relative w-full max-w-[327px] sm:max-w-[1120px] mx-auto mb-[40px] sm:mb-[60px]">
+              <div className="relative w-full h-[181px] sm:h-[500px] rounded-[16px] sm:rounded-[24px] overflow-hidden">
                 <Image
                   src="/mainpageimage1.png"
                   alt="히어로 이미지"
                   fill
-                  sizes="(max-width: 1200px) 100vw, 1120px"
+                  sizes="(max-width: 375px) 327px, 1120px"
                   className="object-cover"
                   priority
                 />
-                <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-end pb-[80px]">
+                <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-end pb-[40px] sm:pb-[80px]">
                   <h1 
-                    className="text-white mb-2"
+                    className="text-white mb-1 sm:mb-2 text-[20px] sm:text-[32px] px-4 text-center"
                     style={{
                       fontFamily: 'Pretendard',
-                      fontSize: '32px',
                       fontWeight: 700,
-                      lineHeight: '38px',
-                      letterSpacing: '-0.025em',
-                      textAlign: 'center'
+                      lineHeight: '1.3',
+                      letterSpacing: '-0.025em'
                     }}
                   >
                     함께 배우면 즐거운 스트릿 댄스
                   </h1>
                   <p 
-                    className="text-white flex items-center gap-2"
+                    className="text-white flex items-center gap-2 text-[14px] sm:text-[16px]"
                     style={{
                       fontFamily: 'Pretendard',
-                      fontSize: '16px',
                       fontWeight: 600,
                       lineHeight: '26px',
                       textAlign: 'center'
                     }}
                   >
-                    1주일 안에 배우는 BEST <span style={{ fontSize: '20px' }}>🔥</span>
+                    1주일 안에 배우는 BEST <span className="text-[16px] sm:text-[20px]">🔥</span>
                   </p>
                 </div>
               </div>
@@ -274,12 +271,12 @@ export default function MainPage() {
 
             {/* 검색 영역 */}
             <div className="text-center">
-              <h2 className="text-32-b text-gray-950 mb-[40px]">
+              <h2 className="text-20-b sm:text-32-b text-gray-950 mb-[30px] sm:mb-[40px] px-4">
                 무엇을 체험하고 싶으신가요?
               </h2>
 
-              <div className="max-w-[1040px] mx-auto">
-                <div className="relative bg-white rounded-[16px] shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+              <div className="max-w-[327px] sm:max-w-[1040px] mx-auto px-4 sm:px-0">
+                <div className="relative bg-white rounded-[12px] sm:rounded-[16px] shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
                   <SearchInput
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -287,10 +284,9 @@ export default function MainPage() {
                       if (e.key === 'Enter') handleSearch();
                     }}
                     placeholder="내가 원하는 체험은"
-                    className="h-[70px] rounded-[16px] pr-[160px] border-0"
+                    className="h-[56px] sm:h-[70px] rounded-[12px] sm:rounded-[16px] pr-[100px] sm:pr-[160px] border-0 text-[14px] sm:text-[18px]"
                     style={{
                       fontFamily: 'Pretendard',
-                      fontSize: '18px',
                       fontWeight: 500,
                       lineHeight: '100%',
                       letterSpacing: '-0.025em'
@@ -301,7 +297,7 @@ export default function MainPage() {
                     variant="primary"
                     size="lg"
                     onClick={handleSearch}
-                    className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[56px] px-[32px] rounded-[12px]"
+                    className="absolute right-[4px] sm:right-[8px] top-1/2 -translate-y-1/2 h-[48px] sm:h-[56px] px-[20px] sm:px-[32px] rounded-[8px] sm:rounded-[12px] text-14-m sm:text-16-m text-white"
                   >
                     검색하기
                   </Button>
@@ -315,8 +311,8 @@ export default function MainPage() {
           {/* 인기 체험 섹션 (무한 스크롤) */}
           <section className="mb-16 relative">
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-32-b">🔥</span>
-              <h2 className="text-32-b text-gray-950">인기 체험</h2>
+              <span className="text-24-b sm:text-32-b">🔥</span>
+              <h2 className="text-24-b sm:text-32-b text-gray-950">인기 체험</h2>
             </div>
 
             {isLoadingPopular ? (
@@ -324,11 +320,11 @@ export default function MainPage() {
                 <p className="text-gray-500">로딩 중...</p>
               </div>
             ) : (
-              <div className="relative" style={{ maxWidth: 'calc(262px * 4 + 24px * 3)', margin: '0 auto' }}>
+              <div className="relative">
                 {showLeftArrow && (
                   <button
                     onClick={() => handleScroll('left')}
-                    className="absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+                    className="hidden sm:flex absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg items-center justify-center hover:bg-gray-50 transition-colors z-10"
                     style={{ left: '-24px' }}
                     aria-label="이전"
                   >
@@ -344,49 +340,35 @@ export default function MainPage() {
                     msOverflowStyle: 'none'
                   }}
                 >
-                  <div className="flex gap-6" style={{ width: 'max-content' }}>
+                  <div className="flex gap-3 sm:gap-6" style={{ width: 'max-content', paddingLeft: '8px', paddingRight: '8px' }}>
                     {popularActivities.map((activity) => (
                       <Link
                         key={activity.id}
                         href={`/activities/${activity.id}`}
-                        className="group block flex-shrink-0"
-                        style={{ width: '262px' }}
+                        className="group block flex-shrink-0 w-[calc(50vw-20px)] sm:w-[262px]"
                       >
                         <div
-                          className="relative rounded-[24px] overflow-hidden mb-[-60px]"
-                          style={{ width: '262px', height: '290px' }}
+                          className="relative rounded-[24px] overflow-hidden mb-[-40px] sm:mb-[-60px] w-full aspect-[262/290]"
                         >
                           <Image
                             src={activity.bannerImageUrl}
                             alt={activity.title}
                             fill
-                            sizes="262px"
+                            sizes="(max-width: 640px) 50vw, 262px"
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
 
                         <div
-                          className="relative bg-white rounded-[16px] shadow-md"
-                          style={{ 
-                            width: '262px', 
-                            height: '136px',
-                            padding: '16px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            gap: '5px'
-                          }}
+                          className="relative bg-white rounded-[16px] shadow-md w-full aspect-[262/136] p-3 sm:p-4 flex flex-col justify-center gap-1"
                         >
                           <h3 
-                            className="text-gray-950 line-clamp-2"
+                            className="text-gray-950 line-clamp-2 text-[14px] sm:text-[18px]"
                             style={{
                               fontFamily: 'Pretendard',
-                              fontSize: '18px',
                               fontWeight: 700,
-                              lineHeight: '26px',
+                              lineHeight: '1.4',
                               letterSpacing: '-0.025em',
-                              minHeight: '52px',
-                              maxHeight: '52px',
                               overflow: 'hidden',
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
@@ -398,14 +380,12 @@ export default function MainPage() {
                           </h3>
 
                           <div className="flex items-center gap-1">
-                            <span style={{ fontSize: '14px' }}>⭐</span>
+                            <span className="text-[12px] sm:text-[14px]">⭐</span>
                             <span 
-                              className="text-gray-900"
+                              className="text-gray-900 text-[12px] sm:text-[14px]"
                               style={{
                                 fontFamily: 'Pretendard',
-                                fontSize: '14px',
-                                fontWeight: 600,
-                                lineHeight: '26px'
+                                fontWeight: 600
                               }}
                             >
                               {activity.rating || 0} ({activity.reviewCount || 0})
@@ -413,20 +393,18 @@ export default function MainPage() {
                           </div>
 
                           <p 
-                            className="text-gray-950"
+                            className="text-gray-950 text-[14px] sm:text-[18px]"
                             style={{
                               fontFamily: 'Pretendard',
-                              fontSize: '18px',
                               fontWeight: 700,
-                              lineHeight: '26px',
+                              lineHeight: '1.4',
                               letterSpacing: '-0.025em'
                             }}
                           >
                             ₩ {activity.price.toLocaleString()}{' '}
                             <span 
-                              className="text-gray-700"
+                              className="text-gray-700 text-[12px] sm:text-[14px]"
                               style={{
-                                fontSize: '14px',
                                 fontWeight: 600
                               }}
                             >
@@ -442,7 +420,7 @@ export default function MainPage() {
                 {showRightArrow && (
                   <button
                     onClick={() => handleScroll('right')}
-                    className="absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10"
+                    className="hidden sm:flex absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg items-center justify-center hover:bg-gray-50 transition-colors z-10"
                     style={{ right: '-24px' }}
                     aria-label="다음"
                   >
@@ -461,15 +439,15 @@ export default function MainPage() {
             </div>
 
             {/* 카테고리 필터 + 가격 정렬 */}
-            <div className="flex justify-between items-center gap-3 mb-8">
-              <div className="flex gap-3 overflow-x-auto pb-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-8">
+              <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 w-full sm:w-auto">
                 {categories.map((category) => (
                   <button
                     key={category.id}
                     onClick={() => handleCategoryClick(category.name)}
                     className={`
-                      flex items-center gap-2 px-4 py-2 rounded-[15px] whitespace-nowrap
-                      transition-all duration-200 text-16-m
+                      flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-[12px] sm:rounded-[15px] whitespace-nowrap flex-shrink-0
+                      transition-all duration-200 text-14-m sm:text-16-m
                       ${
                         selectedCategory === category.name
                           ? 'bg-primary-500 text-white shadow-md'
@@ -480,26 +458,27 @@ export default function MainPage() {
                     <Image 
                       src={`/icons/category-${category.id}.png`}
                       alt={category.name}
-                      width={20}
-                      height={20}
+                      width={16}
+                      height={16}
+                      className="sm:w-[20px] sm:h-[20px]"
                     />
-                    <span>{category.name}</span>
+                    <span className="text-[13px] sm:text-[16px]">{category.name}</span>
                   </button>
                 ))}
               </div>
 
               {/* 가격 정렬 드롭다운 */}
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <select
                   value={sortOrder}
                   onChange={(e) => handleSortChange(e.target.value as 'latest' | 'price_asc' | 'price_desc')}
-                  className="appearance-none px-4 py-2 pr-10 rounded-[15px] border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 whitespace-nowrap text-16-m cursor-pointer"
+                  className="appearance-none w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 pr-8 sm:pr-10 rounded-[12px] sm:rounded-[15px] border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 whitespace-nowrap text-14-m sm:text-16-m cursor-pointer"
                 >
                   <option value="latest">최신순</option>
                   <option value="price_asc">가격 낮은 순</option>
                   <option value="price_desc">가격 높은 순</option>
                 </select>
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-12-m pointer-events-none">▼</span>
+                <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-10-m sm:text-12-m pointer-events-none">▼</span>
               </div>
             </div>
 
@@ -513,49 +492,35 @@ export default function MainPage() {
                 <p className="text-gray-500">체험이 없습니다.</p>
               </div>
             ) : (
-              <CardLayout className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <CardLayout className="grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                 {allActivities.map((activity) => (
                   <Link
                     key={activity.id}
                     href={`/activities/${activity.id}`}
-                    className="group block"
-                    style={{ width: '262px' }}
+                    className="group block w-full"
                   >
                     <div
-                      className="relative rounded-[24px] overflow-hidden mb-[-60px]"
-                      style={{ width: '262px', height: '290px' }}
+                      className="relative rounded-[24px] overflow-hidden mb-[-40px] sm:mb-[-60px] w-full aspect-[262/290]"
                     >
                       <Image
                         src={activity.bannerImageUrl}
                         alt={activity.title}
                         fill
-                        sizes="262px"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1200px) 33vw, 25vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
 
                     <div
-                      className="relative bg-white rounded-[16px] shadow-md"
-                      style={{ 
-                        width: '262px', 
-                        height: '136px',
-                        padding: '16px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        gap: '5px'
-                      }}
+                      className="relative bg-white rounded-[16px] shadow-md w-full aspect-[262/136] p-3 sm:p-4 flex flex-col justify-center gap-1"
                     >
                       <h3 
-                        className="text-gray-950 line-clamp-2"
+                        className="text-gray-950 line-clamp-2 text-[14px] sm:text-[18px]"
                         style={{
                           fontFamily: 'Pretendard',
-                          fontSize: '18px',
                           fontWeight: 700,
-                          lineHeight: '26px',
+                          lineHeight: '1.4',
                           letterSpacing: '-0.025em',
-                          minHeight: '52px',
-                          maxHeight: '52px',
                           overflow: 'hidden',
                           display: '-webkit-box',
                           WebkitLineClamp: 2,
@@ -567,14 +532,12 @@ export default function MainPage() {
                       </h3>
 
                       <div className="flex items-center gap-1">
-                        <span style={{ fontSize: '14px' }}>⭐</span>
+                        <span className="text-[12px] sm:text-[14px]">⭐</span>
                         <span 
-                          className="text-gray-900"
+                          className="text-gray-900 text-[12px] sm:text-[14px]"
                           style={{
                             fontFamily: 'Pretendard',
-                            fontSize: '14px',
-                            fontWeight: 600,
-                            lineHeight: '26px'
+                            fontWeight: 600
                           }}
                         >
                           {activity.rating || 0} ({activity.reviewCount || 0})
@@ -582,20 +545,18 @@ export default function MainPage() {
                       </div>
 
                       <p 
-                        className="text-gray-950"
+                        className="text-gray-950 text-[14px] sm:text-[18px]"
                         style={{
                           fontFamily: 'Pretendard',
-                          fontSize: '18px',
                           fontWeight: 700,
-                          lineHeight: '26px',
+                          lineHeight: '1.4',
                           letterSpacing: '-0.025em'
                         }}
                       >
                         ₩ {activity.price.toLocaleString()}{' '}
                         <span 
-                          className="text-gray-700"
+                          className="text-gray-700 text-[12px] sm:text-[14px]"
                           style={{
-                            fontSize: '14px',
                             fontWeight: 600
                           }}
                         >
