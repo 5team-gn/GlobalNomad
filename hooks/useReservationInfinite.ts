@@ -19,6 +19,7 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
   const [loading, setLoading] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFilterChanging, setIsFilterChanging] = useState(false);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,11 +34,11 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
 
   useEffect(() => {
     stateRef.current = {
+      ...stateRef.current,
       loading,
       cursorId,
       hasNext,
       status,
-      isFilterChanging: false,
       size,
     };
   }, [loading, cursorId, hasNext, status, size]);
@@ -99,6 +100,8 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
           if (abortControllerRef.current?.signal.aborted) return;
           setError("예약 목록을 불러오는데 실패했습니다.");
         } finally {
+          stateRef.current.isFilterChanging = false;
+          setIsFilterChanging(false);
           stateRef.current.loading = false;
           setLoading(false);
         }
@@ -108,6 +111,7 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
 
   useEffect(() => {
     stateRef.current.isFilterChanging = true;
+    setIsFilterChanging(true);
 
     setReservations([]);
     setCursorId(undefined);
@@ -156,5 +160,6 @@ export function useReservationInfinite({ status, size = 10 }: Params) {
     loadMoreRef,
     loading,
     error,
+    isFilterChanging,
   };
 }
