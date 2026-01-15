@@ -8,6 +8,15 @@
 
 import { TimeSlotsSectionProps } from "@/types/reservation/ui";
 
+function formatKoreanDate(d: Date) {
+  const week = ["일", "월", "화", "수", "목", "금", "토"];
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const day = week[d.getDay()];
+  return `${yyyy}.${mm}.${dd} (${day})`;
+}
+
 export default function TimeSlotsSection({
   selectedDate,
   slots,
@@ -22,7 +31,15 @@ export default function TimeSlotsSection({
 }: TimeSlotsSectionProps) {
   return (
     <div>
-      <p className={labelClassName}>{labelText}</p>
+      <div className="flex items-center justify-between">
+        <p className={labelClassName}>{labelText}</p>
+
+        {selectedDate ? (
+          <span className="text-14-m text-gray-600 ">
+            {formatKoreanDate(selectedDate)}
+          </span>
+        ) : null}
+      </div>
 
       {!selectedDate ? (
         <p className={emptyClassName}>{emptyText}</p>
