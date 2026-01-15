@@ -165,7 +165,7 @@ export default function SimpleCalendar({
 
             // 상태에 따른 스타일 우선순위: 선택 > 가능일 > (오늘이지만 불가) > 기본
             const stateCls = selected
-              ? "bg-primary-500 text-white"
+              ? "bg-primary-500 text-white opacity-50 "
               : enabled
               ? "bg-primary-500 text-white hover:bg-primary-600"
               : todayDisabled
