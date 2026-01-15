@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useEffect, useState } from "react";
 import { getMyInfo } from "@/lib/api/user";
+import axios from "axios";
 
 interface User {
   nickname: string;
@@ -49,17 +50,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const userData = await getMyInfo();
+    try {
+      const userData = await getMyInfo();
 
-    setUser((prev) => ({
-      nickname: userData.nickname,
-      profileImageUrl: userData.profileImageUrl ?? null,
-      email: userData.email,
-      pendingProfileImageUrl: prev?.pendingProfileImageUrl ?? null,
-    }));
+      setUser((prev) => ({
+        nickname: userData.nickname,
+        profileImageUrl: userData.profileImageUrl ?? null,
+        email: userData.email,
+        pendingProfileImageUrl: prev?.pendingProfileImageUrl ?? null,
+      }));
 
-    setIsLoggedIn(true);
-    setProfileImageVersion((v) => v + 1);
+      setIsLoggedIn(true);
+      setProfileImageVersion((v) => v + 1);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setUser(null);
+        setIsLoggedIn(false);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+      } else {
+        console.error("Failed to fetch user info:", error);
+      }
+    }
   }, []);
 
   const logout = () => {
