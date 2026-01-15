@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="text-gray-600 flex items-center justify-between py-[60px] px-[200px] border-t border-gray-200 font-medium text-[13px] tracking-[-0.025em]">
       <div>
-        <span>©codeit - 2023</span>
+        <span>©codeit - 2026</span>
       </div>
       <div className="flex space-x-4">
         <Link href="/privacy">
