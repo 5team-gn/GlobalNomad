@@ -9,14 +9,17 @@ export async function apiFetch<T>(path: string, init?: RequestInit) {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!base) throw new Error("Missing API_BASE_URL");
 
+  const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+
   const res = await fetch(`${base}${path}`, {
     ...init,
     headers: {
-      accept: "application/json",
+      "accept": "application/json",
+      "Content-Type": "application/json", 
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(init?.headers ?? {}),
     },
   });
-
   let data: unknown = null;
   try {
     data = await res.json();
