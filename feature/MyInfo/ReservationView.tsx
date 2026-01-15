@@ -34,7 +34,7 @@ export default function ReservationView() {
     isFilterChanging,
   } = useReservationInfinite({
     status: filter,
-    size: 10,
+    size: 6,
   });
 
   const {
