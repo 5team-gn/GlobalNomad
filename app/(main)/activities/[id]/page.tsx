@@ -54,7 +54,7 @@ export default async function Page({
               <p className="text-18-b text-gray-950 pt-[40px] mb-2">
                 체험 설명
               </p>
-              <p className="text-16-body-m text-gray-950">
+              <p className="text-16-body-m text-gray-950 whitespace-pre-wrap">
                 {activity.description}
               </p>
             </div>
