@@ -39,7 +39,7 @@ export default function NotificationsBell() {
 
   // 벨 아이콘 상태(알림 없음 / 알림 있음 / 열림)
   const iconSrc = useMemo(() => {
-    if (!hasNotifications) return "/icons/icon_bell.svg";
+    if (!hasNotifications) return "/icons/icon_bell_on.svg";
     if (open) return "/icons/icon_bell_act.svg";
     return "/icons/icon_bell_on.svg";
   }, [hasNotifications, open]);
@@ -100,7 +100,7 @@ export default function NotificationsBell() {
   };
 
   return (
-    <div className="relative" ref={wrapRef}>
+    <div className="relative flex" ref={wrapRef}>
       <button
         type="button"
         aria-label="알림"
@@ -108,7 +108,7 @@ export default function NotificationsBell() {
         disabled={!hasNotifications}
         className={!hasNotifications ? "opacity-60" : "cursor-pointer"}
       >
-        <Image src={iconSrc} alt="알림" width={20} height={20} />
+        <Image src={iconSrc} alt="알림" width={24} height={24} />
       </button>
 
       {open && hasNotifications && (
