@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -45,9 +45,8 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
-
-  // 🔴 디버깅: 컴포넌트 호출 시 Props 확인
-  console.log(`[ExperienceForm Render] mode: ${mode}, hasInitialValues: ${!!initialValues}`);
+  
+  const isExitingRef = useRef(false);
 
   const {
     control,
@@ -74,22 +73,13 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
   const bannerImages = useImageManager(initialValues?.bannerImageUrl ? [initialValues.bannerImageUrl] : []);
   const detailImages = useImageManager(initialValues?.subImageUrls ?? []);
 
-  // 1. [핵심] 수정 모드 초기 데이터 바인딩 로직
+  // 1. 초기 데이터 바인딩
   useEffect(() => {
     if (mode === "edit" && initialValues && Object.keys(initialValues).length > 0 && !isInitialized) {
-      console.group("🔴 [Step 1] 초기 데이터 주입 시작");
-      console.log("주입할 스케줄 데이터:", initialValues.schedules);
-
-      // (1) 매니저 상태 업데이트
-      if (initialValues.schedules) {
-        scheduleManager.initSchedules(initialValues.schedules);
-        console.log("매니저 initSchedules 호출 완료");
-      }
-      
+      if (initialValues.schedules) scheduleManager.initSchedules(initialValues.schedules);
       if (initialValues.bannerImageUrl) bannerImages.initImages([initialValues.bannerImageUrl]);
       if (initialValues.subImageUrls) detailImages.initImages(initialValues.subImageUrls);
 
-      // (2) 폼 데이터 리셋
       reset({
         ...initialValues,
         title: initialValues.title ?? "",
@@ -100,10 +90,8 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
         bannerImageUrl: initialValues.bannerImageUrl ?? "",
         schedules: initialValues.schedules ?? [],
       });
-      console.log("React Hook Form reset 완료");
 
       setIsInitialized(true);
-      console.groupEnd();
     }
   }, [mode, initialValues, isInitialized, reset, scheduleManager, bannerImages, detailImages]);
 
@@ -114,15 +102,14 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
     trigger("address");
   }, [setValue, trigger]);
 
-  // 2. [핵심] 상태 동기화 모니터링
+  // 2. 스케줄 동기화
   useEffect(() => {
     if (isInitialized || mode === "create") {
-      console.log("🔵 [Sync] 매니저 스케줄 -> 폼 동기화:", scheduleManager.schedules);
       setValue("schedules", scheduleManager.schedules, { shouldDirty: true });
     }
   }, [scheduleManager.schedules, setValue, isInitialized, mode]);
 
-  // 3. 변경 사항 감지 (hasChanges)
+  // 3. 변경 사항 감지
   const hasChanges = (() => {
     if (mode === "create") {
       const values = watch();
@@ -146,8 +133,18 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
   // 4. 이탈 방지 로직
   useEffect(() => {
     if (!hasChanges) return;
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
-    const handlePopState = () => { window.history.pushState(null, "", window.location.href); setShowExitModal(true); };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isExitingRef.current) return; 
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    const handlePopState = () => {
+      if (isExitingRef.current) return; 
+      window.history.pushState(null, "", window.location.href);
+      setShowExitModal(true);
+    };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     window.history.pushState(null, "", window.location.href);
@@ -159,12 +156,16 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
     };
   }, [hasChanges]);
 
-  // 5. 제출 로직
-  const onValidSubmit = async (data: ExperienceFormValues) => {
-    console.group("🚀 [Submit] 데이터 제출 시작");
-    console.log("Form Data:", data);
-    console.log("Manager Schedules:", scheduleManager.schedules);
+  const handleConfirmExit = () => {
+    isExitingRef.current = true;
+    setShowExitModal(false);
+    setTimeout(() => {
+      router.back();
+    }, 100);
+  };
 
+  // 5. 제출 로직 (🟢 정제 로직 강화)
+  const onValidSubmit = async (data: ExperienceFormValues) => {
     try {
       const bannerItem = bannerImages.images[0];
       const bannerImageUrl = bannerItem?.file ? await uploadActivityImage(bannerItem.file) : bannerItem?.preview ?? "";
@@ -174,34 +175,47 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
       const uploadedSubUrls = await Promise.all(newDetailFiles.map(f => uploadActivityImage(f)));
       const subImageUrls = [...existingSubUrls, ...uploadedSubUrls];
 
+      // 🟢 데이터 정제: 문자열 공백 제거 및 형식 통일
+      const sanitizedSchedules = scheduleManager.schedules.map(s => ({
+        date: s.date.trim().substring(0, 10),
+        startTime: s.startTime.trim().substring(0, 5),
+        endTime: s.endTime.trim().substring(0, 5)
+      }));
+
       const formData = {
         ...data,
-        schedules: scheduleManager.schedules, // 폼 데이터가 아닌 매니저 상태를 강제 주입
+        title: data.title.trim(),
+        schedules: sanitizedSchedules,
         bannerImageUrl,
         subImageUrls,
       };
 
       if (mode === "create") {
         await postcreateFrom(TEAM_ID, mapFormToCreateActivity(formData));
+        isExitingRef.current = true;
         setShowSuccessModal(true);
       } else {
         if (!originalData) return;
         const body = mapFormToUpdateActivity(originalData, formData);
-        console.log("📦 [API Patch Body]:", body);
         
+        // 🔍 디버깅용 로그
+        console.log("📦 [Final Patch Body]:", body);
+
         if (Object.keys(body).length === 0) {
           toast.error("변경사항이 없습니다.");
-          console.groupEnd();
           return;
         }
         await patchupdateMyActivity(originalData.id, body);
+        isExitingRef.current = true;
         setShowSuccessModal(true);
       }
     } catch (error) {
-      console.error("❌ 제출 에러:", error);
-      toast.error(error instanceof ApiError ? error.message : "처리 중 오류가 발생했습니다.");
+      if (error instanceof ApiError && error.status === 409) {
+        toast.error("중복된 데이터가 존재합니다. 제목이나 시간대를 확인해 주세요.");
+      } else {
+        toast.error(error instanceof ApiError ? error.message : "처리 중 오류가 발생했습니다.");
+      }
     }
-    console.groupEnd();
   };
 
   return (
@@ -209,7 +223,6 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
       <form className="flex lg:w-175 flex-col gap-6 pb-20" onSubmit={handleSubmit(onValidSubmit)}>
         <h1 className="text-18-b">{mode === "create" ? "내 체험 등록" : "내 체험 수정"}</h1>
 
-        {/* --- 기본 정보 입력 섹션 --- */}
         <div className="flex flex-col gap-2">
           <label className="text-16-b">제목</label>
           <Input {...register("title", { required: "제목을 입력해 주세요" })} placeholder="제목을 입력해 주세요" />
@@ -253,10 +266,8 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
           {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
         </div>
 
-        {/* --- 스케줄 섹션 (여기가 문제의 핵심) --- */}
         <ScheduleSection manager={scheduleManager} />
 
-        {/* --- 이미지 섹션 --- */}
         <ImageSection 
           title="배너 이미지 (필수)" 
           images={bannerImages.images} 
@@ -277,7 +288,6 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
         </Button>
       </form>
 
-      {/* --- 모달 섹션 --- */}
       <BasicModal
         isOpen={showSuccessModal}
         onClose={() => { setShowSuccessModal(false); router.push(SUCCESS_REDIRECT_URL); }}
@@ -292,7 +302,7 @@ export default function ExperienceForm({ mode, initialValues, originalData }: Pr
         text={"저장되지 않은 변경사항이 있습니다.\n정말 나가시겠습니까?"}
         cancelText="아니요" confirmText="네"
         onCancel={() => setShowExitModal(false)}
-        onConfirm={() => { setShowExitModal(false); router.back(); }}
+        onConfirm={handleConfirmExit}
       />
     </>
   );
