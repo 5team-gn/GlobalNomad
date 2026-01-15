@@ -1,29 +1,34 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import CardLayout from '@/components/card/CardLayout';
-import { getActivities, getPopularActivities } from '@/lib/api/activities';
-import type { ActivityListItem } from '@/types/activities/activity.types';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
+import CardLayout from "@/components/card/CardLayout";
+import { getActivities, getPopularActivities } from "@/lib/api/activities";
+import type { ActivityListItem } from "@/types/activities/activity.types";
+import Roller from "@/public/rollerskate.svg";
 
 // feature/MainPage 컴포넌트들
-import { HeroSection } from '@/feature/MainPage/HeroSection';
-import { ActivityCard } from '@/feature/MainPage/ActivityCard';
-import { CategoryFilter } from '@/feature/MainPage/CategoryFilter';
-import { Pagination } from '@/feature/MainPage/Pagination';
+import { HeroSection } from "@/feature/MainPage/HeroSection";
+import { ActivityCard } from "@/feature/MainPage/ActivityCard";
+import { CategoryFilter } from "@/feature/MainPage/CategoryFilter";
+import { Pagination } from "@/feature/MainPage/Pagination";
 
 export default function MainPage() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [sortOrder, setSortOrder] = useState<'latest' | 'price_asc' | 'price_desc'>('latest');
-  const [popularActivities, setPopularActivities] = useState<ActivityListItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortOrder, setSortOrder] = useState<
+    "latest" | "price_asc" | "price_desc"
+  >("latest");
+  const [popularActivities, setPopularActivities] = useState<
+    ActivityListItem[]
+  >([]);
   const [allActivities, setAllActivities] = useState<ActivityListItem[]>([]);
   const [isLoadingPopular, setIsLoadingPopular] = useState(true);
   const [isLoadingAll, setIsLoadingAll] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
+
   // 인기 체험 스크롤
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -40,9 +45,9 @@ export default function MainPage() {
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
-    container.addEventListener('scroll', handleScrollPosition);
+    container.addEventListener("scroll", handleScrollPosition);
     handleScrollPosition();
-    return () => container.removeEventListener('scroll', handleScrollPosition);
+    return () => container.removeEventListener("scroll", handleScrollPosition);
   }, [popularActivities]);
 
   // 인기 체험 로드
@@ -52,35 +57,38 @@ export default function MainPage() {
       const response = await getPopularActivities(undefined, 8);
       if (response?.activities) setPopularActivities(response.activities);
     } catch (error) {
-      console.error('인기 체험 로드 실패:', error);
+      console.error("인기 체험 로드 실패:", error);
     } finally {
       setIsLoadingPopular(false);
     }
   }, []);
 
   // 모든 체험 로드
-  const loadAllActivities = useCallback(async (page: number = 1) => {
-    try {
-      setIsLoadingAll(true);
-      const response = await getActivities({
-        method: 'offset',
-        page,
-        size: 8,
-        sort: sortOrder,
-        category: selectedCategory || undefined,
-      });
-      if (response?.activities) {
-        setAllActivities(response.activities);
-        setTotalPages(Math.ceil((response.totalCount || 0) / 8));
+  const loadAllActivities = useCallback(
+    async (page: number = 1) => {
+      try {
+        setIsLoadingAll(true);
+        const response = await getActivities({
+          method: "offset",
+          page,
+          size: 8,
+          sort: sortOrder,
+          category: selectedCategory || undefined,
+        });
+        if (response?.activities) {
+          setAllActivities(response.activities);
+          setTotalPages(Math.ceil((response.totalCount || 0) / 8));
+        }
+      } catch (error) {
+        console.error("체험 목록 로드 실패:", error);
+        setAllActivities([]);
+        setTotalPages(1);
+      } finally {
+        setIsLoadingAll(false);
       }
-    } catch (error) {
-      console.error('체험 목록 로드 실패:', error);
-      setAllActivities([]);
-      setTotalPages(1);
-    } finally {
-      setIsLoadingAll(false);
-    }
-  }, [selectedCategory, sortOrder]);
+    },
+    [selectedCategory, sortOrder]
+  );
 
   useEffect(() => {
     loadPopularActivities();
@@ -94,30 +102,30 @@ export default function MainPage() {
 
   // 카테고리 선택
   const handleCategoryClick = (categoryName: string) => {
-    setSearchQuery('');
-    setSelectedCategory(categoryName === selectedCategory ? '' : categoryName);
+    setSearchQuery("");
+    setSelectedCategory(categoryName === selectedCategory ? "" : categoryName);
   };
 
   // 정렬 변경
-  const handleSortChange = (sort: 'latest' | 'price_asc' | 'price_desc') => {
-    setSearchQuery('');
+  const handleSortChange = (sort: "latest" | "price_asc" | "price_desc") => {
+    setSearchQuery("");
     setSortOrder(sort);
   };
 
   // 검색 실행
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    setSelectedCategory('');
-    setSortOrder('latest');
+    setSelectedCategory("");
+    setSortOrder("latest");
     setCurrentPage(1);
 
     try {
       setIsLoadingAll(true);
       const response = await getActivities({
-        method: 'offset',
+        method: "offset",
         page: 1,
         size: 8,
-        sort: 'latest',
+        sort: "latest",
         keyword: searchQuery,
       });
       if (response?.activities) {
@@ -125,7 +133,7 @@ export default function MainPage() {
         setTotalPages(Math.ceil((response.totalCount || 0) / 8));
       }
     } catch (error) {
-      console.error('검색 실패:', error);
+      console.error("검색 실패:", error);
       setAllActivities([]);
       setTotalPages(1);
     } finally {
@@ -137,41 +145,42 @@ export default function MainPage() {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
-    
+
     if (searchQuery.trim()) {
       getActivities({
-        method: 'offset',
+        method: "offset",
         page,
         size: 8,
-        sort: 'latest',
+        sort: "latest",
         keyword: searchQuery,
-      }).then(response => {
+      }).then((response) => {
         if (response?.activities) setAllActivities(response.activities);
       });
     } else {
       loadAllActivities(page);
     }
-    
+
     //window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // 스크롤
-  const handleScroll = (direction: 'left' | 'right') => {
+  const handleScroll = (direction: "left" | "right") => {
     if (!scrollContainerRef.current) return;
     const scrollAmount = 300;
     const currentScroll = scrollContainerRef.current.scrollLeft;
     scrollContainerRef.current.scrollTo({
-      left: direction === 'right' ? currentScroll + scrollAmount : currentScroll - scrollAmount,
-      behavior: 'smooth',
+      left:
+        direction === "right"
+          ? currentScroll + scrollAmount
+          : currentScroll - scrollAmount,
+      behavior: "smooth",
     });
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      
-
       <main className="flex-1 bg-white">
-        <HeroSection 
+        <HeroSection
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onSearch={handleSearch}
@@ -182,7 +191,9 @@ export default function MainPage() {
           <section className="mb-16 relative">
             <div className="flex items-center gap-3 mb-6">
               <span className="text-24-b sm:text-32-b">🔥</span>
-              <h2 className="text-24-b sm:text-32-b text-gray-950">인기 체험</h2>
+              <h2 className="text-24-b sm:text-32-b text-gray-950">
+                인기 체험
+              </h2>
             </div>
 
             {isLoadingPopular ? (
@@ -193,23 +204,30 @@ export default function MainPage() {
               <div className="relative">
                 {showLeftArrow && (
                   <button
-                    onClick={() => handleScroll('left')}
+                    onClick={() => handleScroll("left")}
                     className="hidden sm:flex absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg items-center justify-center hover:bg-gray-50 transition-colors z-10"
-                    style={{ left: '-24px' }}
+                    style={{ left: "-24px" }}
                     aria-label="이전"
                   >
                     ←
                   </button>
                 )}
 
-                <div 
+                <div
                   ref={scrollContainerRef}
                   className="overflow-x-auto pb-4 scrollbar-hide"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
-                  <div className="flex gap-3 sm:gap-6" style={{ width: 'max-content', paddingLeft: '8px', paddingRight: '8px' }}>
+                  <div
+                    className="flex gap-3 sm:gap-6"
+                    style={{
+                      width: "max-content",
+                      paddingLeft: "8px",
+                      paddingRight: "8px",
+                    }}
+                  >
                     {popularActivities.map((activity) => (
-                      <ActivityCard 
+                      <ActivityCard
                         key={activity.id}
                         activity={activity}
                         variant="popular"
@@ -221,9 +239,9 @@ export default function MainPage() {
 
                 {showRightArrow && (
                   <button
-                    onClick={() => handleScroll('right')}
+                    onClick={() => handleScroll("right")}
                     className="hidden sm:flex absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg items-center justify-center hover:bg-gray-50 transition-colors z-10"
-                    style={{ right: '-24px' }}
+                    style={{ right: "-24px" }}
                     aria-label="다음"
                   >
                     →
@@ -236,7 +254,9 @@ export default function MainPage() {
           {/* 모든 체험 */}
           <section>
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-32-b">🛼</span>
+              <div className="w-6 h-6 shrink-0">
+                <Roller width="100%" height="100%" />
+              </div>
               <h2 className="text-32-b text-gray-950">모든 체험</h2>
             </div>
 
@@ -258,7 +278,7 @@ export default function MainPage() {
             ) : (
               <CardLayout className="grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                 {allActivities.map((activity) => (
-                  <ActivityCard 
+                  <ActivityCard
                     key={activity.id}
                     activity={activity}
                     variant="normal"
@@ -276,7 +296,6 @@ export default function MainPage() {
           </section>
         </div>
       </main>
-
 
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar {
