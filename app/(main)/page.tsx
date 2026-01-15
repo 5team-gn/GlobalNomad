@@ -152,7 +152,7 @@ export default function MainPage() {
       loadAllActivities(page);
     }
     
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    //window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // 스크롤
