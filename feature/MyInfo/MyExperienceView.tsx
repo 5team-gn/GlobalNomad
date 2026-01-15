@@ -17,7 +17,7 @@ export default function MyExperinenceView() {
       try {
         setLoading(true);
         // 명세서에 따른 호출 (teamId는 환경 변수나 설정된 값을 사용)
-        const data = await getMyActivities({ teamid: "your-team-id", size: 20 });
+        const data = await getMyActivities({ size: 20 });
         setActivities(data.activities);
       } catch (err) {
         setError("데이터를 불러오는 중 오류가 발생했습니다.");
