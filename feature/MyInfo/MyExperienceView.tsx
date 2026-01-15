@@ -31,7 +31,7 @@ export default function MyExperinenceView() {
   }, []);
 
   return (
-    <main className="max-w-160 max-h-300 flex flex-col mx-auto">
+    <main className="max-w-160 max-h-300 flex flex-col mx-auto mb: px-4">
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-18-b">내 체험 관리</h1>
