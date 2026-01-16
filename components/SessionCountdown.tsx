@@ -60,7 +60,7 @@ export default function SessionCountdown({
         "px-3 py-1 rounded-full border text-[12px] font-medium tabular-nums",
         isWarn
           ? "border-red-300 text-red-600 bg-red-50"
-          : "border-gray-200 text-gray-700 bg-gray-50",
+          : "bg-black text-white border-black opacity-85",
         className,
       ].join(" ")}
       aria-label="세션 만료까지 남은 시간"

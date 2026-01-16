@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,6 +28,16 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const getToken = useCallback(() => {
+    return typeof window !== "undefined"
+      ? localStorage.getItem("accessToken")
+      : null;
+  }, []);
+
+  const onExpire = useCallback(() => {
+    logout();
+  }, [logout]);
 
   if (isLoading) {
     return <header className="h-[70px] bg-white border-b border-gray-200" />;
@@ -107,17 +117,8 @@ const Header = () => {
 
             {/* 세션 남은 시간 */}
             <SessionCountdown
-              getToken={() => {
-                // TODO: 프로젝트의 실제 토큰 저장 위치로 변경하세요
-                // 예) localStorage, cookie, zustand store 등
-                return typeof window !== "undefined"
-                  ? localStorage.getItem("accessToken")
-                  : null;
-              }}
-              onExpire={() => {
-                // 만료 시 즉시 로그아웃 처리(원치 않으면 제거)
-                logout();
-              }}
+              getToken={getToken}
+              onExpire={onExpire}
               warnBeforeSec={120}
             />
           </div>
