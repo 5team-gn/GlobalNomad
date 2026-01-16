@@ -14,7 +14,7 @@ export default function ReservationStatusPage() {
   };
 
   return (
-    <section className="mb: px-4">
+    <section className="mb-28 mb: px-4">
       <header className="mb-7.5">
         <h1 className="text-18-b mb-2.5">예약현황</h1>
         <p className="text-14-m text-gray-500">
