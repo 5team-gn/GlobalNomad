@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useState, useRef, useEffect } from 'react';
 
 const categories = [
   { id: 'culture', name: '문화 · 예술' },
@@ -15,12 +16,40 @@ interface CategoryFilterProps {
   onSortChange: (sort: 'latest' | 'price_asc' | 'price_desc') => void;
 }
 
+const sortOptions = [
+  { value: 'latest', label: '가격' },
+  { value: 'price_asc', label: '가격 낮은 순' },
+  { value: 'price_desc', label: '가격 높은 순' },
+] as const;
+
 export function CategoryFilter({ 
   selectedCategory, 
   sortOrder, 
   onCategoryClick, 
   onSortChange 
 }: CategoryFilterProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const selectedLabel = sortOptions.find(option => option.value === sortOrder)?.label || '가격';
+
+  // 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelect = (value: 'latest' | 'price_asc' | 'price_desc') => {
+    onSortChange(value);
+    setIsOpen(false);
+  };
+
   return (
     <div className="flex justify-between items-center gap-3 mb-8">
       <div className="flex gap-2 overflow-x-auto pb-2">
@@ -49,19 +78,32 @@ export function CategoryFilter({
         ))}
       </div>
 
-      {/* 가격 정렬 드롭다운 */}
-<div className="relative flex items-center flex-shrink-0">
-  <select
-    value={sortOrder}
-    onChange={(e) => onSortChange(e.target.value as 'latest' | 'price_asc' | 'price_desc')}
-    className="appearance-none bg-transparent border-none text-gray-700 text-[14px] font-medium cursor-pointer focus:outline-none"
-  >
-    <option value="latest">가격</option>
-    <option value="price_asc">가격 낮은 순</option>
-    <option value="price_desc">가격 높은 순</option>
-  </select>
-  <span className="text-gray-700 text-[10px] pointer-events-none -ml-12">▼</span>
-</div>
+      {/* 커스텀 드롭다운 */}
+      <div className="relative flex-shrink-0" ref={dropdownRef}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center gap-1 text-gray-700 text-[14px] font-medium cursor-pointer hover:text-gray-900"
+        >
+          {selectedLabel}
+          <span className="text-[10px]">▼</span>
+        </button>
+
+        {isOpen && (
+          <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-[8px] shadow-lg py-1 z-10 min-w-[140px]">
+            {sortOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => handleSelect(option.value)}
+                className={`w-full text-left px-4 py-2 text-[14px] hover:bg-gray-50 transition-colors ${
+                  sortOrder === option.value ? 'text-primary-500 font-semibold' : 'text-gray-700'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
