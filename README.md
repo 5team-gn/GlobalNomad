@@ -4,6 +4,17 @@
 
 ## 🌟 프로젝트 소개
 
+글로벌노마드(Global Nomad)는  
+체험형 여행 상품을 쉽고 직관적으로 예약할 수 있도록 돕는 웹 애플리케이션입니다.
+
+캘린더와 지도 기반 UI를 통해  
+사용자는 예약 가능한 날짜를 한눈에 확인하고,  
+원하는 체험 상품을 선택하여 간편하게 예약할 수 있습니다.
+
+본 프로젝트는 실제 서비스 흐름을 고려한  
+**예약 시스템 설계**, **상태 관리**, **공통 컴포넌트화**를 목표로 하여  
+팀 협업을 통해 구현되었습니다.
+
 
 
 ## 🗓️ 프로젝트 기간
@@ -51,7 +62,22 @@ npm run dev
 
 ## 📁 프로젝트 구조
 
-폴더 완성시 수정 예정
+```bash
+GLOBALNOMAD
+ ┣ app/                 # Next.js App Router 기반 페이지 및 레이아웃
+ ┣ components/          # 공통 UI 컴포넌트
+ ┣ feature/             # 도메인(기능) 단위 컴포넌트 및 로직
+ ┣ hooks/               # 공통 커스텀 훅
+ ┣ adapters/            # API 응답 → 프론트엔드 데이터 변환 로직
+ ┣ lib/                 # API 설정, 공통 라이브러리
+ ┣ constants/           # 전역 상수 관리
+ ┣ types/               # TypeScript 타입 정의
+ ┣ utils/               # 공통 유틸 함수
+ ┣ style/               # 전역 스타일 및 스타일 설정
+ ┣ public/              # 정적 리소스
+ ┣ Mocks/               # 목 데이터
+ ┗ .env.local           # 환경 변수
+```
 
 ## 🔗 API 문서
 
@@ -62,23 +88,24 @@ npm run dev
 
 ### 메인 페이지
 
+<img width="1679" height="849" alt="메인로그인x" src="https://github.com/user-attachments/assets/eb7ba205-fc13-4997-9303-60f8d28042c5" />
 
 
 ### 로그인 페이지
+<img width="1149" height="828" alt="로그인페이지" src="https://github.com/user-attachments/assets/8f00cc7c-6ce8-414f-b8d1-6e21e2d2bead" />
 
 
 ### 체험 상세 페이지
+<img width="1592" height="946" alt="예약 상세1" src="https://github.com/user-attachments/assets/1d275664-7e81-402d-bec6-4f7fd8a9e726" />
 
 
 ### 내정보 페이지
 
+<img width="1603" height="742" alt="내정보페이지" src="https://github.com/user-attachments/assets/f007fd28-fc67-452b-9cc3-7c2af37034bb" />
 
 
 ### 체험등록 페이지
-
-
-### 예약 페이지
-
+<img width="1679" height="943" alt="체험등록페이지" src="https://github.com/user-attachments/assets/7d373a90-f4f9-4aae-b9bf-c4883f16fd2f" />
 
 
 ### 🚫NotFound 페이지
@@ -87,9 +114,10 @@ npm run dev
 
 ## 👥 팀원
 
-| <img src="https://github.com/Sseung22.png" alt="Sseung22" width="100"> |
-| ---------------------------------------------------------------------- |
-| [김재승](https://github.com/Sseung22)                                  |
+| 김재승 | 배정민 | 최희락 | 황태우 | 선기훈 |
+| --- | --- | --- | --- | --- |
+| <img src="https://github.com/Sseung22.png" width="100" alt="김재승" /> | <img src="https://github.com/baejm.png" width="100" alt="배정민" /> | <img src="https://github.com/Greensod-96.png" width="100" alt="최희락" /> | <img src="https://github.com/taewoo26.png" width="100" alt="황태우" /> | <img src="https://github.com/seongihun.png" width="100" alt="선기훈" /> |
+| [김재승](https://github.com/Sseung22) | [배정민](https://github.com/baejm) | [최희락](https://github.com/Greensod-96) | [황태우](https://github.com/taewoo26) | [선기훈](https://github.com/seongihun) |
 
 ## 🏷️역할
 
@@ -118,10 +146,12 @@ npm run dev
 
 - **공통 컴포넌트**
   - 공통 Input 컴포넌트 구현
-  - 공통 Search 컴포넌트 구현
 
 - **내정보 페이지**
   - 내정보 페이지 구현
+ 
+- **예약내역 페이지**
+  - 예약내역 페이지 구현
 
 🖥️ **황태우**
 
@@ -130,7 +160,10 @@ npm run dev
 
 - **체험 등록 페이지**
   - 체험 등록 페이지 구현
-
+ 
+- **랜딩 페이지**
+  - 랜딩 페이지 구현
+ 
 🖥️ **선기훈**
 
 - **공통 컴포넌트**
@@ -138,7 +171,12 @@ npm run dev
 
 - **예약 페이지**
   - 예약 페이지 구현
+  **내 체험관리 페이지**
+  - 내 체험관리 페이지 구현
+  **예약 현황 페이지**
+  - 예약 현황 페이지 구현
 
+  
 ## 🎓 학습 포인트
 
 - **React 컴포넌트 설계**: 재사용 가능한 컴포넌트 개발
