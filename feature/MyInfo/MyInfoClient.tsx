@@ -7,15 +7,10 @@ import { useEffect } from "react";
 import Sidebar from "@/feature/MyInfo/Sidebar";
 import MyInfoView from "@/feature/MyInfo/MyInfoView";
 import ReservationView from "@/feature/MyInfo/ReservationView";
-<<<<<<< HEAD
 import MyExperinenceView from "@/feature/MyInfo/MyExperienceView";
 import ReservationStatusPage from "@/feature/reservationStatus/ReservationStatusPage";
 import { getMyInfo } from "@/lib/api/user";
 
-=======
-import MyExperinenceView from "@/feature/MyInfo/MyExperinenceView";
-import ReservaionStatusView from "@/feature/MyInfo/ReservaionStatusView";
->>>>>>> origin/main
 import type { SidebarMenu } from "@/types/SidebarTypes";
 import type { User } from "@/lib/api/user.types"; 
 
@@ -28,7 +23,6 @@ export default function MyInfoClient() {
 
   const activeMenu =
     (searchParams.get("menu") as SidebarMenu) ?? DEFAULT_MENU;
-<<<<<<< HEAD
 
   /** 🔹 user 상태 관리 */
   const [user, setUser] = useState<User | null>(null);
@@ -36,8 +30,6 @@ export default function MyInfoClient() {
   useEffect(() => {
     getMyInfo().then(setUser).catch(console.error);
   }, []);
-=======
->>>>>>> origin/main
 
   const handleMenuChange = (menu: SidebarMenu) => {
     router.push(`/myinfo?menu=${menu}`);
@@ -66,11 +58,7 @@ export default function MyInfoClient() {
             {activeMenu === "RESERVATIONS" && <ReservationView />}
             {activeMenu === "MY_EXPERIENCE" && <MyExperinenceView />}
             {activeMenu === "RESERVATION_STATUS" && (
-<<<<<<< HEAD
               <ReservationStatusPage />
-=======
-              <ReservaionStatusView />
->>>>>>> origin/main
             )}
           </main>
         </div>
