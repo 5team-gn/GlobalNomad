@@ -1,55 +1,72 @@
+"use client";
+
 import Image from 'next/image';
 import { SearchInput } from '@/components/input/searchinput';
 import { Button } from '@/components/button/Button';
+import { ActivityListItem } from '@/types/activities/activity.types';
 
 interface HeroSectionProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   onSearch: () => void;
+  randomActivity: ActivityListItem | null;
 }
 
-export function HeroSection({ searchQuery, onSearchChange, onSearch }: HeroSectionProps) {
+export function HeroSection({ searchQuery, onSearchChange, onSearch, randomActivity }: HeroSectionProps) {
+  // 데이터가 없을 때는 빈 값을 사용하여 하드코딩 문구 노출 방지
+  const displayTitle = randomActivity?.title || "";
+  const displayImage = randomActivity?.bannerImageUrl || "";
+
   return (
     <section className="py-[60px]">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         <div className="relative w-full max-w-[327px] sm:max-w-[1120px] mx-auto mb-[40px] sm:mb-[60px]">
-          <div className="relative w-full h-[181px] sm:h-[500px] rounded-[16px] sm:rounded-[24px] overflow-hidden">
-            <Image
-              src="/mainpageimage1.png"
-              alt="히어로 이미지"
-              fill
-              sizes="(max-width: 375px) 327px, 1120px"
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-end pb-[40px] sm:pb-[80px]">
-              <h1 
-                className="text-white mb-1 sm:mb-2 text-[20px] sm:text-[32px] px-4 text-center"
-                style={{
-                  fontFamily: 'Pretendard',
-                  fontWeight: 700,
-                  lineHeight: '1.3',
-                  letterSpacing: '-0.025em'
-                }}
-              >
-                함께 배우면 즐거운 스트릿 댄스
-              </h1>
-              <p 
-                className="text-white flex items-center gap-2 text-[14px] sm:text-[16px]"
-                style={{
-                  fontFamily: 'Pretendard',
-                  fontWeight: 600,
-                  lineHeight: '26px',
-                  textAlign: 'center'
-                }}
-              >
-                1주일 안에 배우는 BEST <span className="text-[16px] sm:text-[20px]">🔥</span>
-              </p>
-            </div>
+          {/* 배경을 연한 회색으로 설정하여 로딩 전 빈 공간 느낌을 줄임 */}
+          <div className="relative w-full h-[181px] sm:h-[500px] rounded-[16px] sm:rounded-[24px] overflow-hidden bg-gray-100">
+            
+            {/* 1. 이미지가 존재할 때만 렌더링하며 페이드인 효과 적용 */}
+            {displayImage && (
+              <Image
+                src={displayImage}
+                alt={displayTitle}
+                fill
+                sizes="(max-width: 375px) 327px, 1120px"
+                className="object-cover animate-in fade-in duration-1000"
+                priority
+              />
+            )}
+
+            {/* 2. 랜덤 데이터가 로드된 후에만 텍스트 영역을 노출 (깜빡임 방지 핵심) */}
+            {randomActivity && (
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-end pb-[40px] sm:pb-[80px] animate-in fade-in slide-in-from-bottom-2 duration-700">
+                <h1 
+                  className="text-white mb-1 sm:mb-2 text-[20px] sm:text-[32px] px-4 text-center"
+                  style={{
+                    fontFamily: 'Pretendard',
+                    fontWeight: 700,
+                    lineHeight: '1.3',
+                    letterSpacing: '-0.025em'
+                  }}
+                >
+                  {displayTitle}
+                </h1>
+                <p 
+                  className="text-white flex items-center gap-2 text-[14px] sm:text-[16px]"
+                  style={{
+                    fontFamily: 'Pretendard',
+                    fontWeight: 600,
+                    lineHeight: '26px',
+                    textAlign: 'center'
+                  }}
+                >
+                  지금 가장 핫한 인기 체험 <span className="text-[16px] sm:text-[20px]">🔥</span>
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* 검색 영역 */}
+        {/* 검색 영역 (검색창은 데이터 로딩과 상관없이 바로 보여줍니다) */}
         <div className="text-center">
           <h2 className="text-20-b sm:text-32-b text-gray-950 mb-[30px] sm:mb-[40px] px-4">
             무엇을 체험하고 싶으신가요?
@@ -72,7 +89,6 @@ export function HeroSection({ searchQuery, onSearchChange, onSearch }: HeroSecti
                   letterSpacing: '-0.025em'
                 }}
               />
-
               <Button
                 variant="primary"
                 size="lg"
