@@ -1,6 +1,5 @@
 "use client";
 
-<<<<<<< HEAD
 /**
  * ReservationView
  *
@@ -15,23 +14,13 @@ import { useReservationModal } from "@/hooks/useReservationModal";
 import { useReservationInfinite } from "@/hooks/useReservationInfinite";
 import { useReservationActions } from "@/hooks/useReservationActions";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
-=======
 
-type Props = {
-  mode?: "view" | "edit";
-  onEdit?: () => void;
-  onCancel?: () => void;
-};
->>>>>>> origin/main
+import { ReservationFilter } from "./reservationview/ReservationFilter";
+import { ReservationList } from "./reservationview/ReservationList";
+import { ReservationEmpty } from "./reservationview/ReservationEmpty";
+import { CancelContent } from "./reservationview/CancelContent";
+import { ReviewContent } from "./reservationview/ReviewContent";
 
-export default function ReservationView({
-  mode = "view",
-  onEdit,
-  onCancel,
-}: Props) {
-//   const { data, loading, error } = useMyInfo();
-
-<<<<<<< HEAD
 export default function ReservationView() {
   const [filter, setFilter] = useState<ReservationStatus>("pending");
 
@@ -119,18 +108,5 @@ export default function ReservationView() {
         onSubmit={handleReviewSubmit}
       />
     </div>
-=======
-//   if (loading) return <div>로딩중...</div>;
-//   if (error || !data) return <div>에러</div>;
-
-  return ( 
-    <div> 예약내역 들어갈곳</div>
-    // <MyInfoCard
-    //   myInfo={data}
-    //   mode={mode}
-    //   onEdit={onEdit}
-    //   onCancel={onCancel}
-    // />
->>>>>>> origin/main
   );
 }

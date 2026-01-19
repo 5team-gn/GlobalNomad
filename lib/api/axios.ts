@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 const base = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -32,36 +31,13 @@ axiosInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-=======
-// import axios from "axios";
 
-// const axiosInstance = axios.create({
-//   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-//   withCredentials: true,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
+// 응답 인터셉터 (선택)
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => Promise.reject(error)
+);
 
-// // 요청 인터셉터 (선택)
-// axiosInstance.interceptors.request.use(
-//   (config) => {
-//     // 예: 토큰 자동 첨부
-//     // const token = localStorage.getItem("accessToken");
-//     // if (token) config.headers.Authorization = `Bearer ${token}`;
-//     return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
->>>>>>> origin/main
-
-// // 응답 인터셉터 (선택)
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   (error) => Promise.reject(error)
-// );
-
-<<<<<<< HEAD
 /*
  *토큰 갱신 로직 포함한 인증 인터셉터
  * 아래는 상세페이지에서 현재 사용중
@@ -129,6 +105,3 @@ authAxios.interceptors.response.use(
 );
 
 export default axiosInstance;
-=======
-// export default axiosInstance;
->>>>>>> origin/main
