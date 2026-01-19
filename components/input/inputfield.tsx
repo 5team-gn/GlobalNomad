@@ -1,45 +1,29 @@
-import { useId, ReactNode } from "react";
-import clsx from "clsx";
-import type { ComponentPropsWithRef } from "react";
+import { ReactNode } from "react";
 import { Input } from "./Input";
+import clsx from "clsx";
 
-interface InputFieldProps extends ComponentPropsWithRef<typeof Input> {
+interface InputFieldProps {
   label?: string;
   error?: string;
   helperText?: string;
+  inputProps?: React.ComponentProps<typeof Input>;
   children?: ReactNode;
+  className?: string;
 }
 
 export function InputField({
   label,
   error,
   helperText,
+  inputProps,
   children,
   className,
-  ...props
 }: InputFieldProps) {
-  const id = useId();
-
   return (
-    <div className="flex w-full flex-col gap-[10px]">
-      {label && (
-        <label htmlFor={id} className="text-[16px] font-medium text-gray-900">
-          {label}
-        </label>
-      )}
+    <div className={clsx("flex flex-col gap-1", className)}>
+      {label && <label className="text-sm font-medium">{label}</label>}
 
-      {children ?? (
-        <Input
-          id={id}
-          {...props}
-          className={clsx(
-            error
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-200 focus:ring-primary-500",
-            className
-          )}
-        />
-      )}
+      {children ?? <Input {...inputProps} />}
 
       {error ? (
         <p className="text-xs text-red-500">{error}</p>

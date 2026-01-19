@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "../style/global.css";
+<<<<<<< HEAD
 import Providers from "./providers";
 import ToastProvider from "./ToastProvider";
 
 import { AuthProvider } from "./AuthProvider";
+=======
+>>>>>>> origin/main
 
 export const metadata: Metadata = {
-  title: "GlobalNomad",
-  description:
-    "캘린더와 지도 SDK를 활용해 체험 상품을 예약할 수 있는 글로벌 체험 플랫폼",
+  title: "Design System Docs",
+  description: "Button component documentation",
 };
 
 export default function RootLayout({
@@ -17,11 +18,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
-
   return (
     <html lang="ko">
       <body>
+<<<<<<< HEAD
         <Providers>
           <AuthProvider>
             {children}
@@ -36,6 +36,9 @@ export default function RootLayout({
             src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`}
           />
         )}
+=======
+        {children}
+>>>>>>> origin/main
       </body>
     </html>
   );
