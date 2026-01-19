@@ -3,6 +3,16 @@ import type { ReviewResponse } from "@/types/reviews/review.types";
 export const mockActivityReviewsResponse: ReviewResponse = {
   averageRating: 4.3,
   totalCount: 6,
+
+  title: "스트릿 댄스 원데이 클래스",
+  date: "2025-12-20",
+  startTime: "10:00",
+  endTime: "12:00",
+  totalPrice: 30000,
+  headCount: 1,
+  status: "completed",
+  reviewWritten: false,
+
   reviews: [
     {
       id: 101,

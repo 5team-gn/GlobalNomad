@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import type { AxiosError } from "axios";
+
 import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
 import { Button } from "@/components/button/Button";
@@ -13,6 +15,10 @@ import type { LoginRequest } from "@/types/auth/auth.types";
 
 import { useContext } from "react";
 import { AuthContext } from "@/app/AuthProvider";
+
+type ErrorResponse = {
+  message?: string;
+};
 
 /**
  * 로그인 페이지 컴포넌트
@@ -39,6 +45,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginRequest) => {
     try {
       const response = await login(data);
+
       // 토큰 저장 (localStorage)
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
@@ -49,16 +56,14 @@ export default function LoginPage() {
       }
 
       toast.success("로그인에 성공했습니다.");
-      // 메인 페이지로 이동
       router.push("/");
-    } catch (error: any) {
-      console.error(error);
-      // 서버 에러 메시지가 있으면 표시, 없으면 기본 에러 메시지
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("로그인 중 오류가 발생했습니다.");
-      }
+    } catch (err: unknown) {
+      console.error(err);
+
+      const axiosErr = err as AxiosError<ErrorResponse>;
+      const message = axiosErr.response?.data?.message;
+
+      toast.error(message ?? "로그인 중 오류가 발생했습니다.");
     }
   };
 
@@ -97,14 +102,10 @@ export default function LoginPage() {
           })}
         />
 
-        {/* 비밀번호 입력 필드 */}
-        <div className="flex flex-col gap-[10px]">
-          <label className="text-[16px] font-medium text-gray-900">
-            비밀번호
-          </label>
+        {/* ✅ 비밀번호: PasswordInput은 error prop을 받지 않으므로 InputField로 감싸서 처리 */}
+        <InputField label="비밀번호" error={errors.password?.message}>
           <PasswordInput
             placeholder="비밀번호를 입력해주세요"
-            error={errors.password?.message}
             {...register("password", {
               required: "비밀번호를 입력해주세요",
               minLength: {
@@ -113,14 +114,14 @@ export default function LoginPage() {
               },
             })}
           />
-        </div>
+        </InputField>
 
         {/* 로그인 버튼 */}
         <Button
           type="submit"
           variant="primary"
           size="lg"
-          disabled={isSubmitting} // 제출 중일 때 비활성화
+          disabled={isSubmitting}
           className="w-full h-[48px] text-[15px] font-bold mt-[4px] rounded-[16px]"
         >
           로그인 하기

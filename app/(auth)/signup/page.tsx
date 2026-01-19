@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import type { AxiosError } from "axios";
+
 import { InputField } from "@/components/input/inputfield";
 import { PasswordInput } from "@/components/input/passwordinput";
 import { Button } from "@/components/button/Button";
@@ -19,12 +21,16 @@ interface SignupFormValues extends SignupRequest {
   passwordConfirm: string;
 }
 
+type ErrorResponse = {
+  message?: string;
+};
+
 /**
  * 회원가입 페이지 컴포넌트
  */
 export default function SignupPage() {
   const router = useRouter();
-  
+
   // react-hook-form 설정
   const {
     register,
@@ -32,7 +38,7 @@ export default function SignupPage() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>({
-    mode: "onBlur", // 포커스 아웃 시 유효성 검사
+    mode: "onBlur",
   });
 
   // 비밀번호 확인을 위해 비밀번호 값 실시간 감지
@@ -47,20 +53,18 @@ export default function SignupPage() {
       // passwordConfirm 필드는 API 요청에 포함하지 않음
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { passwordConfirm, ...signupData } = data;
-      
+
       await signup(signupData);
-      
+
       toast.success("회원가입이 완료되었습니다.");
-      // 로그인 페이지로 이동
       router.push("/login");
-    } catch (error: any) {
-      console.error(error);
-      // 서버 에러 메시지가 있으면 표시, 없으면 기본 에러 메시지
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("회원가입 중 오류가 발생했습니다.");
-      }
+    } catch (err: unknown) {
+      console.error(err);
+
+      const axiosErr = err as AxiosError<ErrorResponse>;
+      const message = axiosErr.response?.data?.message;
+
+      toast.error(message ?? "회원가입 중 오류가 발생했습니다.");
     }
   };
 
@@ -114,14 +118,10 @@ export default function SignupPage() {
           })}
         />
 
-        {/* 비밀번호 입력 필드 */}
-        <div className="flex flex-col gap-[10px]">
-          <label className="text-[16px] font-medium text-gray-900">
-            비밀번호
-          </label>
+        {/* 비밀번호 입력 필드: InputField로 감싸서 error 처리 */}
+        <InputField label="비밀번호" error={errors.password?.message}>
           <PasswordInput
             placeholder="비밀번호를 입력해주세요"
-            error={errors.password?.message}
             {...register("password", {
               required: "비밀번호를 입력해주세요.",
               minLength: {
@@ -130,30 +130,29 @@ export default function SignupPage() {
               },
             })}
           />
-        </div>
+        </InputField>
 
-        {/* 비밀번호 확인 입력 필드 */}
-        <div className="flex flex-col gap-[10px]">
-          <label className="text-[16px] font-medium text-gray-900">
-            비밀번호 확인
-          </label>
+        {/* 비밀번호 확인 입력 필드: InputField로 감싸서 error 처리 */}
+        <InputField
+          label="비밀번호 확인"
+          error={errors.passwordConfirm?.message}
+        >
           <PasswordInput
             placeholder="비밀번호를 한번 더 입력해주세요"
-            error={errors.passwordConfirm?.message}
             {...register("passwordConfirm", {
               required: "비밀번호 확인을 입력해주세요.",
               validate: (value) =>
                 value === password || "비밀번호가 일치하지 않습니다.",
             })}
           />
-        </div>
+        </InputField>
 
         {/* 회원가입 버튼 */}
         <Button
           type="submit"
           variant="primary"
           size="lg"
-          disabled={isSubmitting} // 제출 중일 때 비활성화
+          disabled={isSubmitting}
           className="w-full h-[48px] text-[15px] font-bold mt-[4px] rounded-[16px]"
         >
           회원가입 하기
@@ -199,7 +198,10 @@ export default function SignupPage() {
         {/* 로그인 페이지 링크 */}
         <div className="flex justify-center gap-[8px] mt-[4px]">
           <span className="text-gray-800 text-[15px]">회원이신가요?</span>
-          <Link href="/login" className="text-primary-500 underline text-[15px]">
+          <Link
+            href="/login"
+            className="text-primary-500 underline text-[15px]"
+          >
             로그인 하기
           </Link>
         </div>
