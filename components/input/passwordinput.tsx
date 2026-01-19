@@ -23,6 +23,16 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
+<<<<<<< HEAD
+        className="absolute right-4 top-1/2 -translate-y-1/2 
+             outline-none focus:outline-none"
+      >
+        <Image
+          src={visible ? "/icon_eye_on.svg" : "/icon_eye.svg"}
+          alt=""
+          width={24}
+          height={24}
+=======
         className="absolute right-3 top-1/2 -translate-y-1/2"
       >
         <Image
@@ -30,6 +40,7 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
           alt={visible ? "비밀번호 숨기기" : "비밀번호 보기"}
           width={20}
           height={20}
+>>>>>>> origin/main
         />
       </button>
     </div>

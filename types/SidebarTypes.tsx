@@ -1,3 +1,5 @@
+import { User } from "@/lib/api/user.types";
+
 export type SidebarMenu =
   | "MY_INFO"
   | "RESERVATIONS"
@@ -12,5 +14,6 @@ export type UserProfile = {
 export type SidebarProps = {
   active: SidebarMenu;
   onChange: (menu: SidebarMenu) => void;
-  user?: UserProfile;
+  user?: User | null;
+  onProfileUpdate: (newImageUrl: string) => void;
 };

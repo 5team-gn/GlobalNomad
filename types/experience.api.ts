@@ -13,8 +13,8 @@ export interface CreateActivityRequest {
   title: string;
   category: string;
   description: string;
-  address: string;
   price: number;
+  address: string;
   bannerImageUrl: string;
   subImageUrls: string[];
   schedules: {

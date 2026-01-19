@@ -1,12 +1,59 @@
 import type { MyActivity } from "@/types/MyExperienceTypes";
 import Star from "@/public/icon_star.svg";
 import Image from "next/image";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { deleteMyActivity } from "../activities-detail/api/deleteMyActivity";
+import { ApiError } from "@/lib/api/apiFetch";
 
 interface Props {
   experience: MyActivity;
+  onDeleteSuccess?: (id: number) => void;
 }
 
-export default function MyExperienceCard({ experience }: Props) {
+export default function MyExperienceCard({
+  experience,
+  onDeleteSuccess,
+}: Props) {
+  const handleDelete = async () => {
+    if (!confirm("이 체험을 삭제하시겠습니까?")) return;
+
+    try {
+      await deleteMyActivity(experience.id);
+      toast.success("체험이 성공적으로 삭제되었습니다.");
+      if (onDeleteSuccess) {
+        onDeleteSuccess(experience.id);
+      }
+    } catch (error) {
+      if (error instanceof ApiError) {
+        const status = error.status;
+        const serverMessage = error.message; 
+
+        switch (status) {
+          case 400:
+            toast.error(
+              serverMessage || "예약 신청이 있어 삭제할 수 없습니다."
+            );
+            break;
+          case 403:
+            toast.error("삭제 권한이 없습니다.");
+            break;
+          case 404:
+            toast.error("이미 삭제되었거나 존재하지 않는 체험입니다.");
+            break;
+          default:
+            toast.error(
+              serverMessage || "삭제 중 알 수 없는 오류가 발생했습니다."
+            );
+        }
+        console.error(`삭제 실패 [${status}]:`, serverMessage);
+      } else {
+        toast.error("네트워크 오류가 발생했습니다.");
+        console.error("Unknown Error:", error);
+      }
+    }
+  };
+
   return (
     <div className="flex w-full justify-between rounded-2xl border border-gray-200 p-6">
       <div className="flex flex-col justify-between">
@@ -25,10 +72,19 @@ export default function MyExperienceCard({ experience }: Props) {
         </div>
 
         <div className="flex gap-2">
-          <button className="border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600">
-            수정하기
-          </button>
-          <button className="bg-gray-50 border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600">
+          <Link href={`/myactivities/${experience.id}/edit`}>
+            <button
+              type="submit"
+              className="border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600 cursor-pointer"
+            >
+              수정하기
+            </button>
+          </Link>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="bg-gray-50 border border-gray-50 rounded-lg text-14-m px-2.5 py-1.5 text-gray-600 cursor-pointer"
+          >
             삭제하기
           </button>
         </div>
