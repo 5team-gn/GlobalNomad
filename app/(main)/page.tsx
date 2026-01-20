@@ -7,7 +7,6 @@ import { getActivities, getPopularActivities } from "@/lib/api/activities";
 import type { ActivityListItem } from "@/types/activities/activity.types";
 import Roller from "@/public/rollerskate.svg";
 
-// feature/MainPage 컴포넌트들
 import { HeroSection } from "@/feature/MainPage/HeroSection";
 import { ActivityCard } from "@/feature/MainPage/ActivityCard";
 import { CategoryFilter } from "@/feature/MainPage/CategoryFilter";
@@ -17,24 +16,22 @@ export default function MainPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [sortOrder, setSortOrder] = useState<
-    "latest" | "price_asc" | "price_desc"
-  >("latest");
-  const [popularActivities, setPopularActivities] = useState<
-    ActivityListItem[]
-  >([]);
+  const [sortOrder, setSortOrder] = useState<"latest" | "price_asc" | "price_desc">("latest");
+  const [popularActivities, setPopularActivities] = useState<ActivityListItem[]>([]);
   const [allActivities, setAllActivities] = useState<ActivityListItem[]>([]);
+  
+  // [추가] 히어로 섹션에 보여줄 랜덤 체험 상태
+  const [randomHeroActivity, setRandomHeroActivity] = useState<ActivityListItem | null>(null);
+
   const [isLoadingPopular, setIsLoadingPopular] = useState(true);
   const [isLoadingAll, setIsLoadingAll] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // 인기 체험 스크롤
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
 
-  // 스크롤 위치 감지
   const handleScrollPosition = () => {
     if (!scrollContainerRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
@@ -50,12 +47,18 @@ export default function MainPage() {
     return () => container.removeEventListener("scroll", handleScrollPosition);
   }, [popularActivities]);
 
-  // 인기 체험 로드
+  // 인기 체험 로드 및 랜덤 추출
   const loadPopularActivities = useCallback(async () => {
     try {
       setIsLoadingPopular(true);
       const response = await getPopularActivities(undefined, 8);
-      if (response?.activities) setPopularActivities(response.activities);
+      if (response?.activities && response.activities.length > 0) {
+        setPopularActivities(response.activities);
+        
+        // [수정 부분] 가져온 인기 체험 중 하나를 랜덤으로 선택하여 히어로 섹션에 전달
+        const randomIndex = Math.floor(Math.random() * response.activities.length);
+        setRandomHeroActivity(response.activities[randomIndex]);
+      }
     } catch (error) {
       console.error("인기 체험 로드 실패:", error);
     } finally {
@@ -63,7 +66,6 @@ export default function MainPage() {
     }
   }, []);
 
-  // 모든 체험 로드
   const loadAllActivities = useCallback(
     async (page: number = 1) => {
       try {
@@ -100,19 +102,16 @@ export default function MainPage() {
     loadAllActivities(1);
   }, [selectedCategory, sortOrder, loadAllActivities]);
 
-  // 카테고리 선택
   const handleCategoryClick = (categoryName: string) => {
     setSearchQuery("");
     setSelectedCategory(categoryName === selectedCategory ? "" : categoryName);
   };
 
-  // 정렬 변경
   const handleSortChange = (sort: "latest" | "price_asc" | "price_desc") => {
     setSearchQuery("");
     setSortOrder(sort);
   };
 
-  // 검색 실행
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     setSelectedCategory("");
@@ -141,7 +140,6 @@ export default function MainPage() {
     }
   };
 
-  // 페이지 변경
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
@@ -159,11 +157,8 @@ export default function MainPage() {
     } else {
       loadAllActivities(page);
     }
-
-    //window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 스크롤
   const handleScroll = (direction: "left" | "right") => {
     if (!scrollContainerRef.current) return;
     const scrollAmount = 300;
@@ -180,20 +175,19 @@ export default function MainPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1 bg-white">
+        {/* [수정] 랜덤으로 선택된 데이터를 props로 전달 */}
         <HeroSection
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onSearch={handleSearch}
+          randomActivity={randomHeroActivity}
         />
 
         <div className="max-w-[1200px] mx-auto px-6 py-16 bg-white">
-          {/* 인기 체험 */}
           <section className="mb-16 relative">
             <div className="flex items-center gap-3 mb-6">
               <span className="text-24-b sm:text-32-b">🔥</span>
-              <h2 className="text-24-b sm:text-32-b text-gray-950">
-                인기 체험
-              </h2>
+              <h2 className="text-24-b sm:text-32-b text-gray-950">인기 체험</h2>
             </div>
 
             {isLoadingPopular ? (
@@ -207,7 +201,6 @@ export default function MainPage() {
                     onClick={() => handleScroll("left")}
                     className="hidden sm:flex absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg items-center justify-center hover:bg-gray-50 transition-colors z-10"
                     style={{ left: "-24px" }}
-                    aria-label="이전"
                   >
                     ←
                   </button>
@@ -218,14 +211,7 @@ export default function MainPage() {
                   className="overflow-x-auto pb-4 scrollbar-hide"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
-                  <div
-                    className="flex gap-3 sm:gap-6"
-                    style={{
-                      width: "max-content",
-                      paddingLeft: "8px",
-                      paddingRight: "8px",
-                    }}
-                  >
+                  <div className="flex gap-3 sm:gap-6" style={{ width: "max-content", paddingLeft: "8px", paddingRight: "8px" }}>
                     {popularActivities.map((activity) => (
                       <ActivityCard
                         key={activity.id}
@@ -242,7 +228,6 @@ export default function MainPage() {
                     onClick={() => handleScroll("right")}
                     className="hidden sm:flex absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg items-center justify-center hover:bg-gray-50 transition-colors z-10"
                     style={{ right: "-24px" }}
-                    aria-label="다음"
                   >
                     →
                   </button>
@@ -251,7 +236,6 @@ export default function MainPage() {
             )}
           </section>
 
-          {/* 모든 체험 */}
           <section>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-6 h-6 shrink-0">
@@ -298,13 +282,8 @@ export default function MainPage() {
       </main>
 
       <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </div>
   );
