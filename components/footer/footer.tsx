@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -8,19 +8,37 @@ const Footer = () => {
         <span>©codeit - 2026</span>
       </div>
       <div className="flex space-x-4">
-        <Link href="/privacy">
+        <Link href="/">
           <span>Privacy Policy</span>
         </Link>
-        <Link href="/faq">
+        <Link href="/">
           <span>FAQ</span>
         </Link>
       </div>
       <div className="flex space-x-4">
-        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-          <Image src="/icon_facebook.svg" alt="Facebook" width={24} height={24} />
+        <a
+          href="https://facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            src="/icon_facebook.svg"
+            alt="Facebook"
+            width={24}
+            height={24}
+          />
         </a>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-          <Image src="/icon_instagram.svg" alt="Instagram" width={24} height={24} />
+        <a
+          href="https://instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            src="/icon_instagram.svg"
+            alt="Instagram"
+            width={24}
+            height={24}
+          />
         </a>
         <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
           <Image src="/icon_youtube.svg" alt="YouTube" width={24} height={24} />
